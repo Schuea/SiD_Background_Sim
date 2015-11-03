@@ -57,6 +57,8 @@ vector<TH1D*> Hits_Energy_Histo_;
 vector<TH2D*> Hits_Energy_2D_;
 vector<TH3D*> Hits_Energy_3D_;
 
+vector<TH2D*> ParticleOrigins_2D_;
+
 int main(int argc, char *argv[]) {
 
 	if (argc < 2) {
@@ -403,6 +405,23 @@ void Setup_EnergyHistos3D(std::array<int, 9> axis_ranges_plot, string subdetecto
 	Hits_Energy_3D_.at(layer)->GetYaxis()->SetTitle("x (mm)");
 	Hits_Energy_3D_.at(layer)->GetYaxis()->CenterTitle();
 }
+void Setup_ParticleOrigins_2D(std::array<int, 9> axis_ranges_plot, string subdetector_name, int layer) {
+	stringstream histo_2d_name, histo_2d_title;
+	histo_2d_name << "ParticleOrigins_" << subdetector_name << "_Layer_" << layer;
+	histo_2d_title << "Origins of pair background particles for " << subdetector_name << " layer " << layer;
+	ParticleOrigins_2D_.emplace_back(
+			new TH2D(histo_2d_name.str().c_str(), histo_2d_title.str().c_str(), axis_ranges_plot[0],
+					axis_ranges_plot[1], axis_ranges_plot[2], axis_ranges_plot[6], sqrt(pow(axis_ranges_plot[4],2)+pow(axis_ranges_plot[7],2)),
+					sqrt(pow(axis_ranges_plot[5],2)+pow(axis_ranges_plot[8],2)));
+
+	ParticleOrigins_2D_.at(layer)->SetContour(100);
+	ParticleOrigins_2D_.at(layer)->GetYaxis()->SetTitle("r (mm)");
+	ParticleOrigins_2D_.at(layer)->GetYaxis()->CenterTitle();
+	ParticleOrigins_2D_.at(layer)->GetXaxis()->SetTitle("z (mm)");
+	ParticleOrigins_2D_.at(layer)->GetXaxis()->CenterTitle();
+	ParticleOrigins_2D_.at(layer)->GetZaxis()->SetTitle("Hit count");
+}
+
 
 void Fill_Energy_Histogram(map<std::pair<int, long>, vector<float> > HitMapEnergy, vector<TH2D*> *Hits_Energy) {
 	for (auto iterator = HitMapEnergy.begin(); iterator != HitMapEnergy.end(); iterator++) {
@@ -609,6 +628,9 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 	float x = 0;
 	float y = 0;
 	float z = 0;
+	float vertex_x = 0;
+	float vertex_y = 0;
+	float vertex_z = 0;
 	float energy = 0;
 	int MaxNumberLayers = 0;
 	int Layer_no = 0;
@@ -638,6 +660,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 
 		//std::cout << __LINE__ << std::endl;
 		Setup_Histos1D_HitsPerLayer(axis_range_plot_1D, subdetector_name, l);
+		SetupParticleOrigins_2D(axis_ranges_plot, subdetector_name, l);
 		Setup_Histos1D(axis_range_plot_1D, subdetector_name, l);
 		Setup_Histos2D(axis_ranges_plot, subdetector_name, l);
 		Setup_Histos3D(axis_ranges_plot, subdetector_name, l);
@@ -682,12 +705,18 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			Get_TTree(SubDetectors.at(s).GetName())->SetBranchStatus("HitPosition_x", kTRUE);
 			Get_TTree(SubDetectors.at(s).GetName())->SetBranchStatus("HitPosition_y", kTRUE);
 			Get_TTree(SubDetectors.at(s).GetName())->SetBranchStatus("HitPosition_z", kTRUE);
+			Get_TTree(SubDetectors.at(s).GetName())->SetBranchStatus("HitVertex_x", kTRUE);
+			Get_TTree(SubDetectors.at(s).GetName())->SetBranchStatus("HitVertex_y", kTRUE);
+			Get_TTree(SubDetectors.at(s).GetName())->SetBranchStatus("HitVertex_z", kTRUE);
 			Get_TTree(SubDetectors.at(s).GetName())->SetBranchStatus("HitEnergy", kTRUE);
 			Get_TTree(SubDetectors.at(s).GetName())->SetBranchAddress("HitCellID0", &id0);
 			Get_TTree(SubDetectors.at(s).GetName())->SetBranchAddress("HitCellID1", &id1);
 			Get_TTree(SubDetectors.at(s).GetName())->SetBranchAddress("HitPosition_x", &x);
 			Get_TTree(SubDetectors.at(s).GetName())->SetBranchAddress("HitPosition_y", &y);
 			Get_TTree(SubDetectors.at(s).GetName())->SetBranchAddress("HitPosition_z", &z);
+			Get_TTree(SubDetectors.at(s).GetName())->SetBranchAddress("HitVertex_x", &vertex_x);
+			Get_TTree(SubDetectors.at(s).GetName())->SetBranchAddress("HitVertex_y", &vertex_y);
+			Get_TTree(SubDetectors.at(s).GetName())->SetBranchAddress("HitVertex_z", &vertex_z);
 			Get_TTree(SubDetectors.at(s).GetName())->SetBranchAddress("HitEnergy", &energy);
 			//std::cout << __LINE__ << std::endl;
 
@@ -726,6 +755,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 				}
 				Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
 
+				ParticleOrigins_2D_.at(Layer_no)->Fill(vertex_z, sqrt(pow(vertex_x,2)+pow(vertex_y,2)));
 				Hits_2D_.at(Layer_no)->Fill(x, y);
 				Hits_3D_.at(Layer_no)->Fill(z, x, y);
 				//Hits_Energy_2D_.at(Layer_no)->Fill(x, y, energy);
@@ -837,8 +867,24 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			HitsCanvasName_eps.str("");
 			HitsCanvasName_C.str("");
 			Hits_Canvas_->Print("PDFCanvas_1D2D_Hits_Layers.pdf");
-		}
-		{
+	
+			Hits_Canvas_->Update();
+			Hits_Canvas_->SetLogy(0);
+			Hits_Canvas_->SetLogx(0);
+			Hits_Canvas_->SetRightMargin(0.15);
+			ParticleOrigins_2D_.at(hitLayers.at(l))->Draw("colz");
+			HitsCanvasName_eps << Hits_Canvas_->GetName() << "_" << ParticleOrigins_2D_.at(hitLayers.at(l))->GetName()
+					<< ".eps";
+			HitsCanvasName_C << Hits_Canvas_->GetName() << "_" << ParticleOrigins_2D_.at(hitLayers.at(l))->GetName()
+					<< ".C";
+			Hits_Canvas_->Write();
+			Hits_Canvas_->Print(HitsCanvasName_eps.str().c_str());
+			Hits_Canvas_->Print(HitsCanvasName_C.str().c_str());
+			HitsCanvasName_eps.str("");
+			HitsCanvasName_C.str("");
+			Hits_Canvas_->Print("PDFCanvas_1D2D_Hits_Layers.pdf");
+
+		
 			Hits_Canvas_->Clear();
 			Hits_Canvas_->Update();
 			gStyle->SetStatX(0.87);
