@@ -16,7 +16,7 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TH3.h"
-#include "TGraph.h"
+#include "TGraphErrors.h"
 #include "TStyle.h"
 #include "TPaveText.h"
 #include "TLatex.h"
@@ -412,7 +412,7 @@ void Setup_ParticleOrigins_2D(std::array<int, 9> axis_ranges_plot, string subdet
 	ParticleOrigins_2D_.emplace_back(
 			new TH2D(histo_2d_name.str().c_str(), histo_2d_title.str().c_str(), axis_ranges_plot[0],
 					axis_ranges_plot[1], axis_ranges_plot[2], axis_ranges_plot[6], sqrt(pow(axis_ranges_plot[4],2)+pow(axis_ranges_plot[7],2)),
-					sqrt(pow(axis_ranges_plot[5],2)+pow(axis_ranges_plot[8],2)));
+					sqrt(pow(axis_ranges_plot[5],2)+pow(axis_ranges_plot[8],2))));
 
 	ParticleOrigins_2D_.at(layer)->SetContour(100);
 	ParticleOrigins_2D_.at(layer)->GetYaxis()->SetTitle("r (mm)");
@@ -660,7 +660,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 
 		//std::cout << __LINE__ << std::endl;
 		Setup_Histos1D_HitsPerLayer(axis_range_plot_1D, subdetector_name, l);
-		SetupParticleOrigins_2D(axis_ranges_plot, subdetector_name, l);
+		Setup_ParticleOrigins_2D(axis_ranges_plot, subdetector_name, l);
 		Setup_Histos1D(axis_range_plot_1D, subdetector_name, l);
 		Setup_Histos2D(axis_ranges_plot, subdetector_name, l);
 		Setup_Histos3D(axis_ranges_plot, subdetector_name, l);
@@ -951,9 +951,10 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			end_of_range = hitLayers.size() - 1;
 		}
 
-	int n = end_of_range - fist_layer_to_be_compared;
-	int layer_numbers[n];
-	int layer_numbers_Errors[n] = {0};
+	int n = end_of_range - first_layer_to_be_compared;
+	float layer_numbers[n];
+	float layer_numbers_Errors[n];
+	std::fill(layer_numbers_Errors,layer_numbers_Errors + n, 0);
 	float MeanHits[n];
 	float MeanHitErrors[n];
 	for(size_t i = 0; i <= n; ++i){
@@ -962,7 +963,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 		MeanHitErrors[i] = Hits_PerLayer_.at(first_layer_to_be_compared + i)->GetMeanError(1);
 	}
 	
-	TGraphErrors* MeanHits_PerLayer = new TGraphErrors(n, layer_numbers, MeanHits, layer_numers_Errors, MeanHitErrors);
+	TGraphErrors* MeanHits_PerLayer = new TGraphErrors(n, layer_numbers, MeanHits, layer_numbers_Errors, MeanHitErrors);
 	MeanHits_PerLayer->SetTitle("Mean hits for different layers; Layer number; Mean hits per bunch crossing");
 	MeanHits_PerLayer->SetMarkerColor(kViolet);
 	MeanHits_PerLayer->SetMarkerStyle(21);
@@ -977,7 +978,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			Hits_Canvas_->Clear();
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(0);
-			MeanHits_PerLayer->Draw("ALP")
+			MeanHits_PerLayer->Draw("ALP");
 			HitsCanvasName_eps << Hits_Canvas_->GetName() << "_"
 					<< MeanHits_PerLayer->GetName() << " " << first_layer_to_be_compared << "-" << end_of_range << ".eps";
 			HitsCanvasName_C << Hits_Canvas_->GetName() << "_" << MeanHits_PerLayer->GetName() << " " << first_layer_to_be_compared 
