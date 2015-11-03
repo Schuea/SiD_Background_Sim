@@ -295,13 +295,14 @@ void Setup_Histos1D_HitsPerLayer(std::array<int, 3> axis_range_plot_1D, string s
 	stringstream histo_name, histo_title;
 	histo_name << "HitsPerLayer_" << subdetector_name << "_Layer_" << layer;
 	histo_title << "Hits for " << subdetector_name << " layer " << layer;
-	//Hits_PerLayer_.emplace_back(
-		//	new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0]*2, axis_range_plot_1D[1],axis_range_plot_1D[2]*6));
-//BeamCal	Hits_PerLayer_.emplace_back(
-		//	new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0], 4000000,5000000));
-	/*ALL:*/Hits_PerLayer_.emplace_back(
-			new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0], 0,1100));
+//	Hits_PerLayer_.emplace_back(
+	//		new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0], axis_range_plot_1D[1],axis_range_plot_1D[2]));
+///*MuonEndcap*/	Hits_PerLayer_.emplace_back(
+	//		new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), 50, 0,1500));
+	///*BeamCal*/	Hits_PerLayer_.emplace_back(new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0]*1/4, 4200000,4850000));
+	/*ALL:*/Hits_PerLayer_.emplace_back(new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0], 0, 1500));
 	Hits_PerLayer_.at(layer)->SetMinimum(0.1);
+	Hits_PerLayer_.at(layer)->SetMaximum(10000);
 	Hits_PerLayer_.at(layer)->SetLineColor(kViolet);
 	Hits_PerLayer_.at(layer)->GetYaxis()->SetTitle("Count");
 	Hits_PerLayer_.at(layer)->GetXaxis()->SetTitle("Hits per bunch crossing");
@@ -312,9 +313,10 @@ void Setup_Histos1D(std::array<int, 3> axis_range_plot_1D, string subdetector_na
 	stringstream histo_name, histo_title;
 	histo_name << "Hits_" << subdetector_name << "_Layer_" << layer;
 	histo_title << "Hit occupancy per cell for " << subdetector_name << " layer " << layer;
-	Hits_Histo_.emplace_back(
-			new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0], axis_range_plot_1D[1],
-					axis_range_plot_1D[2]));
+	//Hits_Histo_.emplace_back(
+		//	new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0], axis_range_plot_1D[1],
+			//		axis_range_plot_1D[2]));
+	/*ALL:*/Hits_Histo_.emplace_back(new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), 150, 0, 12000));
 	Hits_Histo_.at(layer)->SetMinimum(0.1);
 	Hits_Histo_.at(layer)->SetLineColor(kViolet);
 	Hits_Histo_.at(layer)->GetYaxis()->SetTitle("Occupancy");
@@ -359,9 +361,10 @@ void Setup_EnergyHistos1D(std::array<float, 3> axis_range_plot_energy_1D, string
 	stringstream histo_name, histo_title;
 	histo_name << "Energy_" << subdetector_name << "_Layer_" << layer;
 	histo_title << "Deposited hit energy for " << subdetector_name << " layer " << layer;
-	Hits_Energy_Histo_.emplace_back(
-			new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_energy_1D[0],
-					axis_range_plot_energy_1D[1], axis_range_plot_energy_1D[2]));
+	//Hits_Energy_Histo_.emplace_back(
+		//	new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_energy_1D[0],
+			//		axis_range_plot_energy_1D[1], axis_range_plot_energy_1D[2]));
+	/*ALL:*/Hits_Energy_Histo_.emplace_back(new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), 40., 0, 3.));
 	Hits_Energy_Histo_.at(layer)->SetMinimum(0.1);
 	Hits_Energy_Histo_.at(layer)->SetLineColor(kViolet);
 	Hits_Energy_Histo_.at(layer)->GetYaxis()->SetTitle("Count");
@@ -586,9 +589,11 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 
 	Setup_BinningArrays(SubDetectors, &axis_range_plot_1D, &axis_range_plot_energy_1D, &axis_ranges_plot);
 	
-	//TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*2/5, axis_range_plot_1D[1], axis_range_plot_1D[2]*2/5);
-	//BeamCal: TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0], 4000000, 5000000);
-	/*ALL:*/TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0], axis_range_plot_1D[1], 5000000);
+	//TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*2/5, axis_range_plot_1D[1], axis_range_plot_1D[2]);
+	///*MuonBarrel*/TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*1/5, 100, axis_range_plot_1D[2]);
+	///*MuonEndcap*/TH1D* Hits = new TH1D("Hits", "Hits", 35,5500, 7300);
+	///*BeamCal:*/ TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*1/4, 4200000, 4850000);
+	/*ALL:*/TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*2/3, 4000000, 5000000);
 	Hits->GetYaxis()->SetTitle("Count");
 	Hits->GetXaxis()->SetTitle(("Hits per bunch crossing in " + subdetector_name).c_str());
 	Hits->GetXaxis()->CenterTitle();
@@ -786,8 +791,8 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 		}
 	}
 
-	//gStyle->SetOptStat(1);
-	gStyle->SetOptStat(111111);
+	gStyle->SetOptStat(1);
+	//gStyle->SetOptStat(111111);
 	TCanvas* PDF_Canvas_1D2D_Hits_Layers = new TCanvas(); 
 	PDF_Canvas_1D2D_Hits_Layers->Print("PDFCanvas_1D2D_Hits_Layers.pdf[");
 	
@@ -900,12 +905,43 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			end_of_range = hitLayers.size() - 1;
 		}
 
-		if (std::find(hitLayers.begin(), hitLayers.end(), first_layer_to_be_compared) != hitLayers.end()
+	int n = end_of_range - fist_layer_to_be_compared;
+	int layer_numbers[n];
+	int layer_numbers_Errors[n] = {0};
+	float MeanHits[n];
+	float MeanHitErrors[n];
+	for(size_t i = 0; i <= n; ++i){
+		layer_numbers[i] = first_layer_to_be_compared + i;
+		MeanHits[i] = Hits_PerLayer_.at(first_layer_to_be_compared + i)->GetMean(1);
+		MeanHitErrors[i] = Hits_PerLayer_.at(first_layer_to_be_compared + i)->GetMeanError(1);
+	}
+	
+	TGraphErrors* MeanHits_PerLayer = new TGraphErrors(n, layer_numbers, MeanHits, layer_numers_Errors, MeanHitErrors);
+	MeanHits_PerLayer->SetTitle("Mean hits for different layers; Layer number; Mean hits per bunch crossing");
+	MeanHits_PerLayer->SetMarkerColor(kViolet);
+	MeanHits_PerLayer->SetMarkerStyle(21);
+
+
+	if (std::find(hitLayers.begin(), hitLayers.end(), first_layer_to_be_compared) != hitLayers.end()
 				&& std::find(hitLayers.begin(), hitLayers.end(), first_layer_to_be_compared) != hitLayers.end()) {
 
 			stringstream HitsCanvasName_eps, HitsCanvasName_C;
 
 			Hits_Canvas_->cd();
+			Hits_Canvas_->Clear();
+			Hits_Canvas_->Update();
+			Hits_Canvas_->SetLogy(0);
+			MeanHits_PerLayer->Draw("ALP")
+			HitsCanvasName_eps << Hits_Canvas_->GetName() << "_"
+					<< MeanHits_PerLayer->GetName() << " " << first_layer_to_be_compared << "-" << end_of_range << ".eps";
+			HitsCanvasName_C << Hits_Canvas_->GetName() << "_" << MeanHits_PerLayer->GetName() << " " << first_layer_to_be_compared 
+					<< "-" << end_of_range << ".C";
+			Hits_Canvas_->Write();
+			Hits_Canvas_->Print(HitsCanvasName_eps.str().c_str());
+			Hits_Canvas_->Print(HitsCanvasName_C.str().c_str());
+			HitsCanvasName_eps.str("");
+			HitsCanvasName_C.str("");
+			Hits_Canvas_->Print("PDFCanvas_Hits_CompareLayers.pdf");
 			
 			Hits_Canvas_->Clear();
 			Hits_Canvas_->Update();
@@ -961,7 +997,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			HitsCanvasName_C.str("");
 			Hits_Canvas_->Print("PDFCanvas_Hits_CompareLayers.pdf");
 			
-			
+
 			Hits_Canvas_->Clear();
 			Hits_Canvas_->Update();
 			gStyle->SetStatX(0.87);
@@ -1092,8 +1128,8 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 
 	Files_Canvas->cd();
 
-	//gStyle->SetOptStat(1);
-	gStyle->SetOptStat(111111);
+	gStyle->SetOptStat(1);
+	//gStyle->SetOptStat(111111);
 	
 	Files_Canvas->SetLogy(0);
 	ParticlesVSEvent->Draw();

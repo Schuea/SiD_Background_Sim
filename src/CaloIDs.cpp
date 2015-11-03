@@ -68,8 +68,8 @@ CaloIDs::CaloIDs(std::string SubDetector) :
 		LengthBin_layers = 6;
 		Number_layers = 11;
 
-		binningEnergy1D = {25, 0, 0.01};
-		binning1D = {50, 0, 50};
+		binningEnergy1D = {25, 0, 0.00003};
+		binning1D = {10, 0, 10};
 		binning2D = {150, -6300, 6300, 150, -6300, 6300};
 		binning3D = {100, -3100, 3100, 150, -6300, 6300, 150, -6300, 6300};
 	}
@@ -78,8 +78,8 @@ CaloIDs::CaloIDs(std::string SubDetector) :
 		LengthBin_layers = 6;
 		Number_layers = 11;
 
-		binningEnergy1D = {25, 0, 0.01};
-		binning1D = {50, 0, 50};
+		binningEnergy1D = {35, 0, 0.0075};
+		binning1D = {50, 0, 15000};
 		binning2D = {150, -6300, 6300, 150, -6300, 6300};
 		binning3D = {150, -5700, 5700, 150, -6300, 6300, 150, -6300, 6300};
 	}
@@ -99,7 +99,7 @@ CaloIDs::CaloIDs(std::string SubDetector) :
 		Number_layers = 50;
 
 		binningEnergy1D = {45, 0, 2.5};
-		binning1D = {150, 0, 3500};
+		binning1D = {150, 0, 12000};
 		binning2D = {100, -140, 140, 100, -140, 104};
 		binning3D = {150, -3200, 3200, 100, -140, 140, 100, -140, 140};
 	}
