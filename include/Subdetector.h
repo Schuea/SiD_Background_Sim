@@ -112,4 +112,49 @@ class LumiCal : public Subdetector{
 
 								void Initialize();
 };
+class SiVertexEndcap : public Subdetector{
+
+				public:
+								SiVertexEndcap() {}
+
+								~SiVertexEndcap() {}
+
+								void Initialize();
+};
+class SiVertexBarrel : public Subdetector{
+
+				public:
+								SiVertexBarrel() {}
+
+								~SiVertexBarrel() {}
+
+								void Initialize();
+};
+class SiTrackerEndcap : public Subdetector{
+
+				public:
+								SiTrackerEndcap() {}
+
+								~SiTrackerEndcap() {}
+
+								void Initialize();
+};
+class SiTrackerBarrel : public Subdetector{
+
+				public:
+								SiTrackerBarrel() {}
+
+								~SiTrackerBarrel() {}
+
+								void Initialize();
+};
+class SiTrackerForward : public Subdetector{
+
+				public:
+								SiTrackerForward() {}
+
+								~SiTrackerForward() {}
+
+								void Initialize();
+};
 #endif /*SUBDETECTOR_H_*/
