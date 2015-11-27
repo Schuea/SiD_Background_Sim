@@ -34,12 +34,18 @@ class CellID{
 };
 class CellID64bits : public CellID {
 				public:
+								void CreateCellID();
 								char* GetCellID() const {
 												if ((ID0_ == 0 && ID1_ == 0) || ID0_ < 0 || ID1_ <0){
 																throw std::runtime_error("The CellID was not set. Invalid IDs!");
 												}				
 												else return CellID_;
 								}
+								std::bitset<64> ConvertToBitset (char CellID_){
+												CellID_bit_ = std::bitset<64>(Cell_ID_);
+												return CellID_bit_;
+								}
+
 				private:
 								char CellID_;
 								std::bitset<64> CellID_bit_;
