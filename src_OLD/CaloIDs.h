@@ -11,6 +11,9 @@
 #include <bitset>
 #include <array>
 
+//Makes a unique cell ID for every calorimeter cell
+//AND
+//Makes stuff with the cell IDs
 class CaloIDs {
 public:
 	CaloIDs();
@@ -25,6 +28,7 @@ public:
 	int GetLayer(long CellID);
 
 	double* GetCellPos(int ID0);
+	double* GetCellPos(long CellID);
 
 	std::bitset<32> IntToBitsetConversion(int ID);
 	std::bitset<64> LongToBitsetConversion(long ID);

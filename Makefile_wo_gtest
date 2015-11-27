@@ -1,0 +1,35 @@
+CC=g++ #compiler 
+CFLAGS=-g -O2 -std=c++1y $(shell root-config --cflags) -Wfatal-errors #flags for compiler
+INCLUDES=-I include/
+#INCLUDES=-I ~/phd/code/tinyxml/ -I ~/atlas_style/atlasstyle-00-03-05/ $(EGAMMA_UTILS_PATH) -I ../include #folders to include
+LIBS=$(shell root-config --libs) -L ~/phd/code/photons/tmva/TMVA-v4.2.0/lib -l TMVA -l ASImage -l GLEW -l FTGL -l RGL
+
+#OBJECT FILES
+#MAIN=objects/CaloHitsMap.o
+#IDDECODER=objects/CaloIDs.o
+CREATECELLID=objects/CreateCellID.o
+TEST=objects/Test.o
+
+all: Test
+#all: Test Run
+
+Test: $(TEST) $(CREATECELLID)
+	$(CC) $(CFLAGS) $(INCLUDES) $^ $(LIBS) -o $@
+
+#Run: $(MAIN) $(IDDECODER)
+#	$(CC) $(CFLAGS) $(INCLUDES) $^ $(LIBS) -o $@
+
+objects/Test.o: Test.cpp 
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+#objects/CaloHitsMap.o: src/CaloHitsMap.cpp 
+#	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+#objects/CaloIDs.o: src/CaloIDs.cpp 
+#	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+objects/CreateCellID.o: src/CreateCellID.cpp 
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	-rm -f objects/*.o ./Run

@@ -99,7 +99,7 @@ CaloIDs::CaloIDs(std::string SubDetector) :
 		Number_layers = 50;
 
 		binningEnergy1D = {45, 0, 2.5};
-		binning1D = {150, 0, 12000};
+		binning1D = {150, 0, 2000000};
 		binning2D = {100, -140, 140, 100, -140, 104};
 		binning3D = {150, -3200, 3200, 100, -140, 140, 100, -140, 140};
 	}
@@ -248,6 +248,27 @@ double* CaloIDs::GetCellPos(int ID1) {
 	 std::cout << posy_bit[n];
 	 }
 	 std::cout<<std::endl;*/
+
+	double *pos = new double[2];
+	pos[0] = posx_bit.to_ulong();
+	pos[1] = posy_bit.to_ulong();
+
+	return pos;
+	delete[] pos;
+}
+
+double* CaloIDs::GetCellPos(long CellID) {
+
+	std::bitset<64> ID_bit;
+	ID_bit = LongToBitsetConversion(CellID);
+	std::bitset<16> posx_bit;
+	std::bitset<16> posy_bit;
+	for (int n = 32; n < 64; ++n) {
+		if (n <= 32 + 15)
+			posx_bit[n - 32] = ID_bit[n];
+		if (n >= 32 + 16)
+			posy_bit[n - (32 + 16)] = ID_bit[n];
+	}
 
 	double *pos = new double[2];
 	pos[0] = posx_bit.to_ulong();

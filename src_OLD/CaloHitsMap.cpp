@@ -297,14 +297,16 @@ void Setup_Histos1D_HitsPerLayer(std::array<int, 3> axis_range_plot_1D, string s
 	stringstream histo_name, histo_title;
 	histo_name << "HitsPerLayer_" << subdetector_name << "_Layer_" << layer;
 	histo_title << "Hits for " << subdetector_name << " layer " << layer;
-//	Hits_PerLayer_.emplace_back(
-	//		new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0], axis_range_plot_1D[1],axis_range_plot_1D[2]));
+	//Hits_PerLayer_.emplace_back(
+		//	new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0], axis_range_plot_1D[1],axis_range_plot_1D[2]));
+	/*EcalBarrel*/Hits_PerLayer_.emplace_back(
+			new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0]*2, axis_range_plot_1D[1],75));
 ///*MuonEndcap*/	Hits_PerLayer_.emplace_back(
 	//		new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), 50, 0,1500));
 	///*BeamCal*/	Hits_PerLayer_.emplace_back(new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0]*1/4, 4200000,4850000));
-	/*ALL:*/Hits_PerLayer_.emplace_back(new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0], 0, 1500));
+	///*ALL:*/Hits_PerLayer_.emplace_back(new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0], 0, 1500));
 	Hits_PerLayer_.at(layer)->SetMinimum(0.1);
-	Hits_PerLayer_.at(layer)->SetMaximum(10000);
+	///*ALL*/Hits_PerLayer_.at(layer)->SetMaximum(10000);
 	Hits_PerLayer_.at(layer)->SetLineColor(kViolet);
 	Hits_PerLayer_.at(layer)->GetYaxis()->SetTitle("Count");
 	Hits_PerLayer_.at(layer)->GetXaxis()->SetTitle("Hits per bunch crossing");
@@ -315,10 +317,10 @@ void Setup_Histos1D(std::array<int, 3> axis_range_plot_1D, string subdetector_na
 	stringstream histo_name, histo_title;
 	histo_name << "Hits_" << subdetector_name << "_Layer_" << layer;
 	histo_title << "Hit occupancy per cell for " << subdetector_name << " layer " << layer;
-	//Hits_Histo_.emplace_back(
-		//	new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0], axis_range_plot_1D[1],
-			//		axis_range_plot_1D[2]));
-	/*ALL:*/Hits_Histo_.emplace_back(new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), 150, 0, 12000));
+	Hits_Histo_.emplace_back(
+			new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_1D[0], axis_range_plot_1D[1],
+					axis_range_plot_1D[2]));
+	///*ALL:*/Hits_Histo_.emplace_back(new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), 150, 0, 2000000));
 	Hits_Histo_.at(layer)->SetMinimum(0.1);
 	Hits_Histo_.at(layer)->SetLineColor(kViolet);
 	Hits_Histo_.at(layer)->GetYaxis()->SetTitle("Occupancy");
@@ -363,10 +365,10 @@ void Setup_EnergyHistos1D(std::array<float, 3> axis_range_plot_energy_1D, string
 	stringstream histo_name, histo_title;
 	histo_name << "Energy_" << subdetector_name << "_Layer_" << layer;
 	histo_title << "Deposited hit energy for " << subdetector_name << " layer " << layer;
-	//Hits_Energy_Histo_.emplace_back(
-		//	new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_energy_1D[0],
-			//		axis_range_plot_energy_1D[1], axis_range_plot_energy_1D[2]));
-	/*ALL:*/Hits_Energy_Histo_.emplace_back(new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), 40., 0, 3.));
+	Hits_Energy_Histo_.emplace_back(
+			new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot_energy_1D[0],
+					axis_range_plot_energy_1D[1], axis_range_plot_energy_1D[2]));
+	///*ALL:*/Hits_Energy_Histo_.emplace_back(new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), 40., 0, 3.));
 	Hits_Energy_Histo_.at(layer)->SetMinimum(0.1);
 	Hits_Energy_Histo_.at(layer)->SetLineColor(kViolet);
 	Hits_Energy_Histo_.at(layer)->GetYaxis()->SetTitle("Count");
@@ -410,10 +412,15 @@ void Setup_ParticleOrigins_2D(std::array<int, 9> axis_ranges_plot, string subdet
 	histo_2d_name << "ParticleOrigins_" << subdetector_name << "_Layer_" << layer;
 	histo_2d_title << "Origins of pair background particles for " << subdetector_name << " layer " << layer;
 	ParticleOrigins_2D_.emplace_back(
-			new TH2D(histo_2d_name.str().c_str(), histo_2d_title.str().c_str(), axis_ranges_plot[0],
-					axis_ranges_plot[1], axis_ranges_plot[2], axis_ranges_plot[6], sqrt(pow(axis_ranges_plot[4],2)+pow(axis_ranges_plot[7],2)),
-					sqrt(pow(axis_ranges_plot[5],2)+pow(axis_ranges_plot[8],2))));
+			new TH2D(histo_2d_name.str().c_str(), histo_2d_title.str().c_str(), 150, -4000, 4000, axis_ranges_plot[6], 0,sqrt(pow(axis_ranges_plot[5],2)+pow(axis_ranges_plot[8],2))));
+					//axis_ranges_plot[1], axis_ranges_plot[2], axis_ranges_plot[6], 0,sqrt(pow(axis_ranges_plot[5],2)+pow(axis_ranges_plot[8],2))));
 
+	/*
+	for(int i = 0; i <= 8; ++i){
+		cout << axis_ranges_plot[i] << endl;
+	}
+		cout << "sqrt(pow(axis_ranges_plot[5],2)+pow(axis_ranges_plot[8],2))"<< sqrt(pow(axis_ranges_plot[5],2)+pow(axis_ranges_plot[8],2))<< endl;
+*/
 	ParticleOrigins_2D_.at(layer)->SetContour(100);
 	ParticleOrigins_2D_.at(layer)->GetYaxis()->SetTitle("r (mm)");
 	ParticleOrigins_2D_.at(layer)->GetYaxis()->CenterTitle();
@@ -422,7 +429,24 @@ void Setup_ParticleOrigins_2D(std::array<int, 9> axis_ranges_plot, string subdet
 	ParticleOrigins_2D_.at(layer)->GetZaxis()->SetTitle("Hit count");
 }
 
-
+void Fill_2D_Histogram(map<std::pair<int, long>, vector<float> > HitMap, vector<TH2D*> *Hits) {
+	for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
+		int temp_layer = iterator->first.first;
+		float average = 0;
+		for (size_t i = 0; i < iterator->second.size(); ++i) {
+			average += iterator->second.at(i);
+		}
+		average /= iterator->second.size();
+		float stddev = 0;
+		for (size_t i = 0; i < iterator->second.size(); ++i) {
+			stddev += iterator->second.at(i) - average;
+		}
+		stddev /= iterator->second.size();
+		stddev = sqrt(stddev);
+		Hits->at(temp_layer)->SetBinContent(iterator->first.second, average);
+		Hits->at(temp_layer)->SetBinError(iterator->first.second, stddev);
+	}
+}
 void Fill_Energy_Histogram(map<std::pair<int, long>, vector<float> > HitMapEnergy, vector<TH2D*> *Hits_Energy) {
 	for (auto iterator = HitMapEnergy.begin(); iterator != HitMapEnergy.end(); iterator++) {
 		int temp_layer = iterator->first.first;
@@ -608,11 +632,11 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 
 	Setup_BinningArrays(SubDetectors, &axis_range_plot_1D, &axis_range_plot_energy_1D, &axis_ranges_plot);
 	
-	//TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*2/5, axis_range_plot_1D[1], axis_range_plot_1D[2]);
+	TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*3, axis_range_plot_1D[1], axis_range_plot_1D[2]*40);
 	///*MuonBarrel*/TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*1/5, 100, axis_range_plot_1D[2]);
 	///*MuonEndcap*/TH1D* Hits = new TH1D("Hits", "Hits", 35,5500, 7300);
 	///*BeamCal:*/ TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*1/4, 4200000, 4850000);
-	/*ALL:*/TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*2/3, 4000000, 5000000);
+	///*ALL:*/TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*2/3, 4000000, 5000000);
 	Hits->GetYaxis()->SetTitle("Count");
 	Hits->GetXaxis()->SetTitle(("Hits per bunch crossing in " + subdetector_name).c_str());
 	Hits->GetXaxis()->CenterTitle();
@@ -623,14 +647,14 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 	//std::cout << __LINE__ << std::endl;
 	int id0 = 0;
 	int id1 = 0;
-//double cell_posx = 0;
-//double cell_posy = 0;
+	double cell_posx = 0;
+	double cell_posy = 0;
 	float x = 0;
 	float y = 0;
 	float z = 0;
-	float vertex_x = 0;
-	float vertex_y = 0;
-	float vertex_z = 0;
+	double vertex_x = 0;
+	double vertex_y = 0;
+	double vertex_z = 0;
 	float energy = 0;
 	int MaxNumberLayers = 0;
 	int Layer_no = 0;
@@ -674,6 +698,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 	for (int s = 0; s < SubDetectors.size(); ++s) {
 
 		std::map<long, int> HitMap;
+		std::map<std::pair<int, long>, vector<float> > HitMap2D; //layer, bin, hits
 
 		//Getting the inputfile and its TTrees
 		for (int j = 0; j < NUMBER_OF_FILES; ++j) {
@@ -728,17 +753,18 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 
 				Get_TTree(SubDetectors.at(s).GetName())->GetEntry(i);
 				SubDetectors.at(s).GetCellID(id0, id1);
-				//cell_posx = SubDetector.GetCellPos(id1)[0];
-				//cell_posy = SubDetector.GetCellPos(id1)[1];
+				cell_posx = SubDetectors.at(s).GetCellPos(id1)[0];
+				cell_posy = SubDetectors.at(s).GetCellPos(id1)[1];
 				//cout << "Cell with unique ID " << SubDetector.CellID << " is at x = " << cell_posx << " and y = " << cell_posy << endl;
 
 				Layer_no = SubDetectors.at(s).GetLayer(id0);
-				HitMapEnergy2D[std::pair<int, long>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(
+				HitsPerLayerMap[Layer_no].at(j) += 1;
+				
+				HitMapEnergy2D[std::pair<int, long>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(cell_posx, cell_posy))].push_back(
 						energy);
-				HitMapEnergy3D[std::pair<int, long>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(
-						energy);
+				HitMapEnergy3D[std::pair<int, long>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, cell_posx, cell_posy))].push_back(
+						energy);//DON'T KNOW IF CORRECT WITH GLOBAL Z AND LOCAL CELL_POSX AND CELL_POSY
 
-					HitsPerLayerMap[Layer_no].at(j) += 1;
 
 				//cout << "The cell is in Layer " << Layer_no << endl;
 				if (std::find(hitLayers.begin(), hitLayers.end(), Layer_no) == hitLayers.end()) {
@@ -756,7 +782,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 				Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
 
 				ParticleOrigins_2D_.at(Layer_no)->Fill(vertex_z, sqrt(pow(vertex_x,2)+pow(vertex_y,2)));
-				Hits_2D_.at(Layer_no)->Fill(x, y);
+				//Hits_2D_.at(Layer_no)->Fill(x, y);
 				Hits_3D_.at(Layer_no)->Fill(z, x, y);
 				//Hits_Energy_2D_.at(Layer_no)->Fill(x, y, energy);
 				//Hits_Energy_3D_.at(Layer_no)->Fill(z, x, y, energy);
@@ -817,8 +843,10 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 		for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
 			if (iterator->second > 0) {
 				Hits_Histo_.at(SubDetectors.at(s).GetLayer(iterator->first))->Fill(iterator->second);
+				HitMap2D[std::pair<int, long>(SubDetectors.at(s).GetLayer(iterator->first), Hits_2D_.at(Layer_no)->FindBin(SubDetectors.at(s).GetCellPos(iterator->first)[0],SubDetectors.at(s).GetCellPos(iterator->first)[1]))].push_back(iterator->second);
 			}
 		}
+			Fill_2D_Histogram(HitMap2D, &Hits_2D_);
 	}
 
 	gStyle->SetOptStat(1);
@@ -841,6 +869,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			gStyle->SetStatX(0.87);
 			Hits_Canvas_->SetLogy(0);
 			Hits_Canvas_->SetLogx(0);
+			Hits_Canvas_->SetLogz(0);
 			Hits_Canvas_->SetRightMargin(0.15);
 			Hits_2D_.at(hitLayers.at(l))->Draw("colz");
 			HitsCanvasName_eps << Hits_Canvas_->GetName() << "_" << Hits_2D_.at(hitLayers.at(l))->GetName() << ".eps";
@@ -855,6 +884,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(0);
 			Hits_Canvas_->SetLogx(0);
+			Hits_Canvas_->SetLogz(0);
 			Hits_Canvas_->SetRightMargin(0.15);
 			Hits_Energy_2D_.at(hitLayers.at(l))->Draw("colz");
 			HitsCanvasName_eps << Hits_Canvas_->GetName() << "_" << Hits_Energy_2D_.at(hitLayers.at(l))->GetName()
@@ -871,6 +901,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(0);
 			Hits_Canvas_->SetLogx(0);
+			Hits_Canvas_->SetLogz(1);
 			Hits_Canvas_->SetRightMargin(0.15);
 			ParticleOrigins_2D_.at(hitLayers.at(l))->Draw("colz");
 			HitsCanvasName_eps << Hits_Canvas_->GetName() << "_" << ParticleOrigins_2D_.at(hitLayers.at(l))->GetName()
@@ -891,6 +922,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			gROOT->ForceStyle();
 			Hits_Canvas_->SetLogy(0);
 			Hits_Canvas_->SetLogx(0);
+			Hits_Canvas_->SetLogz(0);
 			Hits_PerLayer_.at(hitLayers.at(l))->Draw();
 			HitsCanvasName_eps << Hits_Canvas_->GetName() << "_" << Hits_PerLayer_.at(hitLayers.at(l))->GetName()
 					<< ".eps";
@@ -907,6 +939,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			gROOT->ForceStyle();
 			Hits_Canvas_->SetLogy(1);
 			Hits_Canvas_->SetLogx(0);
+			Hits_Canvas_->SetLogz(0);
 			Hits_Histo_.at(hitLayers.at(l))->Draw();
 			HitsCanvasName_eps << Hits_Canvas_->GetName() << "_" << Hits_Histo_.at(hitLayers.at(l))->GetName()
 					<< ".eps";
@@ -921,6 +954,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(1);
 			Hits_Canvas_->SetLogx(0);
+			Hits_Canvas_->SetLogz(0);
 			Hits_Energy_Histo_.at(hitLayers.at(l))->Draw();
 			HitsCanvasName_eps << Hits_Canvas_->GetName() << "_" << Hits_Energy_Histo_.at(hitLayers.at(l))->GetName()
 					<< ".eps";
@@ -951,7 +985,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			end_of_range = hitLayers.size() - 1;
 		}
 
-	int n = end_of_range - first_layer_to_be_compared;
+	int n = end_of_range - first_layer_to_be_compared + 1;//Otherwise the number of layers are wrong
 	float layer_numbers[n];
 	float layer_numbers_Errors[n];
 	std::fill(layer_numbers_Errors,layer_numbers_Errors + n, 0);
@@ -960,13 +994,15 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 	for(size_t i = 0; i <= n; ++i){
 		layer_numbers[i] = first_layer_to_be_compared + i;
 		MeanHits[i] = Hits_PerLayer_.at(first_layer_to_be_compared + i)->GetMean(1);
-		MeanHitErrors[i] = Hits_PerLayer_.at(first_layer_to_be_compared + i)->GetMeanError(1);
+		MeanHitErrors[i] = Hits_PerLayer_.at(first_layer_to_be_compared + i)->GetRMS(1);
 	}
 	
 	TGraphErrors* MeanHits_PerLayer = new TGraphErrors(n, layer_numbers, MeanHits, layer_numbers_Errors, MeanHitErrors);
 	MeanHits_PerLayer->SetTitle("Mean hits for different layers; Layer number; Mean hits per bunch crossing");
 	MeanHits_PerLayer->SetMarkerColor(kViolet);
 	MeanHits_PerLayer->SetMarkerStyle(21);
+	MeanHits_PerLayer->GetXaxis()->SetRangeUser(first_layer_to_be_compared-0.5, end_of_range+0.5);
+	MeanHits_PerLayer->GetXaxis()->CenterTitle();
 
 
 	if (std::find(hitLayers.begin(), hitLayers.end(), first_layer_to_be_compared) != hitLayers.end()
@@ -978,10 +1014,9 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			Hits_Canvas_->Clear();
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(0);
-			MeanHits_PerLayer->Draw("ALP");
-			HitsCanvasName_eps << Hits_Canvas_->GetName() << "_"
-					<< MeanHits_PerLayer->GetName() << " " << first_layer_to_be_compared << "-" << end_of_range << ".eps";
-			HitsCanvasName_C << Hits_Canvas_->GetName() << "_" << MeanHits_PerLayer->GetName() << " " << first_layer_to_be_compared 
+			MeanHits_PerLayer->Draw("AP");
+			HitsCanvasName_eps << Hits_Canvas_->GetName() << "_MeanHits_" << first_layer_to_be_compared << "-" << end_of_range << ".eps";
+			HitsCanvasName_C << Hits_Canvas_->GetName() << "_MeanHits_" << first_layer_to_be_compared 
 					<< "-" << end_of_range << ".C";
 			Hits_Canvas_->Write();
 			Hits_Canvas_->Print(HitsCanvasName_eps.str().c_str());
@@ -1054,9 +1089,11 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			new_histo_title << "Hit occupancy per cell for " << subdetector_name << " layers "
 					<< first_layer_to_be_compared << " - " << end_of_range;
 			Hits_Histo_.at(first_layer_to_be_compared)->SetTitle(new_histo_title.str().c_str());
+			Hits_Histo_.at(first_layer_to_be_compared)->GetYaxis()->SetTitle("Normalized count");
 			Hits_Histo_.at(first_layer_to_be_compared)->SetLineColor(2);
 			Hits_Histo_.at(first_layer_to_be_compared)->SetMarkerStyle(20);
 			Hits_Histo_.at(first_layer_to_be_compared)->SetMarkerColor(2);
+			Hits_Histo_.at(first_layer_to_be_compared)->Scale(1.0/Hits_Histo_.at(first_layer_to_be_compared)->Integral());
 			Hits_Histo_.at(first_layer_to_be_compared)->Draw();
 			TPaveStats *st2 = (TPaveStats*) Hits_Histo_.at(first_layer_to_be_compared)->FindObject("stats");
 			double statboxsize2 = st2->GetY2NDC() - st2->GetY1NDC();
@@ -1081,6 +1118,8 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 								Hits_Histo_.at(l)->SetLineColor(l+3);
 								Hits_Histo_.at(l)->SetMarkerColor(l+3);
 				}
+				Hits_Histo_.at(l)->GetYaxis()->SetTitle("Normalized count");
+				Hits_Histo_.at(l)->Scale(1.0/Hits_Histo_.at(l)->Integral());
 				Hits_Histo_.at(l)->Draw("sames");
 				TPaveStats *st = (TPaveStats*) Hits_Histo_.at(l)->FindObject("stats");
 				if(l<3) st->SetTextColor(l+2);
@@ -1111,6 +1150,8 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 			Hits_Energy_Histo_.at(first_layer_to_be_compared)->SetLineColor(2);
 			Hits_Energy_Histo_.at(first_layer_to_be_compared)->SetMarkerColor(2);
 			Hits_Energy_Histo_.at(first_layer_to_be_compared)->SetMarkerStyle(20);
+			Hits_Energy_Histo_.at(first_layer_to_be_compared)->GetYaxis()->SetTitle("Normalized count");
+			Hits_Energy_Histo_.at(first_layer_to_be_compared)->Scale(1.0/Hits_Energy_Histo_.at(first_layer_to_be_compared)->Integral());
 			Hits_Energy_Histo_.at(first_layer_to_be_compared)->Draw();
 			TPaveStats *stE1 = (TPaveStats*) Hits_Energy_Histo_.at(first_layer_to_be_compared)->FindObject("stats");
 			double statboxsize_E = stE1->GetY2NDC() - stE1->GetY1NDC();
@@ -1135,6 +1176,8 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 								Hits_Energy_Histo_.at(l)->SetLineColor(l+3);
 								Hits_Energy_Histo_.at(l)->SetMarkerColor(l+3);
 				}
+				Hits_Energy_Histo_.at(l)->GetYaxis()->SetTitle("Normalized count");
+				Hits_Energy_Histo_.at(l)->Scale(1.0/Hits_Energy_Histo_.at(l)->Integral());
 				Hits_Energy_Histo_.at(l)->Draw("sames");
 				TPaveStats *st = (TPaveStats*) Hits_Energy_Histo_.at(l)->FindObject("stats");
 				if(l<3) st->SetTextColor(l+2);
@@ -1161,7 +1204,7 @@ void DrawingMacro(string outputname, std::vector<string> inputnames, std::vector
 	}
 	
 	for (signed int l = 0; l < MaxNumberLayers; ++l) {
-		delete Hits_Histo_.at(l), Hits_2D_.at(l), Hits_3D_.at(l);
+		delete Hits_PerLayer_.at(l), Hits_Histo_.at(l), Hits_2D_.at(l), Hits_3D_.at(l);
 		delete Hits_Energy_Histo_.at(l), Hits_Energy_2D_.at(l), Hits_Energy_3D_.at(l);
 	}
 	delete Hits_Canvas_;
