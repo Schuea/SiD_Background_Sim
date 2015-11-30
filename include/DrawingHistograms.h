@@ -51,6 +51,19 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
 				stringstream several_subdetector_names;
 
 				std::vector<Subdetector*> * SubDetectors;
+				SetupSubDetectorsVector(SubDetectors, severeal_subdetector_names, argument_subdetectors);
+			
+				subdetector_name = several_subdetector_names.str();
+				
+				std::array<int, 3> axis_range_plot_1D = { }; //xbins, xlow, xup
+				std::array<float, 3> axis_range_plot_energy_1D = { }; //xbins, xlow, xup
+				std::array<int, 9> axis_ranges_plot = { }; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup
+
+				Setup_BinningArrays(SubDetectors, &axis_range_plot_1D, &axis_range_plot_energy_1D, &axis_ranges_plot);
+
+
+}
+void SetupSubDetectorsVector(std::vector<Subdetector*> * SubDetectors, stringstream severeal_subdetector_names, std::vector<std::string> argument_subdetectors){
 				for (size_t s = 0; s < argument_subdetectors.size(); ++s) {
 								if (argument_subdetectors.size() == 1) {
 												several_subdetector_names.str("");
@@ -118,16 +131,8 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
 												}
 								}
 				}
-				subdetector_name = several_subdetector_names.str();
-				//std::cout << __LINE__ << std::endl;
-				std::array<int, 3> axis_range_plot_1D = { }; //xbins, xlow, xup
-				std::array<float, 3> axis_range_plot_energy_1D = { }; //xbins, xlow, xup
-				std::array<int, 9> axis_ranges_plot = { }; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup
-
-				Setup_BinningArrays(SubDetectors, &axis_range_plot_1D, &axis_range_plot_energy_1D, &axis_ranges_plot);
-
-
 }
+
 void InitializeAllSubdetectors(std::vector< Subdetector* > * SubDetectors){
 				InitializeAllCaloSubdetectors(SubDetectors);
 				InitializeAllTrackerSubdetectors(SubDetectors);
