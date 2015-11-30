@@ -3,158 +3,158 @@
 
 class Subdetector{
 
-				public:
-								Subdetector() {}
+  public:
+    Subdetector() {}
 
-								~Subdetector() {}
+    ~Subdetector() {}
 
-								std::string GetStartLayerBin() const {
-												return StartLayerBin_;
-								}				
-								std::string GetLengthLayerBin() const {
-												return LengthLayerBin_;
-								}				
-								std::string GetNumberOfLayers() const {
-												return NumberOfLayers_;
-								}				
-								std::array[3] GetROOTEnergyHisto_binning const{
-												return ROOTEnergyHisto_binning;
-								}				
-								std::array[3] GetROOTHisto_binning1D const{
-												return ROOTHisto_binning1D;
-								}				
-								std::array[6] GetROOTHisto_binning2D const{
-												return ROOTHisto_binning2D;
-								}				
-								std::array[9] GetROOTHisto_binning3D const{
-												return ROOTHisto_binning3D;
-								}				
+    std::string GetStartLayerBin() const {
+      return StartLayerBin_;
+    }				
+    std::string GetLengthLayerBin() const {
+      return LengthLayerBin_;
+    }				
+    std::string GetNumberOfLayers() const {
+      return NumberOfLayers_;
+    }				
+    std::array[3] GetROOTEnergyHisto_binning const{
+      return ROOTEnergyHisto_binning;
+    }				
+    std::array[3] GetROOTHisto_binning1D const{
+      return ROOTHisto_binning1D;
+    }				
+    std::array[6] GetROOTHisto_binning2D const{
+      return ROOTHisto_binning2D;
+    }				
+    std::array[9] GetROOTHisto_binning3D const{
+      return ROOTHisto_binning3D;
+    }				
 
-				protected:
-								int LengthLayerBin_;
-								int StartLayerBin_;
-								int NumberOfLayers_;
-								std::array[3] ROOTEnergyHisto_binning;
-								std::array[3] ROOTHisto_binning1D;
-								std::array[6] ROOTHisto_binning2D;
-								std::array[9] ROOTHisto_binning3D;
+  protected:
+    int LengthLayerBin_;
+    int StartLayerBin_;
+    int NumberOfLayers_;
+    std::array[3] ROOTEnergyHisto_binning;
+    std::array[3] ROOTHisto_binning1D;
+    std::array[6] ROOTHisto_binning2D;
+    std::array[9] ROOTHisto_binning3D;
 
 };
 class EcalBarrel : public Subdetector{
 
-				public:
-								EcalBarrel() {}
+  public:
+    EcalBarrel() {}
 
-								~EcalBarrel() {}
+    ~EcalBarrel() {}
 
-								void Initialize();
+    void Initialize();
 };
 class EcalEndcap : public Subdetector{
 
-				public:
-								EcalEndcap() {}
+  public:
+    EcalEndcap() {}
 
-								~EcalEndcap() {}
+    ~EcalEndcap() {}
 
-								void Initialize();
+    void Initialize();
 };
 class HcalBarrel : public Subdetector{
 
-				public:
-								HcalBarrel() {}
+  public:
+    HcalBarrel() {}
 
-								~HcalBarrel() {}
+    ~HcalBarrel() {}
 
-								void Initialize();
+    void Initialize();
 };
 class HcalEndcap : public Subdetector{
 
-				public:
-								HcalEndcap() {}
+  public:
+    HcalEndcap() {}
 
-								~HcalEndcap() {}
+    ~HcalEndcap() {}
 
-								void Initialize();
+    void Initialize();
 };
 class MuonBarrel : public Subdetector{
 
-				public:
-								MuonBarrel() {}
+  public:
+    MuonBarrel() {}
 
-								~MuonBarrel() {}
+    ~MuonBarrel() {}
 
-								void Initialize();
+    void Initialize();
 };
 class MuonEndcap : public Subdetector{
 
-				public:
-								MuonEndcap() {}
+  public:
+    MuonEndcap() {}
 
-								~MuonEndcap() {}
+    ~MuonEndcap() {}
 
-								void Initialize();
+    void Initialize();
 };
 class BeamCal : public Subdetector{
 
-				public:
-								BeamCal() {}
+  public:
+    BeamCal() {}
 
-								~BeamCal() {}
+    ~BeamCal() {}
 
-								void Initialize();
+    void Initialize();
 };
 class LumiCal : public Subdetector{
 
-				public:
-								LumiCal() {}
+  public:
+    LumiCal() {}
 
-								~LumiCal() {}
+    ~LumiCal() {}
 
-								void Initialize();
+    void Initialize();
 };
 class SiVertexEndcap : public Subdetector{
 
-				public:
-								SiVertexEndcap() {}
+  public:
+    SiVertexEndcap() {}
 
-								~SiVertexEndcap() {}
+    ~SiVertexEndcap() {}
 
-								void Initialize();
+    void Initialize();
 };
 class SiVertexBarrel : public Subdetector{
 
-				public:
-								SiVertexBarrel() {}
+  public:
+    SiVertexBarrel() {}
 
-								~SiVertexBarrel() {}
+    ~SiVertexBarrel() {}
 
-								void Initialize();
+    void Initialize();
 };
 class SiTrackerEndcap : public Subdetector{
 
-				public:
-								SiTrackerEndcap() {}
+  public:
+    SiTrackerEndcap() {}
 
-								~SiTrackerEndcap() {}
+    ~SiTrackerEndcap() {}
 
-								void Initialize();
+    void Initialize();
 };
 class SiTrackerBarrel : public Subdetector{
 
-				public:
-								SiTrackerBarrel() {}
+  public:
+    SiTrackerBarrel() {}
 
-								~SiTrackerBarrel() {}
+    ~SiTrackerBarrel() {}
 
-								void Initialize();
+    void Initialize();
 };
 class SiTrackerForward : public Subdetector{
 
-				public:
-								SiTrackerForward() {}
+  public:
+    SiTrackerForward() {}
 
-								~SiTrackerForward() {}
+    ~SiTrackerForward() {}
 
-								void Initialize();
+    void Initialize();
 };
 #endif /*SUBDETECTOR_H_*/
