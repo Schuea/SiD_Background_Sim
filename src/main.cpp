@@ -6,37 +6,13 @@
 //============================================================================
 
 #include "TFile.h"
-#include "TAxis.h"
-#include "TBrowser.h"
-#include "TCanvas.h"
-#include "TLegend.h"
 #include "TTree.h"
-#include "TBranch.h"
-#include "TF1.h"
-#include "TH1.h"
-#include "TH2.h"
-#include "TH3.h"
-#include "TGraphErrors.h"
-#include "TStyle.h"
-#include "TPaveText.h"
-#include "TLatex.h"
-#include "TEllipse.h"
-#include "TPaveStats.h"
-#include "TProfile.h"
-#include "TMath.h"
-#include "TChain.h"
-#include "TROOT.h"
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <array>
 
-#include <map>
-
-#include "CaloIDs.h"
-#include "CreateCellID.h"
 #include "DrawingHistograms.h"
 
 void Usage();
