@@ -23,7 +23,7 @@ void CellID64bits::CreateCellID() {
     ID0_bit = std::bitset<std::numeric_limits<unsigned int>::digits>(ID0_);
     ID1_bit = std::bitset<std::numeric_limits<unsigned int>::digits>(ID1_);
 
-    CellID_ = concatString<64, 32, 32>(ID1_bit, ID0_bit);
+    CellID_bit_ = concatString<64, 32, 32>(ID1_bit, ID0_bit);
   }
 }
 void CellID58bits::CreateCellID() {
@@ -35,7 +35,7 @@ void CellID58bits::CreateCellID() {
     std::bitset<58> ID_bit;
     ID_bit = std::bitset<std::numeric_limits<unsigned int>::digits>(ID_);
 
-    CellID_ = ID_bit;
+    CellID_bit_ = ID_bit;
   }
 }
 void CellID54bits::CreateCellID() {
@@ -47,6 +47,6 @@ void CellID54bits::CreateCellID() {
     std::bitset<54> ID_bit;
     ID_bit = std::bitset<std::numeric_limits<unsigned int>::digits>(ID_);
 
-    CellID_ = ID_bit;
+    CellID_bit_ = ID_bit;
   }
 }
