@@ -27,7 +27,6 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <array>
 
 #include <map>
 
@@ -35,6 +34,7 @@
 #include "Subdetector.h"
 #include "LayerCodeInCellID.h"
 
+TFile* inputfile;
 TCanvas* Hits_Canvas_;
 vector<TH1*> ParticleOrigins_2D_;
 vector<TH1*> Hits_PerLayer_;
@@ -66,10 +66,10 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
 
   subdetector_name = several_subdetector_names.str();
 
-  std::array<int, 3> axis_range_plot_1D = { }; //xbins, xlow, xup
-  std::array<int, 6> axis_range_plot_2D = { }; //xbins, xlow, xup, ybins, ylow, yup
-  std::array<int, 9> axis_range_plot_3D = { }; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup
-  std::array<float, 3> axis_range_plot_energy_1D = { }; //xbins, xlow, xup
+  std::vector<float> axis_range_plot_1D = { }; //xbins, xlow, xup
+  std::vector<float> axis_range_plot_2D = { }; //xbins, xlow, xup, ybins, ylow, yup
+  std::vector<float> axis_range_plot_3D = { }; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup
+  std::vector<float> axis_range_plot_energy_1D = { }; //xbins, xlow, xup
 
   Setup_BinningArrays(SubDetectors, &axis_range_plot_1D, &axis_range_plot_2D, &axis_range_plot_3D, &axis_range_plot_energy_1D);
 
@@ -103,8 +103,8 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
   std::map<long, vector<int>> HitsPerLayerMap;
 
   //Find the largest number of layers from all the subdetectors that are to be plotted
-  for (int s = 0; s < SubDetectors.size(); ++s) {
-    MaxNumberLayers = FindMax(SubDetectors.at(s).Number_layers, MaxNumberLayers); 
+  for (int s = 0; s < SubDetectors->size(); ++s) {
+    MaxNumberLayers = FindMax(SubDetectors->at(s).Number_layers, MaxNumberLayers); 
   }
   for (int l = 0; l < MaxNumberLayers; ++l) {
 
@@ -119,24 +119,24 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
     gROOT->ForceStyle();
     gStyle->SetPalette(1);
 
-  stringstream* histo_name1D, histo_title1D,
-                histo_name2D, histo_title2D,
-                histo_name3D, histo_title3D,
-                energyhisto_name1D, energyhisto_title1D,
-                energyhisto_name2D, energyhisto_title2D,
-                energyhisto_name3D, energyhisto_title3D,
-                hitsperlayerhisto_name, hitsperlayerhisto_title,
-                particleoriginshisto_name, particleoriginshisto_title;
+    stringstream* histo_name1D, histo_title1D,
+      histo_name2D, histo_title2D,
+      histo_name3D, histo_title3D,
+      energyhisto_name1D, energyhisto_title1D,
+      energyhisto_name2D, energyhisto_title2D,
+      energyhisto_name3D, energyhisto_title3D,
+      hitsperlayerhisto_name, hitsperlayerhisto_title,
+      particleoriginshisto_name, particleoriginshisto_title;
 
-  SetupHistoTitles(subdetector_name, layer,
-                histo_name1D, histo_title1D,
-                histo_name2D, histo_title2D,
-                histo_name3D, histo_title3D,
-                energyhisto_name1D, energyhisto_title1D,
-                energyhisto_name2D, energyhisto_title2D,
-                energyhisto_name3D, energyhisto_title3D,
-                hitsperlayerhisto_name, hitsperlayerhisto_title,
-                particleoriginshisto_name, particleoriginshisto_title);
+    SetupHistoTitles(subdetector_name, layer,
+        histo_name1D, histo_title1D,
+        histo_name2D, histo_title2D,
+        histo_name3D, histo_title3D,
+        energyhisto_name1D, energyhisto_title1D,
+        energyhisto_name2D, energyhisto_title2D,
+        energyhisto_name3D, energyhisto_title3D,
+        hitsperlayerhisto_name, hitsperlayerhisto_title,
+        particleoriginshisto_name, particleoriginshisto_title);
 
     Setup_ParticleOriginsHisto(ParticleOrigins_2D_, axis_range_plot_3D, particleoriginshisto_name, particleoriginshisto_title, "cylindrical");
     Setup_Histo(Hits_PerLayer_, axis_range_plot_1D, hitsperlayerhisto_name, hitsperlayerhisto_title);
@@ -147,7 +147,59 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
     Setup_Histo(Hits_Energy_2D_, axis_range_plot_2D, energyhisto_name2D, energyhisto_title2D);
     Setup_Histo(Hits_Energy_3D_, axis_range_plot_3D, energyhisto_name3D, energyhisto_title3D);
   }
+  std::vector<int> hitLayers;
+  for (int s = 0; s < SubDetectors->size(); ++s) {
 
+    std::map<long, int> HitMap;
+    std::map<std::pair<int, long>, vector<float> > HitMap2D; //layer, bin, hits
+
+    //Getting the inputfile and its TTrees
+    for (int j = 0; j < NUMBER_OF_FILES; ++j) {
+      inputfile = TFile::Open((inputnames.at(j)).c_str());
+      if (!inputfile) {
+        throw std::exception();
+      }
+
+      TTree* Tree_MCP;
+      inputfile->GetObject("Tree_MCP", Tree_MCP);
+
+      int number_of_hits = 0;
+      number_of_hits = Get_TTree(SubDetectors->at(s).GetName())->GetEntries();
+
+      std::cout << "The TTree " << Get_TTree(inputfile, SubDetectors->at(s).GetName())->GetName() << " has " << number_of_hits
+        << " entries." << std::endl;
+
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchStatus("*", kFALSE); // disable all
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchStatus("HitCellID0", kTRUE);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchStatus("HitCellID1", kTRUE);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchStatus("HitPosition_x", kTRUE);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchStatus("HitPosition_y", kTRUE);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchStatus("HitPosition_z", kTRUE);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchStatus("HitVertex_x", kTRUE);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchStatus("HitVertex_y", kTRUE);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchStatus("HitVertex_z", kTRUE);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchStatus("HitEnergy", kTRUE);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitCellID0", &id0);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitCellID1", &id1);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitPosition_x", &x);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitPosition_y", &y);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitPosition_z", &z);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitVertex_x", &vertex_x);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitVertex_y", &vertex_y);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitVertex_z", &vertex_z);
+      Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitEnergy", &energy);
+}
+TTree* Get_TTree(TFile* inputfile, string subdetector_name) {
+  stringstream temp;
+  temp << "Tree_" << subdetector_name;
+
+  TTree* Tree = nullptr;
+  inputfile->GetObject(temp.str().c_str(), Tree);
+  if (!Tree) {
+    throw std::exception();
+  }
+
+  return Tree;
 }
 void SetupSubDetectorsVector(std::vector<Subdetector*> * SubDetectors, stringstream severeal_subdetector_names, std::vector<std::string> argument_subdetectors){
   for (size_t s = 0; s < argument_subdetectors.size(); ++s) {
@@ -256,29 +308,29 @@ void InitializeWhichSubdetector(std::string SubdetectorName, std::vector< Subdet
   if (SubdetectorName == std::string("SiTrackerForward")) SubDetectors->push_back(new SiTrackerForward());
 }
 void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, 
-    std::array<int, 3> *axis_range_plot_1D, 
-    std::array<int, 6> *axis_range_plot_2D, 
-    std::array<int, 9> *axis_range_plot_3D,
-    std::array<float, 3> *axis_range_plot_energy_1D) {
+    std::vector<float> *axis_range_plot_1D, 
+    std::vector<float> *axis_range_plot_2D, 
+    std::vector<float> *axis_range_plot_3D,
+    std::vector<float> *axis_range_plot_energy_1D) {
 
   if (SubDetectors.size() == 1) {
 
-    std::array<int, 3> temp1D = { SubDetectors.at(0).GetROOTHisto_binning1D().at(0), SubDetectors.at(0).GetROOTHisto_binning1D().at(1),
+    std::vector<float> temp1D = { SubDetectors.at(0).GetROOTHisto_binning1D().at(0), SubDetectors.at(0).GetROOTHisto_binning1D().at(1),
       SubDetectors.at(0).GetROOTHisto_binning1D().at(2) };
     *axis_range_plot_1D = temp1D;
-    
-    std::array<float, 3> tempenergy1D = { 
+
+    std::vector<float> tempenergy1D = { 
       SubDetectors.at(0).GetROOTEnergyHisto_binning1D().at(0),
       SubDetectors.at(0).GetROOTEnergyHisto_binning1D().at(1), SubDetectors.at(0).GetROOTEnergyHisto_binning1D().at(2) };
     *axis_range_plot_energy_1D = tempenergy1D;
-    
-    std::array<int, 6> temp2D = { 
+
+    std::vector<float> temp2D = { 
       SubDetectors.at(0).GetROOTHisto_binning2D().at(0), SubDetectors.at(0).GetROOTHisto_binning2D().at(1),
       SubDetectors.at(0).GetROOTHisto_binning2D().at(2), SubDetectors.at(0).GetROOTHisto_binning2D().at(3),
       SubDetectors.at(0).GetROOTHisto_binning2D().at(4), SubDetectors.at(0).GetROOTHisto_binning2D().at(5)};
     *axis_ranges_plot_2D = temp2D;
 
-    std::array<int, 9> temp3D = { 
+    std::vector<float> temp3D = { 
       SubDetectors.at(0).GetROOTHisto_binning3D().at(0), SubDetectors.at(0).GetROOTHisto_binning3D().at(1),
       SubDetectors.at(0).GetROOTHisto_binning3D().at(2), SubDetectors.at(0).GetROOTHisto_binning3D().at(3),
       SubDetectors.at(0).GetROOTHisto_binning3D().at(4), SubDetectors.at(0).GetROOTHisto_binning3D().at(5),
@@ -317,39 +369,39 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors,
       minEnergy1D  = FindMin(SubDetectors.at(s).GetROOTEnergyHisto_binning1D().at(1),minEnergy1D);
       maxEnergy1D  = FindMax(SubDetectors.at(s).GetROOTEnergyHisto_binning1D().at(2),maxEnergy1D);
       binsEnergy1D = FindMax(SubDetectors.at(s).GetROOTEnergyHisto_binning1D().at(0),binsEnergy1D);
-      
+
       min1D  = FindMin(SubDetectors.at(s).GetROOTHisto_binning1D().at(1),min1D);
       max1D  = FindMax(SubDetectors.at(s).GetROOTHisto_binning1D().at(2),max1D);
       bins1D = FindMax(SubDetectors.at(s).GetROOTHisto_binning1D().at(0),bins1D);
-      
+
       xmin2D  = FindMin(SubDetectors.at(s).GetROOTEnergyHisto_binning2D().at(1),xmin2D);
       xmax2D  = FindMax(SubDetectors.at(s).GetROOTEnergyHisto_binning2D().at(2),xmax2D);
       xbins2D = FindMax(SubDetectors.at(s).GetROOTEnergyHisto_binning2D().at(0),xbins2D);
-      
+
       ymin2D  = FindMin(SubDetectors.at(s).GetROOTEnergyHisto_binning2D().at(4),ymin2D);
       ymax2D  = FindMax(SubDetectors.at(s).GetROOTEnergyHisto_binning2D().at(5),ymax2D);
       ybins2D = FindMax(SubDetectors.at(s).GetROOTEnergyHisto_binning2D().at(3),ybins2D);
-      
+
       zmin3D  = FindMin(SubDetectors.at(s).GetROOTEnergyHisto_binning3D().at(1),zmin3D);
       zmax3D  = FindMax(SubDetectors.at(s).GetROOTEnergyHisto_binning3D().at(2),zmax3D);
       zbins3D = FindMax(SubDetectors.at(s).GetROOTEnergyHisto_binning3D().at(0),zbins3D);
-      
+
       xmin3D  = FindMin(SubDetectors.at(s).GetROOTEnergyHisto_binning3D().at(4),xmin3D);
       xmax3D  = FindMax(SubDetectors.at(s).GetROOTEnergyHisto_binning3D().at(5),xmax3D);
       xbins3D = FindMax(SubDetectors.at(s).GetROOTEnergyHisto_binning3D().at(3),xbins3D);
-      
+
       ymin3D  = FindMin(SubDetectors.at(s).GetROOTEnergyHisto_binning3D().at(7),ymin3D);
       ymax3D  = FindMax(SubDetectors.at(s).GetROOTEnergyHisto_binning3D().at(8),ymax3D);
       ybins3D = FindMax(SubDetectors.at(s).GetROOTEnergyHisto_binning3D().at(6),ybins3D);
-      
+
     }
-    std::array<float, 3> tempEnergy1D = { binsEnergy1D, minEnergy1D, maxEnergy1D };
+    std::vector<float> tempEnergy1D = { binsEnergy1D, minEnergy1D, maxEnergy1D };
     *axis_range_plot_energy_1D = tempEnergy1D;
-    std::array<int, 3> temp1D = { bins1D, min1D, max1D };
+    std::vector<float> temp1D = { bins1D, min1D, max1D };
     *axis_range_plot_1D = temp1D;
-    std::array<int, 6> temp2D = { xbins, xmin, xmax, ybins, ymin, ymax };
+    std::vector<float> temp2D = { xbins, xmin, xmax, ybins, ymin, ymax };
     *axis_range_plot_2D = temp2D;
-    std::array<int, 9> temp3D = { zbins, zmin, zmax, xbins, xmin, xmax, ybins, ymin, ymax };
+    std::vector<float> temp3D = { zbins, zmin, zmax, xbins, xmin, xmax, ybins, ymin, ymax };
     *axis_range_plot_3D = temp3D;
   }
 }
@@ -419,27 +471,27 @@ void Setup_ParticleOriginsHisto(std::vector<TH1*> HistoVector, std::vector<float
 }
 void Setup_Histo(std::vector<TH1*> HistoVector, std::vector<float> axis_range_plot, stringstream histo_name, stringstream histo_title) {
   if (axis_range_plot.size() == 3){
-    
+
     HistoVector.emplace_back(
-          new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot.at(0), axis_range_plot.at(1),
-            axis_range_plot.at(2)));
+        new TH1D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot.at(0), axis_range_plot.at(1),
+          axis_range_plot.at(2)));
     HistoVector.at(layer)->SetMinimum(0.1);
     HistoVector.at(layer)->SetLineColor(kViolet);
   }
 
   if (axis_range_plot.size() == 6){
-      HistoVector.emplace_back(
-          new TH2D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot.at(0),
-            axis_range_plot.at(1), axis_range_plot.at(2), axis_range_plot.at(3), axis_range_plot.at(4),
-            axis_range_plot.at(5)));
+    HistoVector.emplace_back(
+        new TH2D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot.at(0),
+          axis_range_plot.at(1), axis_range_plot.at(2), axis_range_plot.at(3), axis_range_plot.at(4),
+          axis_range_plot.at(5)));
     HistoVector.at(layer)->SetContour(100);
   }    
 
   if (axis_range_plot.size() == 9){
-      HistoVector.emplace_back(
-          new TH3D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot.at(0),
-            axis_range_plot.at(1), axis_range_plot.at(2), axis_range_plot.at(3), axis_range_plot.at(4),
-            axis_range_plot.at(5), axis_range_plot.at(6), axis_range_plot.at(7), axis_range_plot.at(8)));
+    HistoVector.emplace_back(
+        new TH3D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot.at(0),
+          axis_range_plot.at(1), axis_range_plot.at(2), axis_range_plot.at(3), axis_range_plot.at(4),
+          axis_range_plot.at(5), axis_range_plot.at(6), axis_range_plot.at(7), axis_range_plot.at(8)));
     HistoVector.at(layer)->GetZaxis()->CenterTitle();
   }    
   HistoVector.at(layer)->GetXaxis()->CenterTitle();
