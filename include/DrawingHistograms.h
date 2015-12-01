@@ -35,6 +35,17 @@
 #include "Subdetector.h"
 #include "LayerCodeInCellID.h"
 
+TCanvas* Hits_Canvas_;
+vector<TH1*> ParticleOrigins_2D_;
+vector<TH1*> Hits_PerLayer_;
+vector<TH1*> Hits_Histo_;
+vector<TH1*> Hits_2D_;
+vector<TH1*> Hits_3D_;
+vector<TH1*> Hits_Energy_Histo_;
+vector<TH1*> Hits_Energy_2D_;
+vector<TH1*> Hits_Energy_3D_;
+
+
 void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::vector<std::string> argument_subdetectors){
   TH1::SetDefaultSumw2();
 
@@ -117,7 +128,8 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
                 hitsperlayerhisto_name, hitsperlayerhisto_title,
                 particleoriginshisto_name, particleoriginshisto_title;
 
-  SetupHistoTitles(histo_name1D, histo_title1D,
+  SetupHistoTitles(subdetector_name, layer,
+                histo_name1D, histo_title1D,
                 histo_name2D, histo_title2D,
                 histo_name3D, histo_title3D,
                 energyhisto_name1D, energyhisto_title1D,
@@ -126,14 +138,14 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
                 hitsperlayerhisto_name, hitsperlayerhisto_title,
                 particleoriginshisto_name, particleoriginshisto_title);
 
-  Setup_Histos1D_HitsPerLayer(axis_range_plot_1D, subdetector_name, l);
-    Setup_ParticleOrigins_2D(axis_ranges_plot, subdetector_name, l);
-    Setup_Histos1D(Histos_1D, axis_range_plot_1D, histo_name, histo_title);
-    Setup_Histos2D(axis_ranges_plot, subdetector_name, l);
-    Setup_Histos3D(axis_ranges_plot, subdetector_name, l);
-    Setup_EnergyHistos1D(axis_range_plot_energy_1D, subdetector_name, l);
-    Setup_EnergyHistos2D(axis_ranges_plot, subdetector_name, l);
-    Setup_EnergyHistos3D(axis_ranges_plot, subdetector_name, l);
+    Setup_ParticleOriginsHisto(ParticleOrigins_2D_, axis_range_plot_3D, particleoriginshisto_name, particleoriginshisto_title, "cylindrical");
+    Setup_Histo(Hits_PerLayer_, axis_range_plot_1D, hitsperlayerhisto_name, hitsperlayerhisto_title);
+    Setup_Histo(Hits_Histo_, axis_range_plot_1D, histo_name1D, histo_title1D);
+    Setup_Histo(Hits_2D_, axis_range_plot_2D, histo_name2D, histo_title2D);
+    Setup_Histo(Hits_3D_, axis_range_plot_3D, histo_name3D, histo_title3D);
+    Setup_Histo(Hits_Energy_Histo_, axis_range_plot_energy_1D, energyhisto_name1D, energyhisto_title1D);
+    Setup_Histo(Hits_Energy_2D_, axis_range_plot_2D, energyhisto_name2D, energyhisto_title2D);
+    Setup_Histo(Hits_Energy_3D_, axis_range_plot_3D, energyhisto_name3D, energyhisto_title3D);
   }
 
 }
@@ -369,7 +381,43 @@ void SetupHistoTitles(std::string subdetector_name, std::stringstream layer,
   *(particleoriginshisto_name) << "ParticleOrigins_" << subdetector_name << "_Layer_" << layer;
   *(particleoriginshisto_title) << "Origins of pair background particles for " << subdetector_name << " layer " << layer;
 }
-void Setup_Histo(std::vector<TH1*> HistoVector, std::vector<float> axis_range_plot, stringstream histo_name, stringstream histo_title, string coodinate_system) {
+void Setup_ParticleOriginsHisto(std::vector<TH1*> HistoVector, std::vector<float> axis_range_plot, stringstream histo_name, stringstream histo_title, string coodinate_system) {
+  if(axis_range_plot.size()<9) {
+    std::cerr << "The plot of the particle origins can only be plotted with the vector of the 3 dimensional plot axes." << std::endl;
+    terminate();
+  }
+  std::vector<float> axis_vector;
+  if (coordinate_system == std::string("kartesian")) axis_vector = axis_range_plot;
+  if (coordinate_system == std::string("cylindrical")){
+    float rmax = sqrt(pow(axis_range_plot.at(5),2)+pow(axis_range_plot.at(8),2));
+    float rmin = 0.;
+    float rrange = rmax - rmin;
+    float phimax = arcos(axis_range_plot.at(5)/r);
+    float zmax = axis_range_plot.at(2);
+    float zmin = -zmax;
+    float zrange = rmax - zmin;
+    axis_vector = {0,0,0,zrange/4,zmin,zmax,rrange/4,rmin,rmax};
+  }  
+  if (coordinate_system == std::string("spherical")){
+    float rmax = sqrt(pow(axis_ranges_plot.at(5),2)+pow(axis_ranges_plot.at(8),2)+pow(axis_ranges_plot.at(2),2));
+    float rmin = 0.;
+    float rrange = rmax - rmin;
+    float zmax = axis_range_plot.at(2);
+    float zmin = -zmax;
+    float zrange = rmax - zmin;
+    float thetamax = arcos(axis_range_plot.at(2)/r);
+    float thetamin = 0;
+    float thetarange = thetamax - thetamin;
+    float phimax = arcos(axis_range_plot.at(5)/(r*sin(theta)));
+    axis_vector = {0,0,0,zrange/4,zmin,zmax,thetarange/4,thetamin,thetamax};
+  }  
+  HistoVector.emplace_back(
+      new TH2D(histo_name.str().c_str(), histo_title.str().c_str(), axis_vector.at(3),
+        axis_vector.at(4), axis_vector.at(5), axis_vector.at(6), axis_vector.at(7),
+        axis_vector.at(8)));
+  HistoVector.at(layer)->SetContour(100);
+}
+void Setup_Histo(std::vector<TH1*> HistoVector, std::vector<float> axis_range_plot, stringstream histo_name, stringstream histo_title) {
   if (axis_range_plot.size() == 3){
     
     HistoVector.emplace_back(
@@ -381,29 +429,17 @@ void Setup_Histo(std::vector<TH1*> HistoVector, std::vector<float> axis_range_pl
 
   if (axis_range_plot.size() == 6){
       HistoVector.emplace_back(
-          new TH2D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot[3],
-            axis_range_plot[4], axis_range_plot[5], axis_range_plot[6], axis_range_plot[7],
-            axis_range_plot[8]));
+          new TH2D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot.at(0),
+            axis_range_plot.at(1), axis_range_plot.at(2), axis_range_plot.at(3), axis_range_plot.at(4),
+            axis_range_plot.at(5)));
     HistoVector.at(layer)->SetContour(100);
   }    
 
   if (axis_range_plot.size() == 9){
-    std::vector<float> axis_vector;
-    if (coordinate_system == std::string("kartesian")) axis_vector = axis_range_plot;
-    if (coordinate_system == std::string("cylindrical")){
-        float r = sqrt(pow(axis_range_plot[5],2)+pow(axis_range_plot[8],2));
-        float phi = arcos(axis_range_plot[5]/r);
-        float z = axis_range_plot[2];
-    }  
-    if (coordinate_system == std::string("spherical")){
-        float r = sqrt(pow(axis_ranges_plot[5],2)+pow(axis_ranges_plot[8],2)+pow(axis_ranges_plot[2],2));
-        float theta = arcos(axis_range_plot[2]/r);
-        float phi = arcos(axis_range_plot[5]/(r*sin(theta)));
-      }  
       HistoVector.emplace_back(
-          new TH3D(histo_name.str().c_str(), histo_title.str().c_str(), axis_vector[0],
-            axis_vector[1], axis_vector[2], axis_vector[3], axis_vector[4],
-            axis_vector[5], axis_vector[6], axis_vector[7], axis_vector[8]));
+          new TH3D(histo_name.str().c_str(), histo_title.str().c_str(), axis_range_plot.at(0),
+            axis_range_plot.at(1), axis_range_plot.at(2), axis_range_plot.at(3), axis_range_plot.at(4),
+            axis_range_plot.at(5), axis_range_plot.at(6), axis_range_plot.at(7), axis_range_plot.at(8)));
     HistoVector.at(layer)->GetZaxis()->CenterTitle();
   }    
   HistoVector.at(layer)->GetXaxis()->CenterTitle();
