@@ -8,6 +8,9 @@ class Subdetector{
 
     ~Subdetector() {}
 
+    std::string GetName() const{
+      return Name_;
+    }
     std::string GetStartLayerBin() const {
       return StartLayerBin_;
     }				
@@ -31,6 +34,7 @@ class Subdetector{
     }				
 
   protected:
+    std::string Name_;
     int LengthLayerBin_;
     int StartLayerBin_;
     int NumberOfLayers_;

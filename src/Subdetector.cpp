@@ -1,6 +1,7 @@
 #include "Subdetector.h"
 
 void EcalBarrel:Initialize(){
+  Name_ = "EcalBarrel";
   LengthLayerBin_ = 6;
   StartLayerBin_ = 13;
   NumberOfLayers_ = 31;
@@ -11,6 +12,7 @@ void EcalBarrel:Initialize(){
   ROOTHisto_binning3D = {100, -2000, 2000, 100, -1500, 1500, 100, -1500, 1500};
 }								
 void EcalEndcap:Initialize(){
+  Name_ = "EcalEndcap";
   LengthLayerBin_ = 6;
   StartLayerBin_ = 13;
   NumberOfLayers_ = 31;
@@ -21,6 +23,7 @@ void EcalEndcap:Initialize(){
   ROOTHisto_binning3D = {70, -2000, 2000, 70, -1500, 1500, 70, -1500, 1500};
 }								
 void HcalBarrel:Initialize(){
+  Name_ = "HcalBarrel";
   LengthLayerBin_ = 6;
   StartLayerBin_ = 13;
   NumberOfLayers_ = 40;
@@ -31,6 +34,7 @@ void HcalBarrel:Initialize(){
   ROOTHisto_binning3D = {100, -3100, 3100, 70, -2500, 2500, 70, -2500, 2500};
 }								
 void HcalEndcap:Initialize(){
+  Name_ = "HcalEndcap";
   LengthLayerBin_ = 8;
   StartLayerBin_ = 13;
   NumberOfLayers_ = 45;
@@ -41,6 +45,7 @@ void HcalEndcap:Initialize(){
   ROOTHisto_binning3D = {100, -3100, 3100, 70, -1500, 1500, 70, -1500, 1500};
 }								
 void MuonBarrel:Initialize(){
+  Name_ = "MuonBarrel";
   LengthLayerBin_ = 6;
   StartLayerBin_ = 15;
   NumberOfLayers_ = 11;
@@ -51,6 +56,7 @@ void MuonBarrel:Initialize(){
   ROOTHisto_binning3D = {100, -3100, 3100, 150, -6300, 6300, 150, -6300, 6300};
 }								
 void MuonEndcap:Initialize(){
+  Name_ = "MuonEndcap";
   LengthLayerBin_ = 6;
   StartLayerBin_ = 15;
   NumberOfLayers_ = 11;
@@ -61,6 +67,7 @@ void MuonEndcap:Initialize(){
   ROOTHisto_binning3D = {150, -5700, 5700, 150, -6300, 6300, 150, -6300, 6300};
 }								
 void BeamCal:Initialize(){
+  Name_ = "BeamCal";
   LengthLayerBin_ = 8;
   StartLayerBin_ = 8;
   NumberOfLayers_ = 50;
@@ -71,6 +78,7 @@ void BeamCal:Initialize(){
   ROOTHisto_binning3D = {150, -3200, 3200, 100, -140, 140, 100, -140, 140};
 }								
 void LumiCal:Initialize(){
+  Name_ = "LumiCal";
   LengthLayerBin_ = 8;
   StartLayerBin_ = 8;
   NumberOfLayers_ = 30;
@@ -81,6 +89,7 @@ void LumiCal:Initialize(){
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
 }								
 void SiVertexEndcap:Initialize(){
+  Name_ = "SiVertexEndcap";
   LengthLayerBin_ = 4;
   StartLayerBin_ = 9;
   NumberOfLayers_ = 4;
@@ -92,6 +101,7 @@ void SiVertexEndcap:Initialize(){
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
 }
 void SiVertexBarrel:Initialize(){
+  Name_ = "SiVertexBarrel";
   LengthLayerBin_ = 4;
   StartLayerBin_ = 9;
   NumberOfLayers_ = 5;
@@ -103,6 +113,7 @@ void SiVertexBarrel:Initialize(){
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
 }
 void SiTrackerEndcap:Initialize(){
+  Name_ = "SiTrackerEndcap";
   LengthLayerBin_ = 4;
   StartLayerBin_ = 9;
   NumberOfLayers_ = 4;
@@ -114,6 +125,7 @@ void SiTrackerEndcap:Initialize(){
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
 }
 void SiTrackerBarrel:Initialize(){
+  Name_ = "SiTrackerBarrel";
   LengthLayerBin_ = 4;
   StartLayerBin_ = 9;
   NumberOfLayers_ = 5;
@@ -125,6 +137,7 @@ void SiTrackerBarrel:Initialize(){
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
 }
 void SiTrackerForward:Initialize(){
+  Name_ = "SiTrackerForward";
   LengthLayerBin_ = 4;
   StartLayerBin_ = 9;
   NumberOfLayers_ = 3;
