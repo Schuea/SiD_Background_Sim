@@ -158,4 +158,16 @@ void CheckArguments(int argc, char * argv[]){
     }
   }
 }
-
+void Usage() {
+  //explain how to use program
+  cerr << "Usage:" << endl;
+  cerr
+    << "Type in the name of the subdetector you are interested in, as well as the output filename, the number of input files and the input root filenames after their correspondent flags!"
+    << endl;
+  cerr << "e.g. ./DrawHistograms -s EcalBarrel -o output.root -n 2 -i file1.root file2.root" << endl;
+  cerr
+    << "You can also give a range of layers you want to compare in the 1D histograms: -l 2-5  or  -l 5- (from layer 5 on all the layers that are there)"
+    << endl;
+  cerr << "e.g. ./DrawHistograms -l 2-5 -s EcalBarrel -o output.root -n 2 -i file1.root file2.root" << endl;
+  terminate();
+}
