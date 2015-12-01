@@ -98,9 +98,9 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
   float energy = 0;
   int MaxNumberLayers = 0;
   int Layer_no = 0;
-  long CellIDkey = 0.;
+  int CellIDkey = 0.;
 
-  std::map<long, vector<int>> HitsPerLayerMap;
+  std::map<int, vector<int>> HitsPerLayerMap;
 
   //Find the largest number of layers from all the subdetectors that are to be plotted
   for (int s = 0; s < SubDetectors->size(); ++s) {
@@ -149,13 +149,12 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
   }
   std::vector<int> hitLayers;
   for (int s = 0; s < SubDetectors->size(); ++s) {
-  
-    std::map<long, int> HitMap;
-    std::map<std::pair<int, long>, vector<float> > HitMap2D; //layer, bin, hits
+
+    std::map<int, int> HitMap;//cellid, count of hits per cell
 
     //Getting the inputfile and its TTrees
-    for (int j = 0; j < NUMBER_OF_FILES; ++j) {
-      inputfile = TFile::Open((inputnames.at(j)).c_str());
+    for (int fileIterator = 0; fileIterator < NUMBER_OF_FILES; ++fileIterator) {
+      inputfile = TFile::Open((inputnames.at(fileIterator)).c_str());
       if (!inputfile) {
         throw std::exception();
       }
@@ -188,13 +187,13 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
       Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitVertex_y", &vertex_y);
       Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitVertex_z", &vertex_z);
       Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitEnergy", &energy);
-      
-      map<std::pair<int, long>, vector<float> > HitMapEnergy2D; //layer, bin, energies
-      map<std::pair<int, long>, vector<float> > HitMapEnergy3D; //layer, bin, energies
+
+      map<std::pair<int, int>, vector<float> > HitMapEnergy2D; //layer, bin, energies
+      map<std::pair<int, int>, vector<float> > HitMapEnergy3D; //layer, bin, energies
 
       for (std::size_t i = 0; i < number_of_hits; i++) {
         Get_TTree(SubDetectors->at(s).GetName())->GetEntry(i);
-        
+
         CellID SubdetectorCells;
         InitializeCellIDClass(SubDetectors->at(s).GetName(), id0, id1);
         SubdetectorCells.CreateCellID();
@@ -208,11 +207,11 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
         }
 
         //Fill Maps:
-        HitsPerLayerMap[Layer_no].at(j) += 1;
+        HitsPerLayerMap[Layer_no].at(fileIterator) += 1;
 
-        HitMapEnergy2D[std::pair<int, long>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(
+        HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(
             energy);
-        HitMapEnergy3D[std::pair<int, long>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(
+        HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(
             energy);
 
         if (HitMap.find(CellIDkey) == HitMap.end()) {
@@ -224,10 +223,130 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
         //Fill histograms:
         Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
         ParticleOrigins_2D_.at(Layer_no)->Fill(vertex_z, sqrt(pow(vertex_x,2)+pow(vertex_y,2)));
+        Hits_2D_.at(Layer_no)->Fill(x, y);
         Hits_3D_.at(Layer_no)->Fill(z, x, y);
 
       }
+      int const colorrangeweight = 1000000000;
+      Fill_Histogram_from_Map(HitMapEnergy2D, &Hits_Energy_2D_, colorrangeweight);
+      Fill_Histogram_from_Map(HitMapEnergy3D, &Hits_Energy_3D_, colorrangeweight);
+
+      int number_of_particles = 0;
+      number_of_particles = Tree_MCP->GetEntries();
+      ParticlesVSEvent->Fill(fileIterator, number_of_particles);
+      Particles->Fill(number_of_particles);
+      Hits->Fill(number_of_hits);
+
+      inputfile->Close();
+      delete inputfile;
+    }//End of loop through inputfiles
+
+    for (auto iterator = HitsPerLayerMap.begin(); iterator != HitsPerLayerMap.end(); iterator++) {
+      for(auto e = iterator->second.begin(); e != iterator->second.end(); ++e){
+        if (*e > 0) {
+          Hits_PerLayer_.at(iterator->first)->Fill(*e);
+        }
+      }
+    }
+    for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
+      if (iterator->second > 0) {
+        Hits_Histo_.at(SubDetectors->at(s).ObtainLayerfromCellID(iterator->first, SubDetectors->at(s).GetStartLayerBin(), SubDetectors->at(s).GetLengthLayerBin()))->Fill(iterator->second);
+      }
+    }
+
+  }//End of SubDetectors loop
+  
+  gStyle->SetOptStat(1);
+  //gStyle->SetOptStat(111111);
+  TCanvas* PDF_Canvas_1D2D_Hits_Layers = new TCanvas(); 
+  PDF_Canvas_1D2D_Hits_Layers->Print("PDFCanvas_1D2D_Hits_Layers.pdf[");
+
+  output_rootfile->cd();
+  for (signed int l = 0; l < hitLayers.size(); ++l) {
+
+    Hits_3D_.at(hitLayers.at(l))->Write();
+    Hits_Energy_3D_.at(hitLayers.at(l))->Write();
+
+    Hits_Canvas_->cd();
+
+    Hits_Canvas_->Clear();
+    gStyle->SetStatX(0.87);
+    Hits_Canvas_->SetLogy(0);
+    Hits_Canvas_->SetLogx(0);
+    Hits_Canvas_->SetLogz(0);
+    WritePrintHistogram(Hits_Canvas_, Hits_2D_, hitLayers, l,"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
+
+    Hits_Canvas_->Update();
+    Hits_Canvas_->SetLogy(0);
+    Hits_Canvas_->SetLogx(0);
+    Hits_Canvas_->SetLogz(0);
+    WritePrintHistogram(Hits_Canvas_, Hits_Energy_2D_, hitLayers, l,"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
+
+    Hits_Canvas_->Update();
+    Hits_Canvas_->SetLogy(0);
+    Hits_Canvas_->SetLogx(0);
+    Hits_Canvas_->SetLogz(1);
+    WritePrintHistogram(Hits_Canvas_, ParticleOrigins_2D_, hitLayers, l,"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
+
+    Hits_Canvas_->Clear();
+    gStyle->SetStatX(0.87);
+    gROOT->ForceStyle();
+    Hits_Canvas_->SetLogy(0);
+    Hits_Canvas_->SetLogx(0);
+    Hits_Canvas_->SetLogz(0);
+    WritePrintHistogram(Hits_Canvas_, Hits_PerLayer_, hitLayers, l,"", "PDFCanvas_1D2D_Hits_Layers.pdf");
+
+    Hits_Canvas_->Update();
+    Hits_Canvas_->SetLogy(1);
+    Hits_Canvas_->SetLogx(0);
+    Hits_Canvas_->SetLogz(0);
+    WritePrintHistogram(Hits_Canvas_, Hits_Histo_, hitLayers, l,"", "PDFCanvas_1D2D_Hits_Layers.pdf");
+
+    Hits_Canvas_->Update();
+    Hits_Canvas_->SetLogy(1);
+    Hits_Canvas_->SetLogx(0);
+    Hits_Canvas_->SetLogz(0);
+    WritePrintHistogram(Hits_Canvas_, Hits_Energy_Histo_, hitLayers, l,"", "PDFCanvas_1D2D_Hits_Layers.pdf");
+
+  }
+  PDF_Canvas_1D2D_Hits_Layers->Print("PDFCanvas_1D2D_Hits_Layers.pdf]");
+  delete PDF_Canvas_1D2D_Hits_Layers;
+} //End of function DrawingMacro 
+
+void WritePrintHistogram(TCanvas* Canvas_, std::vector<TH1*> Histos_, std::vector<int> layers, int iterator, std::string drawingoption, std::string PDFName){
+  Canvas_->Update();
+  Canvas_->SetRightMargin(0.15);
+  Histos_.at(layers.at(iterator))->Draw(drawingoption.c_str());
+  Canvas_->Write();
+
+  stringstream CanvasName_eps, CanvasName_C;
+  CanvasName_eps << Canvas_->GetName() << "_" << Histos_.at(layers.at(iterator))->GetName()<< ".eps";
+  CanvasName_C << Canvas_->GetName() << "_" << Histos_.at(layers.at(iterator))->GetName()<< ".C";
+
+  Canvas_->Print(CanvasName_eps.str().c_str());
+  Canvas_->Print(CanvasName_C.str().c_str());
+  Canvas_->Print(PDFName.c_str());
 }
+
+void Fill_Histogram_from_Map (map<std::pair<int, int>, vector<float> > HitMap, vector<TH1*> *Hits, int weight) {
+  for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
+    int temp_layer = iterator->first.first;
+    float average = 0;
+    for (size_t i = 0; i < iterator->second.size(); ++i) {
+      average += iterator->second.at(i);
+    }
+    average /= iterator->second.size();
+    float stddev = 0;
+    for (size_t i = 0; i < iterator->second.size(); ++i) {
+      stddev += iterator->second.at(i) - average;
+    }
+    stddev /= iterator->second.size();
+    stddev = sqrt(stddev);
+    Hits->at(temp_layer)->SetBinContent(iterator->first.second, average * weight);
+    Hits->at(temp_layer)->SetBinError(iterator->first.second, stddev * weight);
+  }
+}
+
 TTree* Get_TTree(TFile* inputfile, string subdetector_name) {
   stringstream temp;
   temp << "Tree_" << subdetector_name;
