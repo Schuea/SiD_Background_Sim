@@ -1,7 +1,7 @@
 #ifndef SUBDETECTOR_H_
 #define SUBDETECTOR_H_
 
-class Subdetector{
+class Subdetector : public LayerCodeInCellID{
 
   public:
     Subdetector() {}
