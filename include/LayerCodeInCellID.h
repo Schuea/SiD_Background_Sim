@@ -6,16 +6,9 @@
 class LayerCodeInCellID {
 
   public:
-    LayerCodeInCellID() {}
-    LayerCodeInCellID(int ID) : ID_(ID) {}
-    LayerCodeInCellID(long ID) : CellID_(ID) {}
-    LayerCodeInCellID(float ID) : ID_(-1) {}
-    LayerCodeInCellID(double ID) : ID_(-1) {}
-    LayerCodeInCellID(std::bitset<32> ID) : ID_bit(ID) {}
-    LayerCodeInCellID(std::bitset<64> CellID) : CellID_bit(CellID){}
+    LayerCodeInCellID(std::string const CellID, int const LayerInfoStart, int const LayerInfoLength) : CellID_(CellID), StartBin_layers(LayerInfoStart), LengthBin_layers(LayerInfoLength) {}
 
     virtual ~LayerCodeInCellID() {}
-
 
     int GetLayer() const {
       if (Layer >= 0){
@@ -25,18 +18,18 @@ class LayerCodeInCellID {
     }				
 
   private:
+    LayerCodeInCellID() {}
+    LayerCodeInCellID(int ID) {}
+    LayerCodeInCellID(long ID) {}
+    LayerCodeInCellID(float ID) {}
+    LayerCodeInCellID(double ID) {}
+
     int Layer;
     int StartBin_layers;
     int LengthBin_layers;
-    std::bitset<6> LayerID6;
-    std::bitset<8> LayerID8;
 
-    int ID_;
-    int CellID_;
-    std::bitset<32> ID_bit;
-    std::bitset<64> CellID_bit;
+    std::string CellID_;
 
-    int FindLayer(int ID_);
-    int FindLayer(int CellID_);
+    int FindLayer(std::string const CellID_, int const StarBin_layers, int const LengthBin_layers);
 };
 #endif /*LAYERCODEINCELLID_H_*/
