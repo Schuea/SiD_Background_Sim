@@ -40,7 +40,7 @@ class CellID{
 };
 class CellID64bits : public CellID {
   public:
-    CellID64bits(int ID0, int ID1) : CellID(int ID0, int ID1) {}
+    CellID64bits(int ID0, int ID1) : CellID(ID0, ID1) {}
     void CreateCellID();
     std::string GetCellID() const {
       if ((ID0_ == 0 && ID1_ == 0) || ID0_ < 0 || ID1_ <0){
@@ -60,7 +60,7 @@ class CellID64bits : public CellID {
 };
 class CellID58bits : public CellID {
   public:
-    CellID58bits(int ID) : CellID(int ID) {}
+    CellID58bits(int ID) : CellID(ID) {}
     void CreateCellID();
     std::string GetCellID() const {
       if (ID_ <= 0){
@@ -75,17 +75,13 @@ class CellID58bits : public CellID {
 };
 class CellID54bits : public CellID {
   public:
-    CellID54bits(int ID) : CellID(int ID) {}
+    CellID54bits(int ID) : CellID(ID) {}
     void CreateCellID();
     std::string GetCellID() const {
       if (ID_ <= 0){
         throw std::runtime_error("The CellID was not set. Invalid IDs!");
       }				
       else return CellID_bit_.to_string();
-    }
-    std::bitset<54> ConvertToBitset (char CellID_){
-      CellID_bit_ = std::bitset<54>(Cell_ID_);
-      return CellID_bit_;
     }
 
   private:

@@ -17,6 +17,7 @@
 
 void Usage();
 void CheckArguments();
+extern int NUMBER_OF_FILES;
 
 int main(int argc, char * argv[]){
 
@@ -27,7 +28,7 @@ int main(int argc, char * argv[]){
   bool inputfile_set = false;
   bool outputfile_set = false;
   bool subdetector_set = false;
-
+  NUMBER_OF_FILES = 0;
   CheckArguments(argc, argv);
 
   if (!inputfile_set || !outputfile_set || !subdetector_set || !NUMBER_OF_FILES_set) {

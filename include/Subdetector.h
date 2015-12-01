@@ -1,7 +1,9 @@
 #ifndef SUBDETECTOR_H_
 #define SUBDETECTOR_H_
 
-class Subdetector : public LayerCodeInCellID{
+#include "LayerCodeInCellID.h"
+
+class Subdetector{
 
   public:
     Subdetector() {}
@@ -20,20 +22,21 @@ class Subdetector : public LayerCodeInCellID{
     int GetNumberOfLayers() const {
       return NumberOfLayers_;
     }				
-    std::vector<float> GetROOTEnergyHisto_binning const{
+    std::vector<float> GetROOTEnergyHisto_binning() const{
       return ROOTEnergyHisto_binning;
     }				
-    std::vector<float> GetROOTHisto_binning1D const{
+    std::vector<float> GetROOTHisto_binning1D() const{
       return ROOTHisto_binning1D;
     }				
-    std::vector<float> GetROOTHisto_binning2D const{
+    std::vector<float> GetROOTHisto_binning2D() const{
       return ROOTHisto_binning2D;
     }				
-    std::vector<float> GetROOTHisto_binning3D const{
+    std::vector<float> GetROOTHisto_binning3D() const{
       return ROOTHisto_binning3D;
     }				
 
   protected:
+    LayerCodeInCellID *LayerInfo_;
     std::string Name_;
     int LengthLayerBin_;
     int StartLayerBin_;
