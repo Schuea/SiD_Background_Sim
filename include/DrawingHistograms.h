@@ -149,7 +149,7 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
   }
   std::vector<int> hitLayers;
   for (int s = 0; s < SubDetectors->size(); ++s) {
-
+  
     std::map<long, int> HitMap;
     std::map<std::pair<int, long>, vector<float> > HitMap2D; //layer, bin, hits
 
@@ -188,6 +188,45 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
       Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitVertex_y", &vertex_y);
       Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitVertex_z", &vertex_z);
       Get_TTree(inputfile, SubDetectors->at(s).GetName())->SetBranchAddress("HitEnergy", &energy);
+      
+      map<std::pair<int, long>, vector<float> > HitMapEnergy2D; //layer, bin, energies
+      map<std::pair<int, long>, vector<float> > HitMapEnergy3D; //layer, bin, energies
+
+      for (std::size_t i = 0; i < number_of_hits; i++) {
+        Get_TTree(SubDetectors->at(s).GetName())->GetEntry(i);
+        
+        CellID SubdetectorCells;
+        InitializeCellIDClass(SubDetectors->at(s).GetName(), id0, id1);
+        SubdetectorCells.CreateCellID();
+        CellIDkey = 0.;
+        CellIDkey = SubdetectorCells.CellID_ToINTconversion(SubdetectorCells.GetCellID());
+
+        LayerCodeInCellID LayerInfo(SubdetectorCells.GetCellID(),SubDetectors->at(s).GetStartLayerBin(),SubDetectors->at(s).GetLengthLayerBin());
+        Layer_no = LayerInfo.GetLayer();
+        if (std::find(hitLayers.begin(), hitLayers.end(), Layer_no) == hitLayers.end()) {
+          hitLayers.push_back(Layer_no);
+        }
+
+        //Fill Maps:
+        HitsPerLayerMap[Layer_no].at(j) += 1;
+
+        HitMapEnergy2D[std::pair<int, long>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(
+            energy);
+        HitMapEnergy3D[std::pair<int, long>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(
+            energy);
+
+        if (HitMap.find(CellIDkey) == HitMap.end()) {
+          HitMap[CellIDkey] = 1;
+        } else {
+          HitMap[CellIDkey] += 1;
+        }
+
+        //Fill histograms:
+        Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
+        ParticleOrigins_2D_.at(Layer_no)->Fill(vertex_z, sqrt(pow(vertex_x,2)+pow(vertex_y,2)));
+        Hits_3D_.at(Layer_no)->Fill(z, x, y);
+
+      }
 }
 TTree* Get_TTree(TFile* inputfile, string subdetector_name) {
   stringstream temp;
@@ -270,7 +309,28 @@ void SetupSubDetectorsVector(std::vector<Subdetector*> * SubDetectors, stringstr
     }
   }
 }
-
+InitializeCellIDClass(std::string SubdetectorName, int id0, int id1){
+  if (id0 >= 0 && id1 >= 0) SubdetectorCells = new CellID64bits(id0, id1);
+  if (id0 >= 0 && id1 < 0) {
+    if (SubdetectorName == std::string("SiVertexBarrel") || 
+        SubdetectorName == std::string("SiVertexEndcap") || 
+        SubdetectorName == std::string("SiTrackerForward")) { 
+      SubdetectorCells = new CellID58bits(id0);
+    }
+    if (SubdetectorName == std::string("SiTrackerBarrel") || 
+        SubdetectorName == std::string("SiTrackerEndcap")) { 
+      SubdetectorCells = new CellID54bits(id0);
+    }
+    else {
+      std::cerr << "This subdetector name is unkown. The CellID classes CellID58bits or CellID54bits could not be inititalized!" << std::endl;
+      terminate();
+    }
+    if (id0 < 0 && id1 < 0) {
+      std::cerr << "The cell ids are not valid! Initializing the CellID class is not possible!" << std::endl;
+      terminate();
+    }
+  }
+}
 void InitializeAllSubdetectors(std::vector< Subdetector* > * SubDetectors){
   InitializeAllCaloSubdetectors(SubDetectors);
   InitializeAllTrackerSubdetectors(SubDetectors);
