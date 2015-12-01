@@ -255,7 +255,7 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
     }
 
   }//End of SubDetectors loop
-  
+
   gStyle->SetOptStat(1);
   //gStyle->SetOptStat(111111);
   TCanvas* PDF_Canvas_1D2D_Hits_Layers = new TCanvas(); 
@@ -274,19 +274,19 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
     Hits_Canvas_->SetLogy(0);
     Hits_Canvas_->SetLogx(0);
     Hits_Canvas_->SetLogz(0);
-    WritePrintHistogram(Hits_Canvas_, Hits_2D_, hitLayers, l,"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
+    WritePrintHistogram(Hits_Canvas_, Hits_2D_.at(hitLayers.at(l)),"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
 
     Hits_Canvas_->Update();
     Hits_Canvas_->SetLogy(0);
     Hits_Canvas_->SetLogx(0);
     Hits_Canvas_->SetLogz(0);
-    WritePrintHistogram(Hits_Canvas_, Hits_Energy_2D_, hitLayers, l,"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
+    WritePrintHistogram(Hits_Canvas_, Hits_Energy_2D_.at(hitLayers.at(l)),"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
 
     Hits_Canvas_->Update();
     Hits_Canvas_->SetLogy(0);
     Hits_Canvas_->SetLogx(0);
     Hits_Canvas_->SetLogz(1);
-    WritePrintHistogram(Hits_Canvas_, ParticleOrigins_2D_, hitLayers, l,"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
+    WritePrintHistogram(Hits_Canvas_, ParticleOrigins_2D_.at(hitLayers.at(l)),"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
 
     Hits_Canvas_->Clear();
     gStyle->SetStatX(0.87);
@@ -294,34 +294,204 @@ void DrawingMacro(string outputname, std::vector<std::string> inputnames, std::v
     Hits_Canvas_->SetLogy(0);
     Hits_Canvas_->SetLogx(0);
     Hits_Canvas_->SetLogz(0);
-    WritePrintHistogram(Hits_Canvas_, Hits_PerLayer_, hitLayers, l,"", "PDFCanvas_1D2D_Hits_Layers.pdf");
+    WritePrintHistogram(Hits_Canvas_, Hits_PerLayer_.at(hitLayers.at(l)),"", "PDFCanvas_1D2D_Hits_Layers.pdf");
 
     Hits_Canvas_->Update();
     Hits_Canvas_->SetLogy(1);
     Hits_Canvas_->SetLogx(0);
     Hits_Canvas_->SetLogz(0);
-    WritePrintHistogram(Hits_Canvas_, Hits_Histo_, hitLayers, l,"", "PDFCanvas_1D2D_Hits_Layers.pdf");
+    WritePrintHistogram(Hits_Canvas_, Hits_Histo_.at(hitLayers.at(l)),"", "PDFCanvas_1D2D_Hits_Layers.pdf");
 
     Hits_Canvas_->Update();
     Hits_Canvas_->SetLogy(1);
     Hits_Canvas_->SetLogx(0);
     Hits_Canvas_->SetLogz(0);
-    WritePrintHistogram(Hits_Canvas_, Hits_Energy_Histo_, hitLayers, l,"", "PDFCanvas_1D2D_Hits_Layers.pdf");
+    WritePrintHistogram(Hits_Canvas_, Hits_Energy_Histo_.at(hitLayers.at(l)),"", "PDFCanvas_1D2D_Hits_Layers.pdf");
 
   }
   PDF_Canvas_1D2D_Hits_Layers->Print("PDFCanvas_1D2D_Hits_Layers.pdf]");
   delete PDF_Canvas_1D2D_Hits_Layers;
-} //End of function DrawingMacro 
 
-void WritePrintHistogram(TCanvas* Canvas_, std::vector<TH1*> Histos_, std::vector<int> layers, int iterator, std::string drawingoption, std::string PDFName){
+  if (first_layer_to_be_compared >= 0) {
+
+    int end_of_range = 0;
+    if (last_layer_to_be_compared != 0) {
+      end_of_range = last_layer_to_be_compared;
+    } else {
+      end_of_range = hitLayers.size() - 1;
+    }
+
+    //Drawing plots with mean values of hit distributions per bunchcrossing
+    int n = end_of_range - first_layer_to_be_compared + 1;//Otherwise the number of layers are wrong
+    float layer_numbers[n];
+    float layer_numbers_Errors[n];
+    std::fill(layer_numbers_Errors,layer_numbers_Errors + n, 0);//Fill layer_number_Errors array with zeros
+    float MeanHits[n];
+    float MeanHitErrors[n];
+    for(size_t i = 0; i <= n; ++i){
+      layer_numbers[i] = first_layer_to_be_compared + i;
+      MeanHits[i] = Hits_PerLayer_.at(first_layer_to_be_compared + i)->GetMean(1);
+      MeanHitErrors[i] = Hits_PerLayer_.at(first_layer_to_be_compared + i)->GetRMS(1);
+    }
+
+    TGraphErrors* MeanHits_PerLayer = new TGraphErrors(n, layer_numbers, MeanHits, layer_numbers_Errors, MeanHitErrors);
+    MeanHits_PerLayer->SetName("MeanHits");
+    MeanHits_PerLayer->SetTitle("Mean hits for different layers; Layer number; Mean hits per bunch crossing");
+    MeanHits_PerLayer->SetMarkerColor(kViolet);
+    MeanHits_PerLayer->SetMarkerStyle(21);
+    MeanHits_PerLayer->GetXaxis()->SetRangeUser(first_layer_to_be_compared-0.5, end_of_range+0.5);
+    MeanHits_PerLayer->GetXaxis()->CenterTitle();
+
+    TCanvas* PDF_Canvas_Hits_CompareLayers = new TCanvas(); 
+    PDF_Canvas_Hits_CompareLayers->Print("PDFCanvas_Hits_CompareLayers.pdf[");
+
+    if (std::find(hitLayers.begin(), hitLayers.end(), first_layer_to_be_compared) != hitLayers.end()
+        && std::find(hitLayers.begin(), hitLayers.end(), last_layer_to_be_compared) != hitLayers.end()) {
+
+      Hits_Canvas_->cd();
+      Hits_Canvas_->Clear();
+      Hits_Canvas_->SetLogy(0);
+      WritePrintComparedHistogram(Hit_Canvas_, MeanHits_PerLayer, first_layer_to_be_compared, end_of_range, "AP", "PDFCanvas_Hits_CompareLayers.pdf");
+
+      Hits_Canvas_->Clear();
+      gStyle->SetStatX(0.87);
+      Hits_Canvas_->SetLogy(1);
+      stringstream new_histo_perlayer_title;
+      new_histo_perlayer_title << "Hits per layer for " << subdetector_name << " layers "
+        << first_layer_to_be_compared << " - " << end_of_range;
+      WritePrintComparedHistogram(Hit_Canvas_, Hits_PerLayer_,new_histo_perlayer_title.str(), first_layer_to_be_compared, end_of_range, "", "PDFCanvas_Hits_CompareLayers.pdf");
+
+      Hits_Canvas_->Clear();
+      gStyle->SetStatX(0.87);
+      Hits_Canvas_->SetLogy(1);
+      stringstream new_histo_title;
+      new_histo_title << "Hit occupancy per cell for " << subdetector_name << " layers "
+        << first_layer_to_be_compared << " - " << end_of_range;
+      WritePrintComparedHistogram(Hit_Canvas_, Hits_Histo_,new_histo_title.str(), first_layer_to_be_compared, end_of_range, true, "", "PDFCanvas_Hits_CompareLayers.pdf");
+
+      Hits_Canvas_->Clear();
+      gStyle->SetStatX(0.87);
+      Hits_Canvas_->SetLogy(1);
+      stringstream new_Energy_histo_title;
+      new_Energy_histo_title << "Deposited hit energy for " << subdetector_name << " layers "
+        << first_layer_to_be_compared << " - " << end_of_range;
+      WritePrintComparedHistogram(Hit_Canvas_, Hits_Energy_Histo_,new_Energy_histo_title.str(), first_layer_to_be_compared, end_of_range, true, "", "PDFCanvas_Hits_CompareLayers.pdf");
+
+    }//End of if-to-be-compared loop
+    else {
+      std::cerr << "The first or the last (or both) layer of your given range has no hits!\n"
+        "There will be no comparison of the layers." << std::endl;
+    }
+    PDF_Canvas_Hits_CompareLayers->Print("PDFCanvas_Hits_CompareLayers.pdf]");
+    delete PDF_Canvas_Hits_CompareLayers;
+  }
+  for (signed int l = 0; l < MaxNumberLayers; ++l) {
+    delete Hits_PerLayer_.at(l), Hits_Histo_.at(l), Hits_2D_.at(l), Hits_3D_.at(l);
+    delete Hits_Energy_Histo_.at(l), Hits_Energy_2D_.at(l), Hits_Energy_3D_.at(l);
+  }
+  delete Hits_Canvas_;
+  output_rootfile->Write();
+
+  TCanvas* PDF_Canvas_ParticlesHits_per_File = new TCanvas(); 
+  PDF_Canvas_ParticlesHits_per_File->Print("PDFCanvas_ParticlesHits_perFile.pdf[");
+  stringstream FilesCanvasName_eps, FilesCanvasName_C;
+
+  Files_Canvas->cd();
+
+  gStyle->SetOptStat(1);
+  //gStyle->SetOptStat(111111);
+
+  Files_Canvas->Clear();
+  Files_Canvas->SetLogy(0);
+  WritePrintHistogram(Files_Canvas_,ParticlesVSEvent, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+
+  Files_Canvas->Clear();
+  Files_Canvas->SetLogy(0);
+  WritePrintHistogram(Files_Canvas_,Particles,"", "PDFCanvas_ParticlesHits_perFile.pdf");
+
+  Files_Canvas->Clear();
+  Files_Canvas->SetLogy(1);
+  WritePrintHistogram(Files_Canvas_,Hits,"", "PDFCanvas_ParticlesHits_perFile.pdf");
+
+  PDF_Canvas_ParticlesHits_per_File->Print("PDFCanvas_ParticlesHits_perFile.pdf]");
+
+  delete PDF_Canvas_ParticlesHits_per_File;
+  delete Files_Canvas;
+
+} //End of function DrawingMacro 
+void WritePrintComparedHistogram(TCanvas* Canvas_, std::vector<TH1*> Histos_, std::string new_histo_title, int firstlayer, int lastlayer, bool Normalizing, std::string drawingoption, std::string PDFName){
   Canvas_->Update();
-  Canvas_->SetRightMargin(0.15);
-  Histos_.at(layers.at(iterator))->Draw(drawingoption.c_str());
+  Histos_.at(firstlayer)->SetTitle(new_histo_title.c_str());
+  Histos_.at(firstlayer)->SetLineColor(2);
+  Histos_.at(firstlayer)->SetMarkerStyle(20);
+  Histos_.at(firstlayer)->SetMarkerColor(2);
+  if (Normalizing) Histos_.at(firstlayer)->GetYaxis()->SetTitle("Normalized entries");
+  if (Normalizing) Histos_.at(firstlayer)->Scale(1.0/Histos_.at(firstlayer)->Integral());
+  Histos_.at(firstlayer)->Draw(drawingoption.c_str());
+  TPaveStats *st1 = (TPaveStats*) Histos_.at(firstlayer)->FindObject("stats");
+  double statboxsize = st1->GetY2NDC() - st1->GetY1NDC();
+  st1->SetTextColor(2);
+  st1->SetY1NDC(0.78);
+  st1->SetY2NDC(0.78 + statboxsize);
+
+  for (signed int l = firstlayer + 1; l <= lastlayer; ++l) {
+
+    if (std::find(hitLayers.begin(), hitLayers.end(), l) == hitLayers.end()) {
+      // If one layer has no hits, it isn't mentioned in the vector hitlayers.
+      //This layer is then skipped.
+      continue;
+    }
+
+    Histos_.at(l)->SetMarkerStyle(l+20);
+    if(l<3){
+      Histos_.at(l)->SetLineColor(l+2);
+      Histos_.at(l)->SetMarkerColor(l+2);
+    }
+    else{
+      Histos_.at(l)->SetLineColor(l+3);
+      Histos_.at(l)->SetMarkerColor(l+3);
+    }
+    if (Normalizing) Histos_.at(l)->GetYaxis()->SetTitle("Normalized entries");
+    if (Normalizing) Histos_.at(l)->Scale(1.0/Histos_.at(l)->Integral());
+    Histos_.at(l)->Draw("sames");
+    TPaveStats *st = (TPaveStats*) Histos_.at(l)->FindObject("stats");
+    if(l<3) st->SetTextColor(l+2);
+    else st->SetTextColor(l+3);
+    st->SetY2NDC(((TPaveStats*) Histos_.at(l - 1)->FindObject("stats"))->GetY1NDC()); //new x start position
+    st->SetY1NDC(st->GetY2NDC() - statboxsize); //new x end position
+  } 
   Canvas_->Write();
 
   stringstream CanvasName_eps, CanvasName_C;
-  CanvasName_eps << Canvas_->GetName() << "_" << Histos_.at(layers.at(iterator))->GetName()<< ".eps";
-  CanvasName_C << Canvas_->GetName() << "_" << Histos_.at(layers.at(iterator))->GetName()<< ".C";
+  CanvasName_eps << Canvas_->GetName() << "_" << Histo->GetName() << "_" << firstlayer << "-" << lastlayer << ".eps";
+  CanvasName_C << Canvas_->GetName() << "_" << Histo->GetName() << "_" << firstlayer << "-" << lastlayer << ".C";
+
+  Canvas_->Print(CanvasName_eps.str().c_str());
+  Canvas_->Print(CanvasName_C.str().c_str());
+  Canvas_->Print(PDFName.c_str());
+}
+void WritePrintComparedHistogram(TCanvas* Canvas_, TH1D* Histo, int firstlayer, int lastlayer, std::string drawingoption, std::string PDFName){
+  Canvas_->Update();
+  Histo->Draw(drawingoption.c_str());
+  Canvas_->Write();
+
+  stringstream CanvasName_eps, CanvasName_C;
+      CanvasName_eps << Canvas_->GetName() << "_" << Histo->GetName() << "_" << firstlayer << "-" << lastlayer << ".eps";
+      CanvasName_C << Canvas_->GetName() << "_" << Histo->GetName() << "_" << firstlayer << "-" << lastlayer << ".C";
+
+  Canvas_->Print(CanvasName_eps.str().c_str());
+  Canvas_->Print(CanvasName_C.str().c_str());
+  Canvas_->Print(PDFName.c_str());
+}
+void WritePrintHistogram(TCanvas* Canvas_, TH1D* Histos_, std::string drawingoption, std::string PDFName){
+  Canvas_->Update();
+  Canvas_->SetRightMargin(0.15);
+  Histos_->Draw(drawingoption.c_str());
+  Canvas_->Write();
+
+  stringstream CanvasName_eps, CanvasName_C;
+  CanvasName_eps << Canvas_->GetName() << "_" << Histos_->GetName()<< ".eps";
+  CanvasName_C << Canvas_->GetName() << "_" << Histos_->GetName()<< ".C";
 
   Canvas_->Print(CanvasName_eps.str().c_str());
   Canvas_->Print(CanvasName_C.str().c_str());
