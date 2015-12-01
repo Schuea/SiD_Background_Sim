@@ -11,13 +11,13 @@ class Subdetector{
     std::string GetName() const{
       return Name_;
     }
-    std::string GetStartLayerBin() const {
+    int GetStartLayerBin() const {
       return StartLayerBin_;
     }				
-    std::string GetLengthLayerBin() const {
+    int GetLengthLayerBin() const {
       return LengthLayerBin_;
     }				
-    std::string GetNumberOfLayers() const {
+    int GetNumberOfLayers() const {
       return NumberOfLayers_;
     }				
     std::vector<float> GetROOTEnergyHisto_binning const{
