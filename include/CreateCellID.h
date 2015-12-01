@@ -14,6 +14,11 @@ class CellID{
     virtual ~CellID() {}
     virtual void CreateCellID();
     virtual std::string GetCellID() const; 
+
+    int CellID_ToINTconversion(std::string const CellIDstring) const{
+	std::bitset<64> temp (CellIDstring);
+	return int(temp.to_ulong());
+    }
   
   private:
     CellID() : ID0_(-999), ID1_(-999) {}
