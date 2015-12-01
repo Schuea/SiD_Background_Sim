@@ -2,6 +2,7 @@
 #define SUBDETECTOR_H_
 
 #include "LayerCodeInCellID.h"
+#include <vector>
 
 class Subdetector{
 
@@ -21,7 +22,8 @@ class Subdetector{
     }				
     int GetNumberOfLayers() const {
       return NumberOfLayers_;
-    }				
+    }	
+    int GetLayer() const;
     std::vector<float> GetROOTEnergyHisto_binning() const{
       return ROOTEnergyHisto_binning;
     }				
@@ -34,6 +36,7 @@ class Subdetector{
     std::vector<float> GetROOTHisto_binning3D() const{
       return ROOTHisto_binning3D;
     }				
+    void SetupLayerInfo(int const cellID);
 
   protected:
     LayerCodeInCellID *LayerInfo_;

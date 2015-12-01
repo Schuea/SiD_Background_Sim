@@ -9,9 +9,9 @@
 #include "TTree.h"
 #include "TBranch.h"
 #include "TF1.h"
-#include "TH1.h"
-#include "TH2.h"
-#include "TH3.h"
+#include "TH1D.h"
+#include "TH2D.h"
+#include "TH3D.h"
 #include "TGraphErrors.h"
 #include "TStyle.h"
 #include "TPaveText.h"
@@ -37,16 +37,18 @@
 
 TFile* inputfile;
 TCanvas* Hits_Canvas_;
-std::vector<TH1*> ParticleOrigins_2D_;
-std::vector<TH1*> Hits_PerLayer_;
-std::vector<TH1*> Hits_Histo_;
-std::vector<TH1*> Hits_2D_;
-std::vector<TH1*> Hits_3D_;
-std::vector<TH1*> Hits_Energy_Histo_;
-std::vector<TH1*> Hits_Energy_2D_;
-std::vector<TH1*> Hits_Energy_3D_;
+std::vector<TH2D*> ParticleOrigins_2D_;
+std::vector<TH1D*> Hits_PerLayer_;
+std::vector<TH1D*> Hits_Histo_;
+std::vector<TH2D*> Hits_2D_;
+std::vector<TH3D*> Hits_3D_;
+std::vector<TH1D*> Hits_Energy_Histo_;
+std::vector<TH2D*> Hits_Energy_2D_;
+std::vector<TH3D*> Hits_Energy_3D_;
 
 int NUMBER_OF_FILES;
+int first_layer_to_be_compared;
+int last_layer_to_be_compared;
 
 void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, std::vector<std::string> argument_subdetectors){
   TH1::SetDefaultSumw2();
@@ -60,13 +62,13 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
   TH1D* Particles = new TH1D("Particles", "Particles", 100, 180000, 220000);
   TF1* gausfit_Particles = new TF1("gausfit", "gaus", 190000, 210000);
 
-  std::string subdetector_name;
-  std::stringstream several_subdetector_names;
+  std::string * subdetector_name2;
+  //std::stringstream several_subdetector_names;
 
   std::vector<Subdetector*> * SubDetectors;
-  SetupSubDetectorsVector(SubDetectors, several_subdetector_names, argument_subdetectors);
-
-  subdetector_name = several_subdetector_names.str();
+  SetupSubDetectorsVector(SubDetectors, subdetector_name2, argument_subdetectors);
+  std::string subdetector_name = *subdetector_name2;
+  //subdetector_name = several_subdetector_names.str();
 
   std::vector<float> axis_range_plot_1D = { }; //xbins, xlow, xup
   std::vector<float> axis_range_plot_2D = { }; //xbins, xlow, xup, ybins, ylow, yup
@@ -106,7 +108,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
 
   //Find the largest number of layers from all the subdetectors that are to be plotted
   for (int s = 0; s < SubDetectors->size(); ++s) {
-    MaxNumberLayers = FindMax(SubDetectors->at(s)->Number_layers, MaxNumberLayers); 
+    MaxNumberLayers = FindMax(SubDetectors->at(s)->GetNumberOfLayers(), MaxNumberLayers); 
   }
   for (int l = 0; l < MaxNumberLayers; ++l) {
 
@@ -116,21 +118,22 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
 
     std::stringstream layer;
     layer << l;
+    std::string layerstring = layer.str();
     Hits_Canvas_ = new TCanvas((Canvas_name + "_Hits_" + subdetector_name).c_str());
 
     gROOT->ForceStyle();
     gStyle->SetPalette(1);
 
-    stringstream* histo_name1D, histo_title1D,
-      histo_name2D, histo_title2D,
-      histo_name3D, histo_title3D,
-      energyhisto_name1D, energyhisto_title1D,
-      energyhisto_name2D, energyhisto_title2D,
-      energyhisto_name3D, energyhisto_title3D,
-      hitsperlayerhisto_name, hitsperlayerhisto_title,
-      particleoriginshisto_name, particleoriginshisto_title;
+    std::string *histo_name1D, *histo_title1D,
+      *histo_name2D, *histo_title2D,
+      *histo_name3D, *histo_title3D,
+      *energyhisto_name1D, *energyhisto_title1D,
+      *energyhisto_name2D, *energyhisto_title2D,
+      *energyhisto_name3D, *energyhisto_title3D,
+      *hitsperlayerhisto_name, *hitsperlayerhisto_title,
+      *particleoriginshisto_name, *particleoriginshisto_title;
 
-    SetupHistoTitles(subdetector_name, layer,
+    SetupHistoTitles(subdetector_name, layerstring,
         histo_name1D, histo_title1D,
         histo_name2D, histo_title2D,
         histo_name3D, histo_title3D,
@@ -140,14 +143,14 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
         hitsperlayerhisto_name, hitsperlayerhisto_title,
         particleoriginshisto_name, particleoriginshisto_title);
 
-    Setup_ParticleOriginsHisto(ParticleOrigins_2D_, axis_range_plot_3D, particleoriginshisto_name, particleoriginshisto_title, "cylindrical");
-    Setup_Histo(Hits_PerLayer_, axis_range_plot_1D, hitsperlayerhisto_name, hitsperlayerhisto_title);
-    Setup_Histo(Hits_Histo_, axis_range_plot_1D, histo_name1D, histo_title1D);
-    Setup_Histo(Hits_2D_, axis_range_plot_2D, histo_name2D, histo_title2D);
-    Setup_Histo(Hits_3D_, axis_range_plot_3D, histo_name3D, histo_title3D);
-    Setup_Histo(Hits_Energy_Histo_, axis_range_plot_energy_1D, energyhisto_name1D, energyhisto_title1D);
-    Setup_Histo(Hits_Energy_2D_, axis_range_plot_2D, energyhisto_name2D, energyhisto_title2D);
-    Setup_Histo(Hits_Energy_3D_, axis_range_plot_3D, energyhisto_name3D, energyhisto_title3D);
+    Setup_ParticleOriginsHisto(ParticleOrigins_2D_, axis_range_plot_3D, *particleoriginshisto_name, *particleoriginshisto_title, "cylindrical");
+    Setup_Histo(Hits_PerLayer_, axis_range_plot_1D, *hitsperlayerhisto_name, *hitsperlayerhisto_title);
+    Setup_Histo(Hits_Histo_, axis_range_plot_1D, *histo_name1D, *histo_title1D);
+    Setup_Histo(Hits_2D_, axis_range_plot_2D, *histo_name2D, *histo_title2D);
+    Setup_Histo(Hits_3D_, axis_range_plot_3D, *histo_name3D, *histo_title3D);
+    Setup_Histo(Hits_Energy_Histo_, axis_range_plot_energy_1D, *energyhisto_name1D, *energyhisto_title1D);
+    Setup_Histo(Hits_Energy_2D_, axis_range_plot_2D, *energyhisto_name2D, *energyhisto_title2D);
+    Setup_Histo(Hits_Energy_3D_, axis_range_plot_3D, *energyhisto_name3D, *energyhisto_title3D);
   }
   std::vector<int> hitLayers;
   for (int s = 0; s < SubDetectors->size(); ++s) {
@@ -165,7 +168,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
       inputfile->GetObject("Tree_MCP", Tree_MCP);
 
       int number_of_hits = 0;
-      number_of_hits = Get_TTree(SubDetectors->at(s)->GetName())->GetEntries();
+      number_of_hits = Get_TTree(inputfile,SubDetectors->at(s)->GetName())->GetEntries();
 
       std::cout << "The TTree " << Get_TTree(inputfile, SubDetectors->at(s)->GetName())->GetName() << " has " << number_of_hits
         << " entries." << std::endl;
@@ -190,19 +193,19 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
       Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitVertex_z", &vertex_z);
       Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitEnergy", &energy);
 
-      map<std::pair<int, int>, vector<float> > HitMapEnergy2D; //layer, bin, energies
-      map<std::pair<int, int>, vector<float> > HitMapEnergy3D; //layer, bin, energies
+      std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D; //layer, bin, energies
+      std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy3D; //layer, bin, energies
 
       for (std::size_t i = 0; i < number_of_hits; i++) {
-        Get_TTree(SubDetectors->at(s)->GetName())->GetEntry(i);
+        Get_TTree(inputfile, SubDetectors->at(s)->GetName())->GetEntry(i);
 
-        CellID SubdetectorCells;
-        InitializeCellIDClass(SubDetectors->at(s)->GetName(), id0, id1);
-        SubdetectorCells.CreateCellID();
+        CellID *SubdetectorCells;
+        InitializeCellIDClass(SubdetectorCells, SubDetectors->at(s)->GetName(), id0, id1);
+        SubdetectorCells->CreateCellID();
         CellIDkey = 0.;
-        CellIDkey = SubdetectorCells.CellID_ToINTconversion(SubdetectorCells.GetCellID());
+        CellIDkey = SubdetectorCells->CellID_ToINTconversion(SubdetectorCells->GetCellID());
 
-        LayerCodeInCellID LayerInfo(SubdetectorCells.GetCellID(),SubDetectors->at(s)->GetStartLayerBin(),SubDetectors->at(s)->GetLengthLayerBin());
+        LayerCodeInCellID LayerInfo(SubdetectorCells->GetCellID(),SubDetectors->at(s)->GetStartLayerBin(),SubDetectors->at(s)->GetLengthLayerBin());
         Layer_no = LayerInfo.GetLayer();
         if (std::find(hitLayers.begin(), hitLayers.end(), Layer_no) == hitLayers.end()) {
           hitLayers.push_back(Layer_no);
@@ -230,8 +233,8 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
 
       }
       int const colorrangeweight = 1000000000;
-      Fill_Histogram_from_Map(HitMapEnergy2D, &Hits_Energy_2D_, colorrangeweight);
-      Fill_Histogram_from_Map(HitMapEnergy3D, &Hits_Energy_3D_, colorrangeweight);
+      Fill_Histogram_from_Map<TH2D*>(HitMapEnergy2D, &Hits_Energy_2D_, colorrangeweight);
+      Fill_Histogram_from_Map<TH3D*>(HitMapEnergy3D, &Hits_Energy_3D_, colorrangeweight);
 
       int number_of_particles = 0;
       number_of_particles = Tree_MCP->GetEntries();
@@ -251,8 +254,9 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
       }
     }
     for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
-      if (iterator->second > 0) {
-          Hits_Histo_.at(SubDetectors->at(s)->ObtainLayerfromCellID(iterator->first, SubDetectors->at(s)->GetStartLayerBin(), SubDetectors->at(s)->GetLengthLayerBin()))->Fill(iterator->second);
+      if (iterator->second > 0) { 
+        SubDetectors->at(s)->SetupLayerInfo(iterator->first);
+        Hits_Histo_.at(SubDetectors->at(s)->GetLayer())->Fill(iterator->second);
       }
     }
 
@@ -276,19 +280,19 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
     Hits_Canvas_->SetLogy(0);
     Hits_Canvas_->SetLogx(0);
     Hits_Canvas_->SetLogz(0);
-    WritePrintHistogram(Hits_Canvas_, Hits_2D_.at(hitLayers.at(l)),"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
+    WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_2D_.at(hitLayers.at(l)),"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
 
     Hits_Canvas_->Update();
     Hits_Canvas_->SetLogy(0);
     Hits_Canvas_->SetLogx(0);
     Hits_Canvas_->SetLogz(0);
-    WritePrintHistogram(Hits_Canvas_, Hits_Energy_2D_.at(hitLayers.at(l)),"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
+    WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Energy_2D_.at(hitLayers.at(l)),"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
 
     Hits_Canvas_->Update();
     Hits_Canvas_->SetLogy(0);
     Hits_Canvas_->SetLogx(0);
     Hits_Canvas_->SetLogz(1);
-    WritePrintHistogram(Hits_Canvas_, ParticleOrigins_2D_.at(hitLayers.at(l)),"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
+    WritePrintHistogram<TH2D*>(Hits_Canvas_, ParticleOrigins_2D_.at(hitLayers.at(l)),"colz", "PDFCanvas_1D2D_Hits_Layers.pdf");
 
     Hits_Canvas_->Clear();
     gStyle->SetStatX(0.87);
@@ -296,19 +300,19 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
     Hits_Canvas_->SetLogy(0);
     Hits_Canvas_->SetLogx(0);
     Hits_Canvas_->SetLogz(0);
-    WritePrintHistogram(Hits_Canvas_, Hits_PerLayer_.at(hitLayers.at(l)),"", "PDFCanvas_1D2D_Hits_Layers.pdf");
+    WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_PerLayer_.at(hitLayers.at(l)),"", "PDFCanvas_1D2D_Hits_Layers.pdf");
 
     Hits_Canvas_->Update();
     Hits_Canvas_->SetLogy(1);
     Hits_Canvas_->SetLogx(0);
     Hits_Canvas_->SetLogz(0);
-    WritePrintHistogram(Hits_Canvas_, Hits_Histo_.at(hitLayers.at(l)),"", "PDFCanvas_1D2D_Hits_Layers.pdf");
+    WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Histo_.at(hitLayers.at(l)),"", "PDFCanvas_1D2D_Hits_Layers.pdf");
 
     Hits_Canvas_->Update();
     Hits_Canvas_->SetLogy(1);
     Hits_Canvas_->SetLogx(0);
     Hits_Canvas_->SetLogz(0);
-    WritePrintHistogram(Hits_Canvas_, Hits_Energy_Histo_.at(hitLayers.at(l)),"", "PDFCanvas_1D2D_Hits_Layers.pdf");
+    WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_.at(hitLayers.at(l)),"", "PDFCanvas_1D2D_Hits_Layers.pdf");
 
   }
   PDF_Canvas_1D2D_Hits_Layers->Print("PDFCanvas_1D2D_Hits_Layers.pdf]");
@@ -353,31 +357,31 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
       Hits_Canvas_->cd();
       Hits_Canvas_->Clear();
       Hits_Canvas_->SetLogy(0);
-      WritePrintComparedHistogram(Hit_Canvas_, MeanHits_PerLayer, first_layer_to_be_compared, end_of_range, "AP", "PDFCanvas_Hits_CompareLayers.pdf");
+      WritePrintComparedHistogram<TGraphErrors*>(Hits_Canvas_, MeanHits_PerLayer, first_layer_to_be_compared, end_of_range, "AP", "PDFCanvas_Hits_CompareLayers.pdf");
 
       Hits_Canvas_->Clear();
       gStyle->SetStatX(0.87);
       Hits_Canvas_->SetLogy(1);
-      stringstream new_histo_perlayer_title;
+      std::stringstream new_histo_perlayer_title;
       new_histo_perlayer_title << "Hits per layer for " << subdetector_name << " layers "
         << first_layer_to_be_compared << " - " << end_of_range;
-      WritePrintComparedHistogram(Hit_Canvas_, Hits_PerLayer_,new_histo_perlayer_title.str(), hitLayers, first_layer_to_be_compared, end_of_range, "", "PDFCanvas_Hits_CompareLayers.pdf");
+      WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_PerLayer_,new_histo_perlayer_title.str(), hitLayers, first_layer_to_be_compared, end_of_range, false, "", "PDFCanvas_Hits_CompareLayers.pdf");
 
       Hits_Canvas_->Clear();
       gStyle->SetStatX(0.87);
       Hits_Canvas_->SetLogy(1);
-      stringstream new_histo_title;
+      std::stringstream new_histo_title;
       new_histo_title << "Hit occupancy per cell for " << subdetector_name << " layers "
         << first_layer_to_be_compared << " - " << end_of_range;
-      WritePrintComparedHistogram(Hit_Canvas_, Hits_Histo_,new_histo_title.str(), hitLayers, first_layer_to_be_compared, end_of_range, true, "", "PDFCanvas_Hits_CompareLayers.pdf");
+      WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_Histo_,new_histo_title.str(), hitLayers, first_layer_to_be_compared, end_of_range, true, "", "PDFCanvas_Hits_CompareLayers.pdf");
 
       Hits_Canvas_->Clear();
       gStyle->SetStatX(0.87);
       Hits_Canvas_->SetLogy(1);
-      stringstream new_Energy_histo_title;
+      std::stringstream new_Energy_histo_title;
       new_Energy_histo_title << "Deposited hit energy for " << subdetector_name << " layers "
         << first_layer_to_be_compared << " - " << end_of_range;
-      WritePrintComparedHistogram(Hit_Canvas_, Hits_Energy_Histo_,new_Energy_histo_title.str(), hitLayers, first_layer_to_be_compared, end_of_range, true, "", "PDFCanvas_Hits_CompareLayers.pdf");
+      WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_,new_Energy_histo_title.str(), hitLayers, first_layer_to_be_compared, end_of_range, true, "", "PDFCanvas_Hits_CompareLayers.pdf");
 
     }//End of if-to-be-compared loop
     else {
@@ -396,7 +400,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
 
   TCanvas* PDF_Canvas_ParticlesHits_per_File = new TCanvas(); 
   PDF_Canvas_ParticlesHits_per_File->Print("PDFCanvas_ParticlesHits_perFile.pdf[");
-  stringstream FilesCanvasName_eps, FilesCanvasName_C;
+  std::stringstream FilesCanvasName_eps, FilesCanvasName_C;
 
   Files_Canvas->cd();
 
@@ -405,15 +409,15 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames, s
 
   Files_Canvas->Clear();
   Files_Canvas->SetLogy(0);
-  WritePrintHistogram(Files_Canvas_,ParticlesVSEvent, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+  WritePrintHistogram(Files_Canvas,ParticlesVSEvent, "", "PDFCanvas_ParticlesHits_perFile.pdf");
 
   Files_Canvas->Clear();
   Files_Canvas->SetLogy(0);
-  WritePrintHistogram(Files_Canvas_,Particles,"", "PDFCanvas_ParticlesHits_perFile.pdf");
+  WritePrintHistogram(Files_Canvas,Particles,"", "PDFCanvas_ParticlesHits_perFile.pdf");
 
   Files_Canvas->Clear();
   Files_Canvas->SetLogy(1);
-  WritePrintHistogram(Files_Canvas_,Hits,"", "PDFCanvas_ParticlesHits_perFile.pdf");
+  WritePrintHistogram(Files_Canvas,Hits,"", "PDFCanvas_ParticlesHits_perFile.pdf");
 
   PDF_Canvas_ParticlesHits_per_File->Print("PDFCanvas_ParticlesHits_perFile.pdf]");
 

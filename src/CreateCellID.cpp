@@ -3,10 +3,8 @@
 template<size_t sRes, size_t s1, size_t s2>
 std::bitset<sRes> concatString(const std::bitset<s1>& bs1,
     const std::bitset<s2>& bs2){
-  std::string string1;
-  string1 = bs1.to_string();
-  std::string string2;
-  string2 = bs2.to_string();
+  std::string string1 = bs1.to_string();
+  std::string string2 = bs2.to_string();
 
   std::bitset<sRes> res(string1 + string2);
   return res;
@@ -33,7 +31,7 @@ void CellID58bits::CreateCellID() {
   }				
   else{
     std::bitset<58> ID_bit;
-    ID_bit = std::bitset<std::numeric_limits<unsigned int>::digits>(ID_);
+    ID_bit = std::bitset<58>(ID_);
 
     CellID_bit_ = ID_bit;
   }
@@ -45,7 +43,7 @@ void CellID54bits::CreateCellID() {
   }				
   else{
     std::bitset<54> ID_bit;
-    ID_bit = std::bitset<std::numeric_limits<unsigned int>::digits>(ID_);
+    ID_bit = std::bitset<54>(ID_);
 
     CellID_bit_ = ID_bit;
   }

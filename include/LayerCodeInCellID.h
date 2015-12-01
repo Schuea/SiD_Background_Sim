@@ -10,8 +10,8 @@ class LayerCodeInCellID {
 
     virtual ~LayerCodeInCellID() {}
 
-    int GetLayer() const;				
-    int ObtainLayerfromCellID(int const cellid,  int const StarBin_layers, int const LengthBin_layers) const;
+    int GetLayer();				
+    int ObtainLayerfromCellID(int const cellid,  int const StarBin_layers, int const LengthBin_layers);
 
   private:
     LayerCodeInCellID() {}

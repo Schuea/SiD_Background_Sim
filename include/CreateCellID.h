@@ -11,9 +11,9 @@ class CellID{
     CellID(int ID) : ID_(ID){}
     CellID(int ID0, int ID1) : ID0_(ID0),ID1_(ID1){}
   
-    virtual ~CellID() {}
-    virtual void CreateCellID();
-    virtual std::string GetCellID() const; 
+    //virtual ~CellID() {}
+    virtual void CreateCellID(){}
+    virtual std::string GetCellID() const{}
 
     int CellID_ToINTconversion(std::string const CellIDstring) const{
 	std::bitset<64> temp (CellIDstring);
