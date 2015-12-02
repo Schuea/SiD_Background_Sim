@@ -6,7 +6,7 @@
 class LayerCodeInCellID {
 
   public:
-    LayerCodeInCellID(std::string const CellID, int const LayerInfoStart, int const LayerInfoLength) : CellID_(CellID), StartBin_layers(LayerInfoStart), LengthBin_layers(LayerInfoLength) {}
+    LayerCodeInCellID(std::string const CellID, int const LayerInfoStart, int const LayerInfoLength) : CellID_(CellID), StartBin_layers(LayerInfoStart), LengthBin_layers(LayerInfoLength), Layer(-1) {}
 
     virtual ~LayerCodeInCellID() {}
 

@@ -9,7 +9,9 @@ class Subdetector{
   public:
     Subdetector() {}
 
-    ~Subdetector() {}
+    //virtual ~Subdetector() {}
+
+    virtual void Initialize(){}
 
     std::string GetName() const{
       return Name_;

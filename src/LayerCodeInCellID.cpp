@@ -1,5 +1,6 @@
 #include "LayerCodeInCellID.h"
 
+#include <iostream>
 #include <limits>
 #include <stdexcept>
 #include <sstream>
@@ -11,7 +12,7 @@ int LayerCodeInCellID::FindLayer(std::string const CellID_, int const StarBin_la
   for (int i = StartBin_layers; i <= StartBin_layers + LengthBin_layers; ++i) {
     LayerID << CellID_.at(i);
   }
-
+  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
   std::bitset<64> LayerIDbit (LayerID.str());
   int Layer = 0;
   Layer = LayerIDbit.to_ulong();

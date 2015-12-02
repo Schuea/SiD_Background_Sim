@@ -25,12 +25,14 @@ extern bool inputfile_set = false;
 extern bool outputfile_set = false;
 extern bool subdetector_set = false;
 
+
   int main(int argc, char * argv[]){
 
-  std::vector<std::string> *inputfilenames;
-  std::vector<std::string> *subdetectors;
-  std::string *outputfilename;
+  std::vector<std::string> *inputfilenames = new std::vector<std::string>();
+  std::vector<std::string> *subdetectors = new std::vector<std::string>();
+  std::string *outputfilename = new std::string("");
   NUMBER_OF_FILES = 0;
+
   CheckArguments(argc, argv, inputfilenames, subdetectors, outputfilename);
 
   if (!inputfile_set || !outputfile_set || !subdetector_set || !NUMBER_OF_FILES_set) {
@@ -39,6 +41,7 @@ extern bool subdetector_set = false;
       << std::endl;
     Usage();
   }
+
   try {
     DrawingMacro(*outputfilename, *inputfilenames, *subdetectors);
   } catch (std::exception& e) {
@@ -52,7 +55,6 @@ void CheckArguments(int argc, char * argv[],  std::vector<std::string> *inputfil
   if (argc < 2) {
     Usage();
   }
-
   //First look for "-h", and store the number of files ("-n"):
   for (int i = 1; i < argc; i++) {
     if (argv[i] == std::string("-h") || argv[i] == std::string("--help=")) {

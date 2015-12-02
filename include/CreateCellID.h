@@ -4,12 +4,13 @@
 #include <bitset>
 #include <limits>
 #include <stdexcept>
+#include <iostream>
 
 class CellID{
 
   public:
-    CellID(int ID) : ID_(ID){}
-    CellID(int ID0, int ID1) : ID0_(ID0),ID1_(ID1){}
+    CellID(int ID) : ID_(ID), ID0_(-1), ID1_(-1){}
+    CellID(int ID0, int ID1) : ID0_(ID0),ID1_(ID1), ID_(-1){}
   
     //virtual ~CellID() {}
     virtual void CreateCellID(){}
