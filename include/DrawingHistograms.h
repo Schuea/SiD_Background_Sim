@@ -98,10 +98,9 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	//Scaling up the histogram ranges from the subdetector specific single layer hits plot, so that data fit on plot
 	//TF1* gausfit_Hits = new TF1("gausfit", "gaus", 0, 150);
 
+	int id = 0;
 	int id0 = 0;
 	int id1 = 0;
-	double cell_posx = 0;
-	double cell_posy = 0;
 	float x = 0;
 	float y = 0;
 	float z = 0;
@@ -189,6 +188,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 
 			SetBranchStatus(inputfile, SubDetectors->at(s)->GetName());
 
+			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitCellID", &id);
 			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitCellID0", &id0);
 			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitCellID1", &id1);
 			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitPosition_x", &x);
