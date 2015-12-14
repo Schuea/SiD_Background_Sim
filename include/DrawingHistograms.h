@@ -179,25 +179,15 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			TTree* Tree_MCP;
 			inputfile->GetObject("Tree_MCP", Tree_MCP);
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
+
 			int number_of_hits = 0;
 			number_of_hits = Get_TTree(inputfile, SubDetectors->at(s)->GetName())->GetEntries();
 
 			std::cout << "The TTree " << Get_TTree(inputfile, SubDetectors->at(s)->GetName())->GetName() << " has "
 					<< number_of_hits << " entries." << std::endl;
 
-			SetBranchStatus(inputfile, SubDetectors->at(s)->GetName());
+			SetBranches(Get_TTree(inputfile, SubDetectors->at(s)->GetName()));
 
-			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitCellID", &id);
-			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitCellID0", &id0);
-			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitCellID1", &id1);
-			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitPosition_x", &x);
-			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitPosition_y", &y);
-			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitPosition_z", &z);
-			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitVertex_x", &vertex_x);
-			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitVertex_y", &vertex_y);
-			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitVertex_z", &vertex_z);
-			Get_TTree(inputfile, SubDetectors->at(s)->GetName())->SetBranchAddress("HitEnergy", &energy);
 			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D; //layer, bin, energies
 			std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy3D; //layer, bin, energies

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 
+#include "DataClass.h"
 #include "UsefulFunctions.h"
 #include "CreateCellID.h"
 #include "Subdetector.h"
@@ -184,6 +185,7 @@ void Fill_Histogram_from_Map(std::map<std::pair<int, int>, std::vector<float> > 
 		Hits->at(temp_layer)->SetBinError(iterator->first.second, stddev * weight);
 	}
 }
+
 TTree* Get_TTree(TFile* inputfile, std::string subdetector_name) {
 	std::stringstream temp;
 	temp << "Tree_" << subdetector_name;
@@ -196,54 +198,31 @@ TTree* Get_TTree(TFile* inputfile, std::string subdetector_name) {
 	std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 	return Tree;
 }
-void SetBranchStatus(TFile* inputfile, std::string SubdetectorName) {
-	Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("*", kFALSE); // disable all
 
-	Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitPosition_x", kTRUE);
-	Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitPosition_y", kTRUE);
-	Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitPosition_z", kTRUE);
-	Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitVertex_x", kTRUE);
-	Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitVertex_y", kTRUE);
-	Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitVertex_z", kTRUE);
-	Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitEnergy", kTRUE);
-	if (SubdetectorName == std::string("EcalBarrel")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID0", kTRUE);
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID1", kTRUE);
-	} else if (SubdetectorName == std::string("EcalEndcap")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID0", kTRUE);
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID1", kTRUE);
-	} else if (SubdetectorName == std::string("HcalBarrel")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID0", kTRUE);
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID1", kTRUE);
-	} else if (SubdetectorName == std::string("HcalEndcap")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID0", kTRUE);
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID1", kTRUE);
-	} else if (SubdetectorName == std::string("MuonBarrel")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID0", kTRUE);
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID1", kTRUE);
-	} else if (SubdetectorName == std::string("MuonEndcap")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID0", kTRUE);
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID1", kTRUE);
-	} else if (SubdetectorName == std::string("BeamCal")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID0", kTRUE);
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID1", kTRUE);
-	} else if (SubdetectorName == std::string("LumiCal")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID0", kTRUE);
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID1", kTRUE);
-	} else if (SubdetectorName == std::string("SiVertexBarrel")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID", kTRUE);
-	} else if (SubdetectorName == std::string("SiVertexEndcap")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID", kTRUE);
-	} else if (SubdetectorName == std::string("SiTrackerBarrel")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID", kTRUE);
-	} else if (SubdetectorName == std::string("SiTrackerEndcap")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID", kTRUE);
-	} else if (SubdetectorName == std::string("SiTrackerForward")) {
-		Get_TTree(inputfile, SubdetectorName)->SetBranchStatus("HitCellID", kTRUE);
-	} else {
-		std::cerr << "The given name doesn't match any subdetector!" << std::endl;
+void SetBranches(TTree* const tree){
+	Data* data;
+	if (tree == std::string("Tree_EcalBarrel") ||
+			tree == std::string("Tree_EcalEndcap") ||
+			tree == std::string("Tree_HcalBarrel") ||
+			tree == std::string("Tree_HcalEndcap") ||
+			tree == std::string("Tree_MuonBarrel") ||
+			tree == std::string("Tree_MuonEndcap") ||
+			tree == std::string("Tree_BeamCal") ||
+			tree == std::string("Tree_LumiCal") ){
+		data = new DataSimCalorimeterHit();
+	}
+	else if (tree == std::string("Tree_SiVertexBarrel") ||
+			tree == std::string("Tree_SiVertexEndcap") ||
+			tree == std::string("Tree_SiTrackerBarrel") ||
+			tree == std::string("Tree_SiTrackerEndcap") ||
+			tree == std::string("Tree_SiTrackerForward") ){
+		data = new DataSimTrackerHit();
+	}
+	else{
+		std::cerr << "The given TTree name does not match any TTree in the inputfile!" << std::endl;
 		std::terminate();
 	}
+	data->SetBranches(tree);
 }
 
 void SetupSubDetectorsVector(std::vector<Subdetector*> * SubDetectors, std::string *several_subdetector_names,
