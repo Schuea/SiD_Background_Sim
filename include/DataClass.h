@@ -8,6 +8,10 @@
 #ifndef DATACLASS_H_
 #define DATACLASS_H_
 
+#include "TTree.h"
+#include "TBranch.h"
+
+
 class Data {
 
 public:

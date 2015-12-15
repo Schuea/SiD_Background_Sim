@@ -201,21 +201,21 @@ TTree* Get_TTree(TFile* inputfile, std::string subdetector_name) {
 
 void SetBranches(TTree* const tree){
 	Data* data;
-	if (tree == std::string("Tree_EcalBarrel") ||
-			tree == std::string("Tree_EcalEndcap") ||
-			tree == std::string("Tree_HcalBarrel") ||
-			tree == std::string("Tree_HcalEndcap") ||
-			tree == std::string("Tree_MuonBarrel") ||
-			tree == std::string("Tree_MuonEndcap") ||
-			tree == std::string("Tree_BeamCal") ||
-			tree == std::string("Tree_LumiCal") ){
+	if (tree->GetName() == std::string("Tree_EcalBarrel") ||
+			tree->GetName() == std::string("Tree_EcalEndcap") ||
+			tree->GetName() == std::string("Tree_HcalBarrel") ||
+			tree->GetName() == std::string("Tree_HcalEndcap") ||
+			tree->GetName() == std::string("Tree_MuonBarrel") ||
+			tree->GetName() == std::string("Tree_MuonEndcap") ||
+			tree->GetName() == std::string("Tree_BeamCal") ||
+			tree->GetName() == std::string("Tree_LumiCal") ){
 		data = new DataSimCalorimeterHit();
 	}
-	else if (tree == std::string("Tree_SiVertexBarrel") ||
-			tree == std::string("Tree_SiVertexEndcap") ||
-			tree == std::string("Tree_SiTrackerBarrel") ||
-			tree == std::string("Tree_SiTrackerEndcap") ||
-			tree == std::string("Tree_SiTrackerForward") ){
+	else if (tree->GetName() == std::string("Tree_SiVertexBarrel") ||
+			tree->GetName() == std::string("Tree_SiVertexEndcap") ||
+			tree->GetName() == std::string("Tree_SiTrackerBarrel") ||
+			tree->GetName() == std::string("Tree_SiTrackerEndcap") ||
+			tree->GetName() == std::string("Tree_SiTrackerForward") ){
 		data = new DataSimTrackerHit();
 	}
 	else{
