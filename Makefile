@@ -6,10 +6,11 @@ LIBS=$(shell root-config --libs) -L ~/phd/code/photons/tmva/TMVA-v4.2.0/lib -l T
 
 #OBJECT FILES
 MAIN=objects/main.o
+DATACLASS=objects/DataClass.o
 CREATECELLID=objects/CreateCellID.o
 SUBDETECTOR=objects/Subdetector.o
 LAYERCODE=objects/LayerCodeInCellID.o
-OBJECTS = $(CREATECELLID) $(SUBDETECTOR) $(LAYERCODE)
+OBJECTS = $(DATACLASS) $(CREATECELLID) $(SUBDETECTOR) $(LAYERCODE)
 
 all: Run
 
@@ -17,6 +18,9 @@ Run: $(MAIN) $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDES) $^ $(LIBS) -o $@
 
 objects/main.o: src/main.cpp 
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+objects/DataClass.o: src/DataClass.cpp 
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 objects/LayerCodeInCellID.o: src/LayerCodeInCellID.cpp 
