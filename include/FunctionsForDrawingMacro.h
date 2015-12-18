@@ -199,30 +199,41 @@ TTree* Get_TTree(TFile* inputfile, std::string subdetector_name) {
 	return Tree;
 }
 
-void SetBranches(TTree* const tree){
+Data* SetBranches(TTree* const tree) {
 	Data* data;
-	if (tree->GetName() == std::string("Tree_EcalBarrel") ||
-			tree->GetName() == std::string("Tree_EcalEndcap") ||
-			tree->GetName() == std::string("Tree_HcalBarrel") ||
-			tree->GetName() == std::string("Tree_HcalEndcap") ||
-			tree->GetName() == std::string("Tree_MuonBarrel") ||
-			tree->GetName() == std::string("Tree_MuonEndcap") ||
-			tree->GetName() == std::string("Tree_BeamCal") ||
-			tree->GetName() == std::string("Tree_LumiCal") ){
+	if (tree->GetName() == std::string("Tree_EcalBarrel") || tree->GetName() == std::string("Tree_EcalEndcap")
+			|| tree->GetName() == std::string("Tree_HcalBarrel") || tree->GetName() == std::string("Tree_HcalEndcap")
+			|| tree->GetName() == std::string("Tree_MuonBarrel") || tree->GetName() == std::string("Tree_MuonEndcap")
+			|| tree->GetName() == std::string("Tree_BeamCal") || tree->GetName() == std::string("Tree_LumiCal")) {
 		data = new DataSimCalorimeterHit();
-	}
-	else if (tree->GetName() == std::string("Tree_SiVertexBarrel") ||
-			tree->GetName() == std::string("Tree_SiVertexEndcap") ||
-			tree->GetName() == std::string("Tree_SiTrackerBarrel") ||
-			tree->GetName() == std::string("Tree_SiTrackerEndcap") ||
-			tree->GetName() == std::string("Tree_SiTrackerForward") ){
+	} else if (tree->GetName() == std::string("Tree_SiVertexBarrel")
+			|| tree->GetName() == std::string("Tree_SiVertexEndcap")
+			|| tree->GetName() == std::string("Tree_SiTrackerBarrel")
+			|| tree->GetName() == std::string("Tree_SiTrackerEndcap")
+			|| tree->GetName() == std::string("Tree_SiTrackerForward")) {
 		data = new DataSimTrackerHit();
-	}
-	else{
+	} else {
 		std::cerr << "The given TTree name does not match any TTree in the inputfile!" << std::endl;
 		std::terminate();
 	}
 	data->SetBranches(tree);
+	return data;
+}
+
+bool DecideIfTrackerHistograms(std::vector<std::string> argument_subdetectors) {
+	bool YesNo_TrackerHistograms = false;
+	for (int iterator = 0; iterator < argument_subdetectors.size(); ++iterator) {
+		if (argument_subdetectors.at(iterator) == std::string("SiVertexBarrel")
+				|| argument_subdetectors.at(iterator) == std::string("SiVertexEndcap")
+				|| argument_subdetectors.at(iterator) == std::string("SiTrackerBarrel")
+				|| argument_subdetectors.at(iterator) == std::string("SiTrackerEndcap")
+				|| argument_subdetectors.at(iterator) == std::string("SiTrackerForward")
+				|| argument_subdetectors.at(iterator) == std::string("allTracker")
+				|| argument_subdetectors.at(iterator) == std::string("all")) {
+			YesNo_TrackerHistograms = true;
+		}
+	}
+	return YesNo_TrackerHistograms;
 }
 
 void SetupSubDetectorsVector(std::vector<Subdetector*> * SubDetectors, std::string *several_subdetector_names,
@@ -314,17 +325,25 @@ void SetupSubDetectorsVector(std::vector<Subdetector*> * SubDetectors, std::stri
 		std::cout << SubDetectors->at(i)->GetName() << std::endl;
 	}
 }
-void InitializeCellIDClass(CellID *SubdetectorCells, std::string SubdetectorName, int id0, int id1) {
-	if (id0 >= 0 && id1 >= 0)
-		SubdetectorCells = new CellID64bits(id0, id1);
-	else if (id0 >= 0 && id1 < 0) {
+void InitializeCellIDClass(CellID *SubdetectorCells, std::string SubdetectorName, Data* data) {
+	if (data->ids.size() == 2) {
+		if (data->ids.at(0) <= 0 || data->ids.at(1) <= 0) {
+			std::cerr << "The cell ids are not valid! Initializing the CellID class is not possible!" << std::endl;
+			std::terminate();
+		}
+		SubdetectorCells = new CellID64bits(data->ids.at(0), data->ids.at(1));
+	} else if (data->ids.size() == 1) {
+		if (data->ids.at(0) <= 0) {
+			std::cerr << "The cell id is not valid! Initializing the CellID class is not possible!" << std::endl;
+			std::terminate();
+		}
 		if (SubdetectorName == std::string("SiVertexBarrel") || SubdetectorName == std::string("SiVertexEndcap")
 				|| SubdetectorName == std::string("SiTrackerForward")) {
-			SubdetectorCells = new CellID58bits(id0);
+			SubdetectorCells = new CellID58bits(data->ids.at(0));
 			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
-		}
-		if (SubdetectorName == std::string("SiTrackerBarrel") || SubdetectorName == std::string("SiTrackerEndcap")) {
-			SubdetectorCells = new CellID54bits(id0);
+		} else if (SubdetectorName == std::string("SiTrackerBarrel")
+				|| SubdetectorName == std::string("SiTrackerEndcap")) {
+			SubdetectorCells = new CellID54bits(data->ids.at(0));
 			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 		} else {
 			std::cerr
@@ -332,10 +351,9 @@ void InitializeCellIDClass(CellID *SubdetectorCells, std::string SubdetectorName
 					<< std::endl;
 			std::terminate();
 		}
-		if (id0 < 0 && id1 < 0) {
-			std::cerr << "The cell ids are not valid! Initializing the CellID class is not possible!" << std::endl;
-			std::terminate();
-		}
+	} else {
+		std::cerr << "The cell ids were not set! Initializing the CellID class is not possible!" << std::endl;
+		std::terminate();
 	}
 }
 

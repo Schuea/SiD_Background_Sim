@@ -66,15 +66,13 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	TH1D* Particles = new TH1D("Particles", "Particles", 100, 180000, 220000);
 	TF1* gausfit_Particles = new TF1("gausfit", "gaus", 190000, 210000);
 
+	bool YesNo_TrackerHistograms = DecideIfTrackerHistograms(argument_subdetectors);
+
 	std::string * subdetector_name2 = new std::string("");
-	//std::stringstream several_subdetector_names;
-
 	std::vector<Subdetector*> * SubDetectors = new std::vector<Subdetector*>();
-	std::cout << "argument_subdetectors: " << std::endl;
-
 	SetupSubDetectorsVector(SubDetectors, subdetector_name2, argument_subdetectors);
 	std::string subdetector_name = *subdetector_name2;
-	//subdetector_name = several_subdetector_names.str();
+
 	std::cout << "Subdetectors: " << std::endl;
 	for (int i = 0; i < SubDetectors->size(); ++i) {
 		std::cout << SubDetectors->at(i)->GetName() << std::endl;
@@ -98,6 +96,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	//Scaling up the histogram ranges from the subdetector specific single layer hits plot, so that data fit on plot
 	//TF1* gausfit_Hits = new TF1("gausfit", "gaus", 0, 150);
 
+	/*
 	int id = 0;
 	int id0 = 0;
 	int id1 = 0;
@@ -108,6 +107,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	double vertex_y = 0;
 	double vertex_z = 0;
 	float energy = 0;
+	*/
 	int MaxNumberLayers = 0;
 	int Layer_no = 0;
 	int CellIDkey = 0.;
@@ -186,7 +186,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 			std::cout << "The TTree " << Get_TTree(inputfile, SubDetectors->at(s)->GetName())->GetName() << " has "
 					<< number_of_hits << " entries." << std::endl;
 
-			SetBranches(Get_TTree(inputfile, SubDetectors->at(s)->GetName()));
+			Data* data = SetBranches(Get_TTree(inputfile, SubDetectors->at(s)->GetName()));
 
 			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D; //layer, bin, energies
@@ -194,10 +194,13 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 
 			for (std::size_t i = 0; i < number_of_hits; i++) {
 				Get_TTree(inputfile, SubDetectors->at(s)->GetName())->GetEntry(i);
+				std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
 				CellID *SubdetectorCells;
-				InitializeCellIDClass(SubdetectorCells, SubDetectors->at(s)->GetName(), id0, id1);
+				InitializeCellIDClass(SubdetectorCells, SubDetectors->at(s)->GetName(), data);
+				std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 				SubdetectorCells->CreateCellID();
+				std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 				CellIDkey = 0.;
 				CellIDkey = SubdetectorCells->CellID_ToINTconversion(SubdetectorCells->GetCellID());
 				std::cout << __FILE__ << ": " << __LINE__ << std::endl;
@@ -211,10 +214,16 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				//Fill Maps:
 				HitsPerLayerMap[Layer_no].at(fileIterator) += 1;
 
-				HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(
-						energy);
-				HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(
-						energy);
+				float energy = 0.;
+				if (YesNo_TrackerHistograms) energy = data->Get_dEdx_hit();
+				if (!YesNo_TrackerHistograms) energy = data->Get_energy_hit();
+				std::array <double, 3> vertex = {0};
+				if (YesNo_TrackerHistograms) vertex = data->Get_vertex_particle();
+				if (!YesNo_TrackerHistograms) vertex = data->Get_vertex_mother();
+
+
+				HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(data->Get_x_hit(), data->Get_y_hit()))].push_back(energy);
+				HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(data->Get_z_hit(), data->Get_x_hit(), data->Get_y_hit()))].push_back(energy);
 
 				if (HitMap.find(CellIDkey) == HitMap.end()) {
 					HitMap[CellIDkey] = 1;
@@ -224,9 +233,9 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 				//Fill histograms:
 				Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
-				ParticleOrigins_2D_.at(Layer_no)->Fill(vertex_z, sqrt(pow(vertex_x, 2) + pow(vertex_y, 2)));
-				Hits_2D_.at(Layer_no)->Fill(x, y);
-				Hits_3D_.at(Layer_no)->Fill(z, x, y);
+				ParticleOrigins_2D_.at(Layer_no)->Fill(vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
+				Hits_2D_.at(Layer_no)->Fill(data->Get_x_hit(), data->Get_y_hit());
+				Hits_3D_.at(Layer_no)->Fill(data->Get_z_hit(), data->Get_x_hit(), data->Get_y_hit());
 				std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			}
 			int const colorrangeweight = 1000000000;

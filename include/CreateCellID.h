@@ -12,9 +12,9 @@ class CellID{
     CellID(int ID) : ID_(ID), ID0_(-1), ID1_(-1){}
     CellID(int ID0, int ID1) : ID0_(ID0),ID1_(ID1), ID_(-1){}
   
-    //virtual ~CellID() {}
-    virtual void CreateCellID(){}
-    virtual std::string GetCellID() const{}
+    virtual ~CellID() {}
+    virtual void CreateCellID(){std::cout << "This should not be called!" << std::endl;}
+    virtual std::string GetCellID() const{return "";}
 
     int CellID_ToINTconversion(std::string const CellIDstring) const{
 	std::bitset<64> temp (CellIDstring);
@@ -22,16 +22,16 @@ class CellID{
     }
   
   private:
-    CellID() : ID0_(-999), ID1_(-999) {}
-    CellID(float ID) : ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(double ID) : ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID() : ID0_(-1), ID1_(-1), ID_(-1) {}
+    CellID(float ID) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(double ID) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
 
-    CellID(float ID0, float ID1) : ID0_(-1),ID1_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(int ID0, float ID1) : ID0_(-1),ID1_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(float ID0, int ID1) : ID0_(-1),ID1_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(double ID0, double ID1) : ID0_(-1),ID1_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(int ID0, double ID1) : ID0_(-1),ID1_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(double ID0, int ID1) : ID0_(-1),ID1_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(float ID0, float ID1) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(int ID0, float ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(float ID0, int ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(double ID0, double ID1) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(int ID0, double ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(double ID0, int ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
 
   protected:
     int ID_;

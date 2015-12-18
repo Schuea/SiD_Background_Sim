@@ -14,11 +14,11 @@ class LayerCodeInCellID {
     int ObtainLayerfromCellID(int const cellid,  int const StarBin_layers, int const LengthBin_layers);
 
   private:
-    LayerCodeInCellID() {}
-    LayerCodeInCellID(int ID) {}
-    LayerCodeInCellID(long ID) {}
-    LayerCodeInCellID(float ID) {}
-    LayerCodeInCellID(double ID) {}
+    LayerCodeInCellID(): CellID_(""), StartBin_layers(-1), LengthBin_layers(-1), Layer(-1) {}
+    LayerCodeInCellID(int ID): CellID_(""), StartBin_layers(-1), LengthBin_layers(-1), Layer(-1) {}
+    LayerCodeInCellID(long ID): CellID_(""), StartBin_layers(-1), LengthBin_layers(-1), Layer(-1) {}
+    LayerCodeInCellID(float ID): CellID_(""), StartBin_layers(-1), LengthBin_layers(-1), Layer(-1) {}
+    LayerCodeInCellID(double ID): CellID_(""), StartBin_layers(-1), LengthBin_layers(-1), Layer(-1) {}
 
     int Layer;
     int StartBin_layers;

@@ -100,7 +100,7 @@ void DataSimTrackerHit::SetBranchStatus(TTree* const tree) {
 	tree->SetBranchStatus("HitMomentum_y", kTRUE);
 	tree->SetBranchStatus("HitMomentum_z", kTRUE);
 
-	tree->SetBranchStatus("HitParticleLCIO_id", kTRUE);
+	tree->SetBranchStatus("HitParticleLCIO_ID", kTRUE);
 	tree->SetBranchStatus("HitParticleCreationTime", kTRUE);
 
 	tree->SetBranchStatus("HitParticleVertex_x", kTRUE);
@@ -135,7 +135,7 @@ void DataSimTrackerHit::SetBranchAddresses(TTree* const tree) {
 	tree->Branch("HitMomentum_y", &momentum_y_hit, "HitMomentum_y/F");
 	tree->Branch("HitMomentum_z", &momentum_z_hit, "HitMomentum_z/F");
 
-	tree->Branch("HitParticleLCIO_id", &LCIO_id_particle, "HitParticleLCIO_id/I");
+	tree->Branch("HitParticleLCIO_ID", &LCIO_id_particle, "HitParticleLCIO_ID/I");
 	tree->Branch("HitParticleCreationTime", &time_creation_particle, "HitParticleCreationTime/F");
 
 	tree->Branch("HitParticleVertex_x", &vertex_x_particle, "HitParticleVertex_x/D");
