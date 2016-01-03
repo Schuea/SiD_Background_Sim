@@ -6,7 +6,13 @@
 class LayerCodeInCellID {
 
   public:
-    LayerCodeInCellID(std::string const CellID, int const LayerInfoStart, int const LayerInfoLength) : CellID_(CellID), StartBin_layers(LayerInfoStart), LengthBin_layers(LayerInfoLength), Layer(-1) {}
+    LayerCodeInCellID(std::string const CellID, 
+        int const LayerInfoStart, 
+        int const LayerInfoLength) : 
+      CellID_(CellID), 
+      StartBin_layers(LayerInfoStart), 
+      LengthBin_layers(LayerInfoLength), 
+      Layer(-1) {}
 
     virtual ~LayerCodeInCellID() {}
 
@@ -20,7 +26,7 @@ class LayerCodeInCellID {
     LayerCodeInCellID(float ID): CellID_(""), StartBin_layers(-1), LengthBin_layers(-1), Layer(-1) {}
     LayerCodeInCellID(double ID): CellID_(""), StartBin_layers(-1), LengthBin_layers(-1), Layer(-1) {}
 
-    int Layer;
+    unsigned long Layer;
     int StartBin_layers;
     int LengthBin_layers;
 
