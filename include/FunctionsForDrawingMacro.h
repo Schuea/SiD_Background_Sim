@@ -306,36 +306,44 @@ void SetupSubDetectorsVector(std::vector<Subdetector*> * SubDetectors, std::stri
 	}
 }
 CellID * InitializeCellIDClass(std::string SubdetectorName, Data* data) {
-	if (data->ids.size() == 2) {
-		if (data->ids.at(0) <= 0 || data->ids.at(1) <= 0) {
-			std::cerr << "The cell ids are not valid! Initializing the CellID class is not possible!" << std::endl;
-			std::terminate();
-		}
-    std::cout << "id0 = " << data->ids.at(0) << std::endl;
-    std::cout << "id1 = " << data->ids.at(1) << std::endl;
-		return new CellID64bits(data->ids.at(0), data->ids.at(1));
-	} else if (data->ids.size() == 1) {
-		if (data->ids.at(0) <= 0) {
-			std::cerr << "The cell id is not valid! Initializing the CellID class is not possible!" << std::endl;
-			std::terminate();
-		}
-    std::cout << "id = " << data->ids.at(0) << std::endl;
-		if (SubdetectorName == std::string("SiVertexBarrel") || SubdetectorName == std::string("SiVertexEndcap")
-				|| SubdetectorName == std::string("SiTrackerForward")) {
-			return new CellID58bits(data->ids.at(0));
-		} else if (SubdetectorName == std::string("SiTrackerBarrel")
-				|| SubdetectorName == std::string("SiTrackerEndcap")) {
-			return new CellID54bits(data->ids.at(0));
-		} else {
-			std::cerr
-					<< "This subdetector name is unkown. The CellID classes CellID58bits or CellID54bits could not be inititalized!"
-					<< std::endl;
-			std::terminate();
-		}
-	} else {
-		std::cerr << "The cell ids were not set! Initializing the CellID class is not possible!" << std::endl;
-		std::terminate();
-	}
+  if (SubdetectorName == std::string("SiVertexBarrel") || SubdetectorName == std::string("SiVertexEndcap")
+      || SubdetectorName == std::string("SiTrackerForward")) {
+    if (data->Get_id() == 0) {
+      std::cerr << "The cell id is not valid! Initializing the CellID class is not possible!" << std::endl;
+      std::terminate();
+    }
+    else return new CellID58bits(data->Get_id());
+  } else if (SubdetectorName == std::string("SiTrackerBarrel")
+      || SubdetectorName == std::string("SiTrackerEndcap")) {
+    if (data->Get_id() == 0) {
+      std::cerr << "The cell id is not valid! Initializing the CellID class is not possible!" << std::endl;
+      std::terminate();
+    }
+    else return new CellID54bits(data->Get_id());
+  } else if (SubdetectorName == std::string("EcalBarrel")
+      || SubdetectorName == std::string("EcalEndcap")
+      || SubdetectorName == std::string("HcalBarrel")
+      || SubdetectorName == std::string("HcalEndcap")
+      || SubdetectorName == std::string("MuonBarrel")
+      || SubdetectorName == std::string("MuonEndcap")
+      || SubdetectorName == std::string("LumiCal")
+      || SubdetectorName == std::string("BeamCal")){
+
+      std::cout << "id0 = " << data->Get_id0() << std::endl;
+      std::cout << "id1 = " << data->Get_id1() << std::endl;
+    if (data->Get_id0() == 0 || data->Get_id1() == 0) {
+      std::cerr << "The cell ids are not valid! Initializing the CellID class is not possible!" << std::endl;
+      std::terminate();
+    }else {
+      return new CellID64bits(data->Get_id0(), data->Get_id1());
+    }
+  }  
+  else {
+    std::cerr
+      << "This subdetector name is unkown. The CellID class could not be inititalized!"
+      << std::endl;
+    std::terminate();
+  }
 }
 
 void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<float> *axis_range_plot_1D,

@@ -36,6 +36,7 @@ int LayerCodeInCellID::GetLayer(int const cellid,
         int const StartBin_layers, 
         int const LengthBin_layers){
   std::bitset<64> cellidbit(cellid);
+
   Layer = -1;
   Layer = FindLayer(cellidbit.to_string(), StartBin_layers, LengthBin_layers);
   if (Layer >= 0){

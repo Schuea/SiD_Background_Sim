@@ -16,7 +16,6 @@ class Data {
 public:
 	Data() {}
 
-	std::vector<int> ids;
 	int Get_event_id() const {
 		return event_id;
 	}
@@ -29,6 +28,9 @@ public:
 	float Get_z_hit() const {
 		return z_hit;
 	}
+  virtual int Get_id() const {return 0;}
+  virtual int Get_id0() const {return 0;}
+  virtual int Get_id1() const {return 0;}
 	virtual float Get_energy_hit() const {return 0.0;}
 	virtual int Get_number_contributionsToHit() const {return 0;}
 	virtual float Get_energy_contribution() const {return 0.0;}
@@ -76,7 +78,6 @@ public:
 	virtual float Get_charge_particle() const {return 0.0;}
 	virtual double Get_energy_particle() const {return 0.0;}
 
-	virtual void Fill_ids() = 0;
 
 	virtual void SetBranchStatus(TTree* const tree) = 0;
 	virtual void SetBranchAddresses(TTree* const tree) = 0;
@@ -95,6 +96,12 @@ class DataSimCalorimeterHit: public Data {
 public:
 	DataSimCalorimeterHit() {}
 
+  int Get_id0() const {
+    return id0;
+  }
+  int Get_id1() const {
+    return id1;
+  }
 	float Get_energy_hit() const {
 		return energy_hit;
 	}
@@ -174,11 +181,6 @@ public:
 		return energy_mother;
 	}
 
-	void Fill_ids() {
-		ids.clear();
-		ids.push_back(id0);
-		ids.push_back(id1);
-	}
 
 	void SetBranchStatus(TTree* const tree);
 	void SetBranchAddresses(TTree* const tree);
@@ -214,6 +216,9 @@ class DataSimTrackerHit: public Data {
 public:
 	DataSimTrackerHit() {}
 
+  int Get_id() const {
+    return id;
+  }
 	float Get_dEdx_hit() const {
 		return dEdx_hit;
 	}
@@ -300,10 +305,6 @@ public:
 		return energy_particle;
 	}
 
-	void Fill_ids() {
-		ids.clear();
-		ids.push_back(id);
-	}
 
 	void SetBranchStatus(TTree* const tree);
 	void SetBranchAddresses(TTree* const tree);

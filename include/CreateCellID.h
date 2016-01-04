@@ -44,7 +44,8 @@ class CellID64bits : public CellID {
     CellID64bits(int ID0, int ID1) : CellID(ID0, ID1) {}
     void CreateCellID();
     std::string GetCellID() const {
-      if ((ID0_ == 0 && ID1_ == 0) || ID0_ < 0 || ID1_ <0){
+      //if ((ID0_ == 0 && ID1_ == 0) || ID0_ < 0 || ID1_ <0){
+      if (ID0_ == 0 && ID1_ == 0){
         throw std::runtime_error("The CellID was not set. Invalid IDs!");
       }				
       else return CellID_bit_.to_string();

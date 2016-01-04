@@ -10,7 +10,6 @@
 void Data::SetBranches(TTree* const tree){
 	SetBranchStatus(tree);
 	SetBranchAddresses(tree);
-  Fill_ids();
 }
 
 void DataSimCalorimeterHit::SetBranchStatus(TTree* const tree) {

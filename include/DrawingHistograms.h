@@ -192,7 +192,6 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 
 			for (std::size_t i = 0; i < number_of_hits; i++) {
 				SubdetectorTree->GetEntry(i);
-				std::cout <<  "data->ids.size()= " << data->ids.size() << std::endl;
 
 				CellID *SubdetectorCells = InitializeCellIDClass(SubDetectors->at(s)->GetName(), data);
 				std::cout << SubdetectorCells << std::endl;
