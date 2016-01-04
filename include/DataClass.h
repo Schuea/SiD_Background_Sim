@@ -8,6 +8,8 @@
 #ifndef DATACLASS_H_
 #define DATACLASS_H_
 
+#include <array>
+
 #include "TTree.h"
 #include "TBranch.h"
 
