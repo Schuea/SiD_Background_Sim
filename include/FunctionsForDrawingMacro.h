@@ -311,12 +311,15 @@ CellID * InitializeCellIDClass(std::string SubdetectorName, Data* data) {
 			std::cerr << "The cell ids are not valid! Initializing the CellID class is not possible!" << std::endl;
 			std::terminate();
 		}
+    std::cout << "id0 = " << data->ids.at(0) << std::endl;
+    std::cout << "id1 = " << data->ids.at(1) << std::endl;
 		return new CellID64bits(data->ids.at(0), data->ids.at(1));
 	} else if (data->ids.size() == 1) {
 		if (data->ids.at(0) <= 0) {
 			std::cerr << "The cell id is not valid! Initializing the CellID class is not possible!" << std::endl;
 			std::terminate();
 		}
+    std::cout << "id = " << data->ids.at(0) << std::endl;
 		if (SubdetectorName == std::string("SiVertexBarrel") || SubdetectorName == std::string("SiVertexEndcap")
 				|| SubdetectorName == std::string("SiTrackerForward")) {
 			return new CellID58bits(data->ids.at(0));
@@ -426,33 +429,33 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 		*axis_range_plot_3D = temp3D;
 	}
 }
-void SetupHistoTitles(std::string subdetector_name, std::string layer, std::string* histo_name1D,
-		std::string* histo_title1D, std::string* histo_name2D, std::string* histo_title2D, std::string* histo_name3D,
-		std::string* histo_title3D, std::string* energyhisto_name1D, std::string* energyhisto_title1D,
-		std::string* energyhisto_name2D, std::string* energyhisto_title2D, std::string* energyhisto_name3D,
-		std::string* energyhisto_title3D, std::string* hitsperlayerhisto_name, std::string* hitsperlayerhisto_title,
-		std::string* particleoriginshisto_name, std::string* particleoriginshisto_title) {
+void SetupHistoTitles(std::string subdetector_name, std::string layer, std::string & histo_name1D,
+		std::string & histo_title1D, std::string & histo_name2D, std::string & histo_title2D, std::string & histo_name3D,
+		std::string & histo_title3D, std::string & energyhisto_name1D, std::string & energyhisto_title1D,
+		std::string & energyhisto_name2D, std::string & energyhisto_title2D, std::string & energyhisto_name3D,
+		std::string & energyhisto_title3D, std::string & hitsperlayerhisto_name, std::string & hitsperlayerhisto_title,
+		std::string & particleoriginshisto_name, std::string & particleoriginshisto_title) {
 
-	*(histo_name1D) = "Hits_" + subdetector_name + "_Layer_" + layer;
-	*(histo_title1D) = "Hit occupancy per cell for " + subdetector_name + " layer " + layer;
-	*(histo_name2D) = "Hits_2D_" + subdetector_name + "_Layer_" + layer;
-	*(histo_title2D) = "HitMap for " + subdetector_name + " layer " + layer;
-	*(histo_name3D) = "Hits_3D_" + subdetector_name + "_Layer_" + layer;
-	*(histo_title3D) = "HitMap for " + subdetector_name + " layer " + layer;
-	*(energyhisto_name1D) = "Energy_" + subdetector_name + "_Layer_" + layer;
-	*(energyhisto_title1D) = "Deposited hit energy for " + subdetector_name + " layer " + layer;
-	*(energyhisto_name2D) = "Hits_Energy_2D_" + subdetector_name + "_Layer_" + layer;
-	*(energyhisto_title2D) = "HitMap with the average hit energy per bin for " + subdetector_name + " layer " + layer;
-	*(energyhisto_name3D) = "Hits_Energy_3D_" + subdetector_name + "_Layer_" + layer;
-	*(energyhisto_title3D) = "HitMap with the hit energy for " + subdetector_name + " layer " + layer;
-	*(hitsperlayerhisto_name) = "HitsPerLayer_" + subdetector_name + "_Layer_" + layer;
-	*(hitsperlayerhisto_title) = "Hits for " + subdetector_name + " layer " + layer;
-	*(particleoriginshisto_name) = "ParticleOrigins_" + subdetector_name + "_Layer_" + layer;
-	*(particleoriginshisto_title) = "Origins of std::pair background particles for " + subdetector_name + " layer "
+	histo_name1D = "Hits_" + subdetector_name + "_Layer_" + layer;
+	histo_title1D = "Hit occupancy per cell for " + subdetector_name + " layer " + layer;
+	histo_name2D = "Hits_2D_" + subdetector_name + "_Layer_" + layer;
+	histo_title2D = "HitMap for " + subdetector_name + " layer " + layer;
+	histo_name3D = "Hits_3D_" + subdetector_name + "_Layer_" + layer;
+	histo_title3D = "HitMap for " + subdetector_name + " layer " + layer;
+	energyhisto_name1D = "Energy_" + subdetector_name + "_Layer_" + layer;
+	energyhisto_title1D = "Deposited hit energy for " + subdetector_name + " layer " + layer;
+	energyhisto_name2D = "Hits_Energy_2D_" + subdetector_name + "_Layer_" + layer;
+	energyhisto_title2D = "HitMap with the average hit energy per bin for " + subdetector_name + " layer " + layer;
+	energyhisto_name3D = "Hits_Energy_3D_" + subdetector_name + "_Layer_" + layer;
+	energyhisto_title3D = "HitMap with the hit energy for " + subdetector_name + " layer " + layer;
+	hitsperlayerhisto_name = "HitsPerLayer_" + subdetector_name + "_Layer_" + layer;
+	hitsperlayerhisto_title = "Hits for " + subdetector_name + " layer " + layer;
+	particleoriginshisto_name = "ParticleOrigins_" + subdetector_name + "_Layer_" + layer;
+	particleoriginshisto_title = "Origins of std::pair background particles for " + subdetector_name + " layer "
 			+ layer;
 }
 
-void Setup_ParticleOriginsHisto(std::vector<TH2D*> HistoVector, std::vector<float> axis_range_plot,
+void Setup_ParticleOriginsHisto(std::vector<TH2D*> & HistoVector, std::vector<float> axis_range_plot,
 		std::string histo_name, std::string histo_title, std::string coordinate_system) {
 	if (axis_range_plot.size() < 9) {
 		std::cerr
@@ -491,7 +494,7 @@ void Setup_ParticleOriginsHisto(std::vector<TH2D*> HistoVector, std::vector<floa
 					axis_vector.at(6), axis_vector.at(7), axis_vector.at(8)));
 	HistoVector.at(HistoVector.size() - 1)->SetContour(100);
 }
-void Setup_Histo(std::vector<TH1D*> HistoVector, std::vector<float> axis_range_plot, std::string histo_name,
+void Setup_Histo(std::vector<TH1D*> & HistoVector, std::vector<float> axis_range_plot, std::string histo_name,
 		std::string histo_title) {
 	HistoVector.emplace_back(
 			new TH1D(histo_name.c_str(), histo_title.c_str(), axis_range_plot.at(0), axis_range_plot.at(1),
@@ -502,7 +505,7 @@ void Setup_Histo(std::vector<TH1D*> HistoVector, std::vector<float> axis_range_p
 	HistoVector.at(HistoVector.size() - 1)->GetYaxis()->CenterTitle();
 }
 
-void Setup_Histo(std::vector<TH2D*> HistoVector, std::vector<float> axis_range_plot, std::string histo_name,
+void Setup_Histo(std::vector<TH2D*> & HistoVector, std::vector<float> axis_range_plot, std::string histo_name,
 		std::string histo_title) {
 	HistoVector.emplace_back(
 			new TH2D(histo_name.c_str(), histo_title.c_str(), axis_range_plot.at(0), axis_range_plot.at(1),
@@ -512,7 +515,7 @@ void Setup_Histo(std::vector<TH2D*> HistoVector, std::vector<float> axis_range_p
 	HistoVector.at(HistoVector.size() - 1)->GetYaxis()->CenterTitle();
 }
 
-void Setup_Histo(std::vector<TH3D*> HistoVector, std::vector<float> axis_range_plot, std::string histo_name,
+void Setup_Histo(std::vector<TH3D*> & HistoVector, std::vector<float> axis_range_plot, std::string histo_name,
 		std::string histo_title) {
 	HistoVector.emplace_back(
 			new TH3D(histo_name.c_str(), histo_title.c_str(), axis_range_plot.at(0), axis_range_plot.at(1),

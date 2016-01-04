@@ -25,7 +25,7 @@ class Subdetector{
     int GetNumberOfLayers() const {
       return NumberOfLayers_;
     }	
-    int GetLayer() const;
+    int GetLayer(int const cellID);
     std::vector<float> GetROOTEnergyHisto_binning() const{
       return ROOTEnergyHisto_binning;
     }				
@@ -38,7 +38,6 @@ class Subdetector{
     std::vector<float> GetROOTHisto_binning3D() const{
       return ROOTHisto_binning3D;
     }				
-    void SetupLayerInfo(int const cellID);
 
   protected:
     LayerCodeInCellID *LayerInfo_;

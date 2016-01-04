@@ -133,36 +133,36 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		gROOT->ForceStyle();
 		gStyle->SetPalette(1);
 
-		std::string *histo_name1D = new std::string("");
-		std::string *histo_title1D = new std::string("");
-		std::string *histo_name2D = new std::string("");
-		std::string *histo_title2D = new std::string("");
-		std::string *histo_name3D = new std::string("");
-		std::string *histo_title3D = new std::string("");
-		std::string *energyhisto_name1D = new std::string("");
-		std::string *energyhisto_title1D = new std::string("");
-		std::string *energyhisto_name2D = new std::string("");
-		std::string *energyhisto_title2D = new std::string("");
-		std::string *energyhisto_name3D = new std::string("");
-		std::string *energyhisto_title3D = new std::string("");
-		std::string *hitsperlayerhisto_name = new std::string("");
-		std::string *hitsperlayerhisto_title = new std::string("");
-		std::string *particleoriginshisto_name = new std::string("");
-		std::string *particleoriginshisto_title = new std::string("");
+		std::string histo_name1D;
+		std::string histo_title1D;
+		std::string histo_name2D;
+		std::string histo_title2D;
+		std::string histo_name3D;
+		std::string histo_title3D;
+		std::string energyhisto_name1D;
+		std::string energyhisto_title1D;
+		std::string energyhisto_name2D;
+		std::string energyhisto_title2D;
+		std::string energyhisto_name3D;
+		std::string energyhisto_title3D;
+		std::string hitsperlayerhisto_name;
+		std::string hitsperlayerhisto_title;
+		std::string particleoriginshisto_name;
+		std::string particleoriginshisto_title;
 
 		SetupHistoTitles(subdetector_name, layerstring, histo_name1D, histo_title1D, histo_name2D, histo_title2D,
 				histo_name3D, histo_title3D, energyhisto_name1D, energyhisto_title1D, energyhisto_name2D,
 				energyhisto_title2D, energyhisto_name3D, energyhisto_title3D, hitsperlayerhisto_name,
 				hitsperlayerhisto_title, particleoriginshisto_name, particleoriginshisto_title);
-		Setup_ParticleOriginsHisto(ParticleOrigins_2D_, axis_range_plot_3D, *particleoriginshisto_name,
-				*particleoriginshisto_title, "cylindrical");
-		Setup_Histo(Hits_PerLayer_, axis_range_plot_1D, *hitsperlayerhisto_name, *hitsperlayerhisto_title);
-		Setup_Histo(Hits_Histo_, axis_range_plot_1D, *histo_name1D, *histo_title1D);
-		Setup_Histo(Hits_2D_, axis_range_plot_2D, *histo_name2D, *histo_title2D);
-		Setup_Histo(Hits_3D_, axis_range_plot_3D, *histo_name3D, *histo_title3D);
-		Setup_Histo(Hits_Energy_Histo_, axis_range_plot_energy_1D, *energyhisto_name1D, *energyhisto_title1D);
-		Setup_Histo(Hits_Energy_2D_, axis_range_plot_2D, *energyhisto_name2D, *energyhisto_title2D);
-		Setup_Histo(Hits_Energy_3D_, axis_range_plot_3D, *energyhisto_name3D, *energyhisto_title3D);
+		Setup_ParticleOriginsHisto(ParticleOrigins_2D_, axis_range_plot_3D, particleoriginshisto_name,
+				particleoriginshisto_title, "cylindrical");
+		Setup_Histo(Hits_PerLayer_, axis_range_plot_1D, hitsperlayerhisto_name, hitsperlayerhisto_title);
+		Setup_Histo(Hits_Histo_, axis_range_plot_1D, histo_name1D, histo_title1D);
+		Setup_Histo(Hits_2D_, axis_range_plot_2D, histo_name2D, histo_title2D);
+		Setup_Histo(Hits_3D_, axis_range_plot_3D, histo_name3D, histo_title3D);
+		Setup_Histo(Hits_Energy_Histo_, axis_range_plot_energy_1D, energyhisto_name1D, energyhisto_title1D);
+		Setup_Histo(Hits_Energy_2D_, axis_range_plot_2D, energyhisto_name2D, energyhisto_title2D);
+		Setup_Histo(Hits_Energy_3D_, axis_range_plot_3D, energyhisto_name3D, energyhisto_title3D);
 	}
 	std::vector<int> hitLayers;
 	for (int s = 0; s < SubDetectors->size(); ++s) {
@@ -179,18 +179,19 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 			inputfile->GetObject("Tree_MCP", Tree_MCP);
 
 			int number_of_hits = 0;
-			number_of_hits = Get_TTree(inputfile, SubDetectors->at(s)->GetName())->GetEntries();
+      TTree *SubdetectorTree = Get_TTree(inputfile, SubDetectors->at(s)->GetName());
+			number_of_hits = SubdetectorTree->GetEntries();
 
-			std::cout << "The TTree " << Get_TTree(inputfile, SubDetectors->at(s)->GetName())->GetName() << " has "
+			std::cout << "The TTree " << SubdetectorTree->GetName() << " has "
 					<< number_of_hits << " entries." << std::endl;
 
-			Data* data = SetBranches(Get_TTree(inputfile, SubDetectors->at(s)->GetName()));
+			Data* data = SetBranches(SubdetectorTree);
 
 			std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D; //layer, bin, energies
 			std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy3D; //layer, bin, energies
 
 			for (std::size_t i = 0; i < number_of_hits; i++) {
-				Get_TTree(inputfile, SubDetectors->at(s)->GetName())->GetEntry(i);
+				SubdetectorTree->GetEntry(i);
 				std::cout <<  "data->ids.size()= " << data->ids.size() << std::endl;
 
 				CellID *SubdetectorCells = InitializeCellIDClass(SubDetectors->at(s)->GetName(), data);
@@ -198,9 +199,9 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				SubdetectorCells->CreateCellID();
 				CellIDkey = 0.;
 				CellIDkey = SubdetectorCells->CellID_ToINTconversion(SubdetectorCells->GetCellID());
-				LayerCodeInCellID LayerInfo(SubdetectorCells->GetCellID(), SubDetectors->at(s)->GetStartLayerBin(),
+				LayerCodeInCellID LayerInfo;
+				Layer_no = LayerInfo.GetLayer(SubdetectorCells->GetCellID(), SubDetectors->at(s)->GetStartLayerBin(),
 						SubDetectors->at(s)->GetLengthLayerBin());
-				Layer_no = LayerInfo.GetLayer();
 				if (std::find(hitLayers.begin(), hitLayers.end(), Layer_no) == hitLayers.end()) {
 					hitLayers.push_back(Layer_no);
 				}
@@ -209,6 +210,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
         std::cout << "Mapvector size = " << HitsPerLayerMap[Layer_no].size() << std::endl;
 				//Fill Maps:
 				HitsPerLayerMap[Layer_no].at(fileIterator) += 1;
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
 				float energy = 0.;
 				if (YesNo_TrackerHistograms) energy = data->Get_dEdx_hit();
@@ -216,10 +218,17 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				std::array <double, 3> vertex = {0};
 				if (YesNo_TrackerHistograms) vertex = data->Get_vertex_particle();
 				if (!YesNo_TrackerHistograms) vertex = data->Get_vertex_mother();
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
 
+        std::cout << "Layer = " << Layer_no << std::endl;
+        std::cout << "Hits_Energy_2D size = " << Hits_Energy_2D_.size() << std::endl;
+        std::cout << "2Dhistobin = " << Hits_Energy_2D_.at(Layer_no)->FindBin(data->Get_x_hit(), data->Get_y_hit()) << std::endl;
+        std::cout << "HitMapEnergy2Dvector size = " << HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(data->Get_x_hit(), data->Get_y_hit()))].size() << std::endl;
 				HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(data->Get_x_hit(), data->Get_y_hit()))].push_back(energy);
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 				HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(data->Get_z_hit(), data->Get_x_hit(), data->Get_y_hit()))].push_back(energy);
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
 				if (HitMap.find(CellIDkey) == HitMap.end()) {
 					HitMap[CellIDkey] = 1;
@@ -231,30 +240,37 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				ParticleOrigins_2D_.at(Layer_no)->Fill(vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
 				Hits_2D_.at(Layer_no)->Fill(data->Get_x_hit(), data->Get_y_hit());
 				Hits_3D_.at(Layer_no)->Fill(data->Get_z_hit(), data->Get_x_hit(), data->Get_y_hit());
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			}
 			int const colorrangeweight = 1000000000;
 			Fill_Histogram_from_Map<TH2D*>(HitMapEnergy2D, &Hits_Energy_2D_, colorrangeweight);
 			Fill_Histogram_from_Map<TH3D*>(HitMapEnergy3D, &Hits_Energy_3D_, colorrangeweight);
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			int number_of_particles = 0;
 			number_of_particles = Tree_MCP->GetEntries();
 			ParticlesVSEvent->Fill(fileIterator, number_of_particles);
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			Particles->Fill(number_of_particles);
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			Hits->Fill(number_of_hits);
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			inputfile->Close();
 			delete inputfile;
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 		} //End of loop through inputfiles
 
 		for (auto iterator = HitsPerLayerMap.begin(); iterator != HitsPerLayerMap.end(); iterator++) {
 			for (auto e = iterator->second.begin(); e != iterator->second.end(); ++e) {
 				if (*e > 0) {
 					Hits_PerLayer_.at(iterator->first)->Fill(*e);
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 				}
 			}
 		}
 		for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
 			if (iterator->second > 0) {
-				SubDetectors->at(s)->SetupLayerInfo(iterator->first);
-				Hits_Histo_.at(SubDetectors->at(s)->GetLayer())->Fill(iterator->second);
+				Hits_Histo_.at(SubDetectors->at(s)->GetLayer(iterator->first))->Fill(iterator->second);
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			}
 		}
 	} //End of SubDetectors loop
@@ -266,6 +282,8 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 
 	output_rootfile->cd();
 	for (signed int l = 0; l < hitLayers.size(); ++l) {
+
+    std::cout << "Printing plots for layer number " << hitLayers.at(l) << std::endl;
 
 		Hits_3D_.at(hitLayers.at(l))->Write();
 		Hits_Energy_3D_.at(hitLayers.at(l))->Write();
