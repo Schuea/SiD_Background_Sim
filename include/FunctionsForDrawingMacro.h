@@ -382,13 +382,13 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(8) };
 		*axis_range_plot_3D = temp3D;
 		std::vector<float> temptime3D =
-					{ SubDetectors->at(0)->GetROOTHisto_binning3D().at(0),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(1),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(2),
-						SubDetectors->at(0)->GetROOTHisto_time().at(0),
+          {	SubDetectors->at(0)->GetROOTHisto_time().at(0),
 						SubDetectors->at(0)->GetROOTHisto_time().at(1),
 						SubDetectors->at(0)->GetROOTHisto_time().at(2),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(3),
+						SubDetectors->at(0)->GetROOTHisto_binning3D().at(0),
+						SubDetectors->at(0)->GetROOTHisto_binning3D().at(1),
+						SubDetectors->at(0)->GetROOTHisto_binning3D().at(2),
+					  SubDetectors->at(0)->GetROOTHisto_binning3D().at(3),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(4),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(5) };
 		*axis_range_plot_time_3D = temptime3D;
@@ -458,7 +458,7 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 		*axis_range_plot_2D = temp2D;
 		std::vector<float> temp3D = { zbins3D, zmin3D, zmax3D, xbins3D, xmin3D, xmax3D, ybins3D, ymin3D, ymax3D };
 		*axis_range_plot_3D = temp3D;
-		std::vector<float> temptime3D = { zbins3D, zmin3D, zmax3D, binstime, mintime, maxtime, xbins3D, xmin3D, xmax3D };
+		std::vector<float> temptime3D = { binstime, mintime, maxtime, zbins3D, zmin3D, zmax3D, xbins3D, xmin3D, xmax3D };
 		*axis_range_plot_time_3D = temptime3D;
 	}
 }

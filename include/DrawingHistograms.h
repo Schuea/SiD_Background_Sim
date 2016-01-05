@@ -226,7 +226,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
 				ParticleOrigins_2D_.at(Layer_no)->Fill(vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
 				std::cout << "x_hit, y_hit = " << x << ", " << y << std::endl;
-				Hits_Time_3D_.at(Layer_no)->Fill(time, x, z);
+				Hits_Time_3D_.at(Layer_no)->Fill(time, z, x);
 				Hits_2D_.at(Layer_no)->Fill(x, y);
 				Hits_3D_.at(Layer_no)->Fill(z, x, y);
 			}
