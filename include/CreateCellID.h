@@ -9,29 +9,25 @@
 class CellID{
 
   public:
-    CellID(int const ID) : ID_(ID), ID0_(-1), ID1_(-1){}
-    CellID(int const ID0, int const ID1) : ID0_(ID0),ID1_(ID1), ID_(-1){}
+    CellID(int const ID);
+    CellID(int const ID0, int const ID1);
 
-    virtual ~CellID() {}
-    virtual void CreateCellID(){std::cout << "This should not be called!" << std::endl;}
-    virtual std::string GetCellID() const {return "";}
+    virtual ~CellID();
+    virtual void CreateCellID();
+    virtual std::string GetCellID() const;
 
-    int CellID_ToINTconversion(std::string const CellIDstring) const{
-      std::bitset<64> temp (CellIDstring);
-      return int(temp.to_ulong());
-    }
-
+    int CellID_ToINTconversion(std::string const CellIDstring) const;
   private:
-    CellID() : ID0_(-1), ID1_(-1), ID_(-1) {}
-    CellID(float const ID) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(double const ID) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID();
+    CellID(float const ID);  //Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(double const ID);	//Float arguments are not allowed -> set them to negative to make it throw exception
 
-    CellID(float const ID0, float const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(int const ID0, float const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(float const ID0, int const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(double const ID0, double const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(int const ID0, double const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(double const ID0, int const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(float const ID0, float const ID1);	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(int const ID0, float const ID1);	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(float const ID0, int const ID1);	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(double const ID0, double const ID1);	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(int const ID0, double const ID1);	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(double const ID0, int const ID1);	//Float arguments are not allowed -> set them to negative to make it throw exception
 
   protected:
     int ID_;
@@ -42,15 +38,9 @@ class CellID{
 
 class CellID64bits : public CellID {
   public:
-    CellID64bits(int const ID0, int const ID1) : CellID(ID0, ID1) {}
+    CellID64bits(int const ID0, int const ID1);
     void CreateCellID();
-    std::string GetCellID() const {
-      //if ((ID0_ == 0 && ID1_ == 0) || ID0_ < 0 || ID1_ <0){
-      if (ID0_ == 0 && ID1_ == 0){
-        throw std::runtime_error("The CellID was not set. Invalid IDs!");
-      }				
-      else return CellID_bit_.to_string();
-    }
+    std::string GetCellID() const;
     /*
        std::bitset<64> ConvertToBitset (std::string CellID_){
        CellID_bit_ = std::bitset<64>(Cell_ID_);
@@ -63,30 +53,19 @@ class CellID64bits : public CellID {
     };
     class CellID58bits : public CellID {
       public:
-        CellID58bits(int const ID) : CellID(ID) {}
+        CellID58bits(int const ID);
         void CreateCellID();
-        std::string GetCellID() const {
-          if (ID_ <= 0){
-            throw std::runtime_error("The CellID was not set. Invalid IDs!");
-          }				
-          else return CellID_bit_.to_string();
-        }
-
+        std::string GetCellID() const;
       private:
         std::bitset<58> CellID_bit_;
 
     };
     class CellID54bits : public CellID {
       public:
-        CellID54bits(int const ID) : CellID(ID) {}
+        CellID54bits(int const ID);
         void CreateCellID();
-        std::string GetCellID() const {
-          if (ID_ <= 0){
-            throw std::runtime_error("The CellID was not set. Invalid IDs!");
-          }				
-          else return CellID_bit_.to_string();
-        }
-
+        std::string GetCellID() const;
+    
       private:
         std::bitset<54> CellID_bit_;
 
