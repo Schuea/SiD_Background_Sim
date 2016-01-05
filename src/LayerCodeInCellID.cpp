@@ -25,9 +25,7 @@ int LayerCodeInCellID::FindLayer(std::string const CellID_, int const StartBin_l
   return tempLayer;
 }
 
-int LayerCodeInCellID::GetLayer(std::string const CellID, 
-        int const StartBin_layers, 
-        int const LengthBin_layers){
+int LayerCodeInCellID::GetLayer(std::string const CellID, int const StartBin_layers, int const LengthBin_layers){
   Layer = -1;
   Layer = FindLayer(CellID, StartBin_layers, LengthBin_layers);
   if (Layer >= 0){
@@ -36,9 +34,7 @@ int LayerCodeInCellID::GetLayer(std::string const CellID,
   else throw std::runtime_error("You didn't initialize the class with an ID!");
 }				
 
-int LayerCodeInCellID::GetLayer(int const cellid,
-        int const StartBin_layers, 
-        int const LengthBin_layers){
+int LayerCodeInCellID::GetLayer(int const cellid, int const StartBin_layers, int const LengthBin_layers){
   std::bitset<64> cellidbit(cellid);
 
   Layer = -1;

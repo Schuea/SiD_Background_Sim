@@ -178,7 +178,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 			inputfile->GetObject("Tree_MCP", Tree_MCP);
 
 			int number_of_hits = 0;
-      TTree *SubdetectorTree = Get_TTree(inputfile, SubDetectors->at(s)->GetName());
+			TTree *SubdetectorTree = Get_TTree(inputfile, SubDetectors->at(s)->GetName());
 			number_of_hits = SubdetectorTree->GetEntries();
 
 			std::cout << "The TTree " << SubdetectorTree->GetName() << " has "
@@ -203,29 +203,32 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				if (std::find(hitLayers.begin(), hitLayers.end(), Layer_no) == hitLayers.end()) {
 					hitLayers.push_back(Layer_no);
 				}
-        std::cout << "fileIterator = " << fileIterator << std::endl;
-        std::cout << "Layer = " << Layer_no << std::endl;
-        std::cout << "Mapvector size = " << HitsPerLayerMap[Layer_no].size() << std::endl;
+
 				//Fill Maps:
 				HitsPerLayerMap[Layer_no].at(fileIterator) += 1;
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
 				float energy = 0.;
-				if (YesNo_TrackerHistograms) energy = data->Get_dEdx_hit();
-				if (!YesNo_TrackerHistograms) energy = data->Get_energy_hit();
+				float x = 0.;
+				float y = 0.;
+				float z = 0.;
 				std::array <double, 3> vertex = {0};
-				if (YesNo_TrackerHistograms) vertex = data->Get_vertex_particle();
-				if (!YesNo_TrackerHistograms) vertex = data->Get_vertex_mother();
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
+				if (YesNo_TrackerHistograms){
+					x = data-> Get_x_hit_particle();
+					y = data-> Get_y_hit_particle();
+					z = data-> Get_z_hit_particle();
+					energy = data->Get_dEdx_hit();
+					vertex = data->Get_vertex_particle();
+				}
+				if (!YesNo_TrackerHistograms){
+					x = data-> Get_x_hit();
+					y = data-> Get_y_hit();
+					z = data-> Get_z_hit();
+					energy = data->Get_energy_hit();
+					vertex = data->Get_vertex_mother();
+				}
 
-
-        std::cout << "Layer = " << Layer_no << std::endl;
-        std::cout << "Hits_Energy_2D size = " << Hits_Energy_2D_.size() << std::endl;
-        std::cout << "2Dhistobin = " << Hits_Energy_2D_.at(Layer_no)->FindBin(data->Get_x_hit(), data->Get_y_hit()) << std::endl;
-        std::cout << "HitMapEnergy2Dvector size = " << HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(data->Get_x_hit(), data->Get_y_hit()))].size() << std::endl;
-				HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(data->Get_x_hit(), data->Get_y_hit()))].push_back(energy);
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
-				HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(data->Get_z_hit(), data->Get_x_hit(), data->Get_y_hit()))].push_back(energy);
+				HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(energy);
+				HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(energy);
 			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
 				if (HitMap.find(CellIDkey) == HitMap.end()) {
@@ -236,39 +239,35 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				//Fill histograms:
 				Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
 				ParticleOrigins_2D_.at(Layer_no)->Fill(vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
-				Hits_2D_.at(Layer_no)->Fill(data->Get_x_hit(), data->Get_y_hit());
-				Hits_3D_.at(Layer_no)->Fill(data->Get_z_hit(), data->Get_x_hit(), data->Get_y_hit());
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
+				std::cout << "x_hit, y_hit = " << x << ", " << y << std::endl;
+				Hits_2D_.at(Layer_no)->Fill(x, y);
+				Hits_3D_.at(Layer_no)->Fill(z, x, y);
 			}
 			int const colorrangeweight = 1000000000;
 			Fill_Histogram_from_Map<TH2D*>(HitMapEnergy2D, &Hits_Energy_2D_, colorrangeweight);
 			Fill_Histogram_from_Map<TH3D*>(HitMapEnergy3D, &Hits_Energy_3D_, colorrangeweight);
+
 			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
+
 			int number_of_particles = 0;
 			number_of_particles = Tree_MCP->GetEntries();
 			ParticlesVSEvent->Fill(fileIterator, number_of_particles);
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			Particles->Fill(number_of_particles);
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			Hits->Fill(number_of_hits);
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			inputfile->Close();
 			delete inputfile;
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 		} //End of loop through inputfiles
 
 		for (auto iterator = HitsPerLayerMap.begin(); iterator != HitsPerLayerMap.end(); iterator++) {
 			for (auto e = iterator->second.begin(); e != iterator->second.end(); ++e) {
 				if (*e > 0) {
 					Hits_PerLayer_.at(iterator->first)->Fill(*e);
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 				}
 			}
 		}
 		for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
 			if (iterator->second > 0) {
 				Hits_Histo_.at(SubDetectors->at(s)->GetLayer(iterator->first))->Fill(iterator->second);
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 			}
 		}
 	} //End of SubDetectors loop

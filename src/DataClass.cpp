@@ -127,9 +127,9 @@ void DataSimTrackerHit::SetBranchAddresses(TTree* const tree) {
 	tree->SetBranchAddress("HitdEdx", &dEdx_hit);
 	tree->SetBranchAddress("HitTime", &time_hit);
 
-	tree->SetBranchAddress("HitPosition_x", &x_hit);
-	tree->SetBranchAddress("HitPosition_y", &y_hit);
-	tree->SetBranchAddress("HitPosition_z", &z_hit);
+	tree->SetBranchAddress("HitPosition_x", &x_hit_particle);
+	tree->SetBranchAddress("HitPosition_y", &y_hit_particle);
+	tree->SetBranchAddress("HitPosition_z", &z_hit_particle);
 
 	tree->SetBranchAddress("HitMomentum_x", &momentum_x_hit);
 	tree->SetBranchAddress("HitMomentum_y", &momentum_y_hit);

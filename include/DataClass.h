@@ -21,18 +21,12 @@ public:
 	int Get_event_id() const {
 		return event_id;
 	}
-	double Get_x_hit() const {
-		return x_hit;
-	}
-	double Get_y_hit() const {
-		return y_hit;
-	}
-	double Get_z_hit() const {
-		return z_hit;
-	}
-  virtual int Get_id() const {return 0;}
-  virtual int Get_id0() const {return 0;}
-  virtual int Get_id1() const {return 0;}
+
+	virtual int Get_id0() const {return 0;}
+	virtual int Get_id1() const {return 0;}
+	virtual float Get_x_hit() const {return 0.0;}
+	virtual float Get_y_hit() const {return 0.0;}
+	virtual float Get_z_hit() const {return 0.0;}
 	virtual float Get_energy_hit() const {return 0.0;}
 	virtual int Get_number_contributionsToHit() const {return 0;}
 	virtual float Get_energy_contribution() const {return 0.0;}
@@ -56,6 +50,10 @@ public:
 	virtual float Get_charge_mother() const {return 0.0;}
 	virtual double Get_energy_mother() const {return 0.0;}
 
+	virtual int Get_id() const {return 0;}
+	virtual double Get_x_hit_particle() const {return 0.0;}
+	virtual double Get_y_hit_particle() const {return 0.0;}
+	virtual double Get_z_hit_particle() const {return 0.0;}
 	virtual float Get_dEdx_hit() const {return 0.0;}
 	virtual float Get_time_hit() const {return 0.0;}
 	virtual float Get_momentum_x_hit() const {return 0.0;}
@@ -87,9 +85,6 @@ public:
 
 protected:
 	int event_id;
-	double x_hit;
-	double y_hit;
-	double z_hit;
 }
 ;
 
@@ -98,12 +93,21 @@ class DataSimCalorimeterHit: public Data {
 public:
 	DataSimCalorimeterHit() {}
 
-  int Get_id0() const {
-    return id0;
-  }
-  int Get_id1() const {
-    return id1;
-  }
+	float Get_x_hit() const {
+		return x_hit;
+	}
+	float Get_y_hit() const {
+		return y_hit;
+	}
+	float Get_z_hit() const {
+		return z_hit;
+	}
+	int Get_id0() const {
+		return id0;
+	}
+	int Get_id1() const {
+		return id1;
+	}
 	float Get_energy_hit() const {
 		return energy_hit;
 	}
@@ -188,6 +192,9 @@ public:
 	void SetBranchAddresses(TTree* const tree);
 
 private:
+	float x_hit;
+	float y_hit;
+	float z_hit;
 	int id0;
 	int id1;
 	float energy_hit;
@@ -218,9 +225,18 @@ class DataSimTrackerHit: public Data {
 public:
 	DataSimTrackerHit() {}
 
-  int Get_id() const {
-    return id;
-  }
+	double Get_x_hit_particle() const {
+		return x_hit_particle;
+	}
+	double Get_y_hit_particle() const {
+		return y_hit_particle;
+	}
+	double Get_z_hit_particle() const {
+		return z_hit_particle;
+	}
+	int Get_id() const {
+		return id;
+	}
 	float Get_dEdx_hit() const {
 		return dEdx_hit;
 	}
@@ -312,6 +328,9 @@ public:
 	void SetBranchAddresses(TTree* const tree);
 
 private:
+	double x_hit_particle;
+	double y_hit_particle;
+	double z_hit_particle;
 	int id;
 	float dEdx_hit;
 	float time_hit;
