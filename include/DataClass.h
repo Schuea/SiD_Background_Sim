@@ -21,13 +21,13 @@ public:
 	int Get_event_id() const {
 		return event_id;
 	}
-	float Get_x_hit() const {
+	double Get_x_hit() const {
 		return x_hit;
 	}
-	float Get_y_hit() const {
+	double Get_y_hit() const {
 		return y_hit;
 	}
-	float Get_z_hit() const {
+	double Get_z_hit() const {
 		return z_hit;
 	}
   virtual int Get_id() const {return 0;}
@@ -87,9 +87,9 @@ public:
 
 protected:
 	int event_id;
-	float x_hit;
-	float y_hit;
-	float z_hit;
+	double x_hit;
+	double y_hit;
+	double z_hit;
 }
 ;
 

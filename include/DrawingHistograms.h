@@ -117,7 +117,6 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	//Find the largest number of layers from all the subdetectors that are to be plotted
 	for (int s = 0; s < SubDetectors->size(); ++s) {
 		MaxNumberLayers = FindMax(SubDetectors->at(s)->GetNumberOfLayers(), MaxNumberLayers);
-    MaxNumberLayers = 36; //TODO Fix this, added by Phill as temp check
 	}
 	for (int l = 0; l < MaxNumberLayers; ++l) {
 		for (int files = 1; files <= NUMBER_OF_FILES; ++files) {
