@@ -15,7 +15,7 @@ class CellID{
     virtual ~CellID();
     virtual void CreateCellID();
     virtual std::string GetCellID() const;
-
+    
     int CellID_ToINTconversion(std::string const CellIDstring) const;
   private:
     CellID();
@@ -33,7 +33,6 @@ class CellID{
     int ID_;
     int ID0_;
     int ID1_;
-
 };
 
 class CellID64bits : public CellID {
@@ -41,34 +40,29 @@ class CellID64bits : public CellID {
     CellID64bits(int const ID0, int const ID1);
     void CreateCellID();
     std::string GetCellID() const;
-    /*
-       std::bitset<64> ConvertToBitset (std::string CellID_){
-       CellID_bit_ = std::bitset<64>(Cell_ID_);
-       return CellID_bit_;
-       }
-     */
-      private:
+  private:
     std::bitset<64> CellID_bit_;
 
-    };
-    class CellID58bits : public CellID {
-      public:
-        CellID58bits(int const ID);
-        void CreateCellID();
-        std::string GetCellID() const;
-      private:
-        std::bitset<58> CellID_bit_;
+};
 
-    };
-    class CellID54bits : public CellID {
-      public:
-        CellID54bits(int const ID);
-        void CreateCellID();
-        std::string GetCellID() const;
-    
-      private:
-        std::bitset<54> CellID_bit_;
+class CellID58bits : public CellID {
+  public:
+    CellID58bits(int const ID);
+    void CreateCellID();
+    std::string GetCellID() const;
+  private:
+    std::bitset<58> CellID_bit_;
 
-    };
+};
+
+class CellID54bits : public CellID {
+  public:
+    CellID54bits(int const ID);
+    void CreateCellID();
+    std::string GetCellID() const;
+  private:
+    std::bitset<54> CellID_bit_;
+
+};
+
 #endif /*CELLID_H_*/
-

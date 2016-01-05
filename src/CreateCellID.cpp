@@ -3,8 +3,7 @@
 #include <iostream>
 
 template<size_t sRes, size_t s1, size_t s2>
-std::bitset<sRes> concatString(std::bitset<s1> const & bs1,
-    std::bitset<s2> const & bs2){
+std::bitset<sRes> concatString(std::bitset<s1> const & bs1, std::bitset<s2> const & bs2){
   std::string const string1(bs1.to_string());
   std::string const string2(bs2.to_string());
 
@@ -13,7 +12,6 @@ std::bitset<sRes> concatString(std::bitset<s1> const & bs1,
 }
 
 void CellID64bits::CreateCellID() {
-  //if ((ID0_ == 0 && ID1_ == 0) || ID0_ < 0 || ID1_ <0){
   if (ID0_ == 0 && ID1_ == 0){
     throw std::runtime_error("The CellID was not set. Invalid IDs!");
   }				
@@ -23,27 +21,30 @@ void CellID64bits::CreateCellID() {
     CellID_bit_ = concatString<64, 32, 32>(ID1_bit, ID0_bit);
   }
 }
-void CellID58bits::CreateCellID() {
 
+void CellID58bits::CreateCellID() {
   if (ID_ <= 0){
     throw std::runtime_error("The CellID was not set. Invalid IDs!");
   }				
   else{
     std::bitset<58> const ID_bit = std::bitset<58>(ID_);
-
     CellID_bit_ = ID_bit;
   }
 }
-void CellID54bits::CreateCellID() {
 
+void CellID54bits::CreateCellID() {
   if (ID_ <= 0){
     throw std::runtime_error("The CellID was not set. Invalid IDs!");
   }				
   else{
     std::bitset<54> const ID_bit = std::bitset<54>(ID_);
-
     CellID_bit_ = ID_bit;
   }
+}
+
+int CellID::CellID_ToINTconversion(std::string const CellIDstring) const{
+  std::bitset<64> temp (CellIDstring);
+  return int(temp.to_ulong());
 }
 
 CellID::CellID(int const ID) : ID_(ID), ID0_(-1), ID1_(-1){}
@@ -55,11 +56,6 @@ void CellID::CreateCellID(){
 std::string CellID::GetCellID() const {
   return "";
 }
-int CellID::CellID_ToINTconversion(std::string const CellIDstring) const{
-  std::bitset<64> temp (CellIDstring);
-  return int(temp.to_ulong());
-}
-
 CellID::CellID() : ID0_(-1), ID1_(-1), ID_(-1) {}
 CellID::CellID(float const ID) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
 CellID::CellID(double const ID) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
@@ -72,7 +68,6 @@ CellID::CellID(double const ID0, int const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}	
  
 CellID64bits::CellID64bits(int const ID0, int const ID1) : CellID(ID0, ID1) {}
 std::string CellID64bits::GetCellID() const {
-  //if ((ID0_ == 0 && ID1_ == 0) || ID0_ < 0 || ID1_ <0){
   if (ID0_ == 0 && ID1_ == 0){
     throw std::runtime_error("The CellID was not set. Invalid IDs!");
   }				
@@ -94,5 +89,3 @@ std::string CellID54bits::GetCellID() const {
   }				
   else return CellID_bit_.to_string();
 }
-
-
