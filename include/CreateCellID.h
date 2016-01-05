@@ -9,12 +9,12 @@
 class CellID{
 
   public:
-    CellID(int ID) : ID_(ID), ID0_(-1), ID1_(-1){}
-    CellID(int ID0, int ID1) : ID0_(ID0),ID1_(ID1), ID_(-1){}
+    CellID(int const ID) : ID_(ID), ID0_(-1), ID1_(-1){}
+    CellID(int const ID0, int const ID1) : ID0_(ID0),ID1_(ID1), ID_(-1){}
   
     virtual ~CellID() {}
     virtual void CreateCellID(){std::cout << "This should not be called!" << std::endl;}
-    virtual std::string GetCellID() const{return "";}
+    virtual std::string GetCellID() const {return "";}
 
     int CellID_ToINTconversion(std::string const CellIDstring) const{
 	std::bitset<64> temp (CellIDstring);
@@ -23,15 +23,15 @@ class CellID{
   
   private:
     CellID() : ID0_(-1), ID1_(-1), ID_(-1) {}
-    CellID(float ID) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(double ID) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(float const ID) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(double const ID) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
 
-    CellID(float ID0, float ID1) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(int ID0, float ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(float ID0, int ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(double ID0, double ID1) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(int ID0, double ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
-    CellID(double ID0, int ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(float const ID0, float const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(int const ID0, float const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(float const ID0, int const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(double const ID0, double const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}	//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(int const ID0, double const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
+    CellID(double const ID0, int const ID1) : ID0_(-1), ID1_(-1), ID_(-1){}		//Float arguments are not allowed -> set them to negative to make it throw exception
 
   protected:
     int ID_;
@@ -39,9 +39,10 @@ class CellID{
     int ID1_;
 
 };
+
 class CellID64bits : public CellID {
   public:
-    CellID64bits(int ID0, int ID1) : CellID(ID0, ID1) {}
+    CellID64bits(int const ID0, int const ID1) : CellID(ID0, ID1) {}
     void CreateCellID();
     std::string GetCellID() const {
       //if ((ID0_ == 0 && ID1_ == 0) || ID0_ < 0 || ID1_ <0){
@@ -62,7 +63,7 @@ class CellID64bits : public CellID {
 };
 class CellID58bits : public CellID {
   public:
-    CellID58bits(int ID) : CellID(ID) {}
+    CellID58bits(int const ID) : CellID(ID) {}
     void CreateCellID();
     std::string GetCellID() const {
       if (ID_ <= 0){
@@ -77,7 +78,7 @@ class CellID58bits : public CellID {
 };
 class CellID54bits : public CellID {
   public:
-    CellID54bits(int ID) : CellID(ID) {}
+    CellID54bits(int const ID) : CellID(ID) {}
     void CreateCellID();
     std::string GetCellID() const {
       if (ID_ <= 0){
