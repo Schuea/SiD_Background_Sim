@@ -45,6 +45,7 @@ std::vector<TH3D*> Hits_3D_;
 std::vector<TH1D*> Hits_Energy_Histo_;
 std::vector<TH2D*> Hits_Energy_2D_;
 std::vector<TH3D*> Hits_Energy_3D_;
+std::vector<TH2D*> Hits_Time_ztime_2D_;
 std::vector<TH3D*> Hits_Time_3D_;
 
 int NUMBER_OF_FILES;
@@ -82,10 +83,11 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	std::vector<float> axis_range_plot_2D = { }; //xbins, xlow, xup, ybins, ylow, yup
 	std::vector<float> axis_range_plot_3D = { }; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup
 	std::vector<float> axis_range_plot_energy_1D = { }; //xbins, xlow, xup
-	std::vector<float> axis_range_plot_time_3D = { }; //zbins, zlow, zup, timebins, timelow, timeup, xbins, xlow, xup
+	std::vector<float> axis_range_plot_ztime_2D = { }; //zbins, zlow, zup, timebins, timelow, timeup
+	std::vector<float> axis_range_plot_time_3D = { }; //timebins, timelow, timeup, zbins, zlow, zup, xbins, xlow, xup
 
 	Setup_BinningArrays(SubDetectors, &axis_range_plot_1D, &axis_range_plot_2D, &axis_range_plot_3D,
-			&axis_range_plot_energy_1D, &axis_range_plot_time_3D);
+			&axis_range_plot_energy_1D, &axis_range_plot_ztime_2D, &axis_range_plot_time_3D);
 	std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 	TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0] * 3, axis_range_plot_1D[1], axis_range_plot_1D[2] * 40);
 	///*MuonBarrel*/TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*1/5, 100, axis_range_plot_1D[2]);
@@ -130,12 +132,16 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		std::string energyhisto_name3D, energyhisto_title3D;
 		std::string hitsperlayerhisto_name, hitsperlayerhisto_title;
 		std::string particleoriginshisto_name, particleoriginshisto_title;
+		std::string histo_name_ztime2D, histo_title_ztime2D;
 		std::string histo_name_time3D, histo_title_time3D;
 
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 		SetupHistoTitles(subdetector_name, layerstring, histo_name1D, histo_title1D, histo_name2D, histo_title2D,
 				histo_name3D, histo_title3D, energyhisto_name1D, energyhisto_title1D, energyhisto_name2D,
 				energyhisto_title2D, energyhisto_name3D, energyhisto_title3D, hitsperlayerhisto_name,
-				hitsperlayerhisto_title, particleoriginshisto_name, particleoriginshisto_title, histo_name_time3D, histo_title_time3D);
+				hitsperlayerhisto_title, particleoriginshisto_name, particleoriginshisto_title, histo_name_ztime2D, histo_title_ztime2D, 
+        histo_name_time3D, histo_title_time3D);
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 		Setup_ParticleOriginsHisto(ParticleOrigins_2D_, axis_range_plot_3D, particleoriginshisto_name,
 				particleoriginshisto_title, "cylindrical");
 		Setup_Histo(Hits_PerLayer_, axis_range_plot_1D, hitsperlayerhisto_name, hitsperlayerhisto_title);
@@ -145,7 +151,9 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		Setup_Histo(Hits_Energy_Histo_, axis_range_plot_energy_1D, energyhisto_name1D, energyhisto_title1D);
 		Setup_Histo(Hits_Energy_2D_, axis_range_plot_2D, energyhisto_name2D, energyhisto_title2D);
 		Setup_Histo(Hits_Energy_3D_, axis_range_plot_3D, energyhisto_name3D, energyhisto_title3D);
+		Setup_Histo(Hits_Time_ztime_2D_, axis_range_plot_ztime_2D, histo_name_ztime2D, histo_title_ztime2D);
 		Setup_Histo(Hits_Time_3D_, axis_range_plot_time_3D, histo_name_time3D, histo_title_time3D);
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 	}
 	std::vector<int> hitLayers;
 	for (int s = 0; s < SubDetectors->size(); ++s) {
@@ -226,6 +234,8 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
 				ParticleOrigins_2D_.at(Layer_no)->Fill(vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
 				std::cout << "x_hit, y_hit = " << x << ", " << y << std::endl;
+				Hits_Time_ztime_2D_.at(Layer_no)->Fill(time, z);
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 				Hits_Time_3D_.at(Layer_no)->Fill(time, z, x);
 				Hits_2D_.at(Layer_no)->Fill(x, y);
 				Hits_3D_.at(Layer_no)->Fill(z, x, y);
@@ -258,6 +268,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 			}
 		}
 	} //End of SubDetectors loop
+			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
 	gStyle->SetOptStat(1);
 	//gStyle->SetOptStat(111111);
@@ -312,6 +323,12 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		Hits_Canvas_->SetLogz(0);
 		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_.at(hitLayers.at(l)), "",
 				"PDFCanvas_1D2D_Hits_Layers.pdf");
+		Hits_Canvas_->Update();
+		Hits_Canvas_->SetLogy(0);
+		Hits_Canvas_->SetLogx(0);
+		Hits_Canvas_->SetLogz(0);
+		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_ztime_2D_.at(hitLayers.at(l)), "",
+						"PDFCanvas_1D2D_Hits_Layers.pdf");
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
@@ -399,7 +416,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	}
 	for (signed int l = 0; l < MaxNumberLayers; ++l) {
 		delete Hits_PerLayer_.at(l), Hits_Histo_.at(l), Hits_2D_.at(l), Hits_3D_.at(l);
-		delete Hits_Energy_Histo_.at(l), Hits_Energy_2D_.at(l), Hits_Energy_3D_.at(l);
+		delete Hits_Energy_Histo_.at(l), Hits_Energy_2D_.at(l), Hits_Energy_3D_.at(l), Hits_Time_ztime_2D_.at(l), Hits_Time_3D_.at(l);
 	}
 	delete Hits_Canvas_;
 	output_rootfile->Write();
