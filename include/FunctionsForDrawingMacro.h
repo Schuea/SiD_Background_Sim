@@ -381,7 +381,7 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(7),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(8) };
 		*axis_range_plot_3D = temp3D;
-		std::vector<float> temp3D =
+		std::vector<float> temptime3D =
 					{ SubDetectors->at(0)->GetROOTHisto_binning3D().at(0),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(1),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(2),
@@ -391,7 +391,7 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(3),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(4),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(5) };
-		*axis_range_plot_3D = temp3D;
+		*axis_range_plot_time_3D = temptime3D;
 	} else {
 		float maxEnergy1D = 0;
 		float minEnergy1D = 0;
@@ -418,6 +418,10 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 		float zmin3D = 0;
 		float zbins3D = 0;
 
+		float maxtime = 0;
+		float mintime = 0;
+		float binstime = 0;
+
 		for (int s = 0; s < SubDetectors->size(); ++s) {
 
 			minEnergy1D = FindMin(SubDetectors->at(s)->GetROOTEnergyHisto_binning().at(1), minEnergy1D);
@@ -441,6 +445,10 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 			ymin3D = FindMin(SubDetectors->at(s)->GetROOTHisto_binning3D().at(7), ymin3D);
 			ymax3D = FindMax(SubDetectors->at(s)->GetROOTHisto_binning3D().at(8), ymax3D);
 			ybins3D = FindMax(SubDetectors->at(s)->GetROOTHisto_binning3D().at(6), ybins3D);
+
+			mintime = FindMin(SubDetectors->at(s)->GetROOTHisto_time().at(1), mintime);
+			maxtime = FindMax(SubDetectors->at(s)->GetROOTHisto_time().at(2), maxtime);
+			binstime = FindMax(SubDetectors->at(s)->GetROOTHisto_time().at(0), binstime);
 		}
 		std::vector<float> tempEnergy1D = { binsEnergy1D, minEnergy1D, maxEnergy1D };
 		*axis_range_plot_energy_1D = tempEnergy1D;
@@ -450,6 +458,8 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 		*axis_range_plot_2D = temp2D;
 		std::vector<float> temp3D = { zbins3D, zmin3D, zmax3D, xbins3D, xmin3D, xmax3D, ybins3D, ymin3D, ymax3D };
 		*axis_range_plot_3D = temp3D;
+		std::vector<float> temptime3D = { zbins3D, zmin3D, zmax3D, binstime, mintime, maxtime, xbins3D, xmin3D, xmax3D };
+		*axis_range_plot_time_3D = temptime3D;
 	}
 }
 void SetupHistoTitles(std::string subdetector_name, std::string layer, std::string & histo_name1D,

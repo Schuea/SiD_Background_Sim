@@ -45,7 +45,7 @@ std::vector<TH3D*> Hits_3D_;
 std::vector<TH1D*> Hits_Energy_Histo_;
 std::vector<TH2D*> Hits_Energy_2D_;
 std::vector<TH3D*> Hits_Energy_3D_;
-std::vector<TH2D*> Hits_Time_3D_;
+std::vector<TH3D*> Hits_Time_3D_;
 
 int NUMBER_OF_FILES;
 int first_layer_to_be_compared;
@@ -98,18 +98,6 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	//Scaling up the histogram ranges from the subdetector specific single layer hits plot, so that data fit on plot
 	//TF1* gausfit_Hits = new TF1("gausfit", "gaus", 0, 150);
 
-	/*
-	int id = 0;
-	int id0 = 0;
-	int id1 = 0;
-	float x = 0;
-	float y = 0;
-	float z = 0;
-	double vertex_x = 0;
-	double vertex_y = 0;
-	double vertex_z = 0;
-	float energy = 0;
-	*/
 	int MaxNumberLayers = 0;
 	int Layer_no = 0;
 	int CellIDkey = 0.;
@@ -228,7 +216,6 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 
 				HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(energy);
 				HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(energy);
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
 				if (HitMap.find(CellIDkey) == HitMap.end()) {
 					HitMap[CellIDkey] = 1;
@@ -325,6 +312,12 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		Hits_Canvas_->SetLogz(0);
 		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_.at(hitLayers.at(l)), "",
 				"PDFCanvas_1D2D_Hits_Layers.pdf");
+		Hits_Canvas_->Update();
+		Hits_Canvas_->SetLogy(0);
+		Hits_Canvas_->SetLogx(0);
+		Hits_Canvas_->SetLogz(0);
+		WritePrintHistogram<TH3D*>(Hits_Canvas_, Hits_Time_3D_.at(hitLayers.at(l)), "",
+						"PDFCanvas_1D2D_Hits_Layers.pdf");
 	}
 	PDF_Canvas_1D2D_Hits_Layers->Print("PDFCanvas_1D2D_Hits_Layers.pdf]");
 	delete PDF_Canvas_1D2D_Hits_Layers;
@@ -377,7 +370,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 					<< first_layer_to_be_compared << " - " << end_of_range;
 			WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_PerLayer_, new_histo_perlayer_title.str(), hitLayers,
 					first_layer_to_be_compared, end_of_range, false, "", "PDFCanvas_Hits_CompareLayers.pdf");
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
+
 			Hits_Canvas_->Clear();
 			gStyle->SetStatX(0.87);
 			Hits_Canvas_->SetLogy(1);
@@ -386,7 +379,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 					<< first_layer_to_be_compared << " - " << end_of_range;
 			WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_Histo_, new_histo_title.str(), hitLayers,
 					first_layer_to_be_compared, end_of_range, true, "", "PDFCanvas_Hits_CompareLayers.pdf");
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
+
 			Hits_Canvas_->Clear();
 			gStyle->SetStatX(0.87);
 			Hits_Canvas_->SetLogy(1);
