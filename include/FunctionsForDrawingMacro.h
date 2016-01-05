@@ -348,34 +348,49 @@ CellID * InitializeCellIDClass(std::string SubdetectorName, Data* data) {
 
 void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<float> *axis_range_plot_1D,
 		std::vector<float> *axis_range_plot_2D, std::vector<float> *axis_range_plot_3D,
-		std::vector<float> *axis_range_plot_energy_1D) {
+		std::vector<float> *axis_range_plot_energy_1D, std::vector<float> *axis_range_plot_time_3D) {
 
 	if (SubDetectors->size() == 1) {
 
 		std::vector<float> temp1D =
-				{ SubDetectors->at(0)->GetROOTHisto_binning1D().at(0), SubDetectors->at(0)->GetROOTHisto_binning1D().at(
-						1), SubDetectors->at(0)->GetROOTHisto_binning1D().at(2) };
+				{ SubDetectors->at(0)->GetROOTHisto_binning1D().at(0),
+						SubDetectors->at(0)->GetROOTHisto_binning1D().at(1),
+						SubDetectors->at(0)->GetROOTHisto_binning1D().at(2) };
 		*axis_range_plot_1D = temp1D;
-		std::vector<float> tempenergy1D = { SubDetectors->at(0)->GetROOTEnergyHisto_binning().at(0),
-				SubDetectors->at(0)->GetROOTEnergyHisto_binning().at(1),
-				SubDetectors->at(0)->GetROOTEnergyHisto_binning().at(2) };
+		std::vector<float> tempenergy1D =
+				{ SubDetectors->at(0)->GetROOTEnergyHisto_binning().at(0),
+						SubDetectors->at(0)->GetROOTEnergyHisto_binning().at(1),
+						SubDetectors->at(0)->GetROOTEnergyHisto_binning().at(2) };
 		*axis_range_plot_energy_1D = tempenergy1D;
 		std::vector<float> temp2D =
-				{ SubDetectors->at(0)->GetROOTHisto_binning2D().at(0), SubDetectors->at(0)->GetROOTHisto_binning2D().at(
-						1), SubDetectors->at(0)->GetROOTHisto_binning2D().at(2),
+				{ SubDetectors->at(0)->GetROOTHisto_binning2D().at(0),
+						SubDetectors->at(0)->GetROOTHisto_binning2D().at(1),
+						SubDetectors->at(0)->GetROOTHisto_binning2D().at(2),
 						SubDetectors->at(0)->GetROOTHisto_binning2D().at(3),
 						SubDetectors->at(0)->GetROOTHisto_binning2D().at(4),
 						SubDetectors->at(0)->GetROOTHisto_binning2D().at(5) };
 		*axis_range_plot_2D = temp2D;
 		std::vector<float> temp3D =
-				{ SubDetectors->at(0)->GetROOTHisto_binning3D().at(0), SubDetectors->at(0)->GetROOTHisto_binning3D().at(
-						1), SubDetectors->at(0)->GetROOTHisto_binning3D().at(2),
+				{ SubDetectors->at(0)->GetROOTHisto_binning3D().at(0),
+						SubDetectors->at(0)->GetROOTHisto_binning3D().at(1),
+						SubDetectors->at(0)->GetROOTHisto_binning3D().at(2),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(3),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(4),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(5),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(6),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(7),
 						SubDetectors->at(0)->GetROOTHisto_binning3D().at(8) };
+		*axis_range_plot_3D = temp3D;
+		std::vector<float> temp3D =
+					{ SubDetectors->at(0)->GetROOTHisto_binning3D().at(0),
+						SubDetectors->at(0)->GetROOTHisto_binning3D().at(1),
+						SubDetectors->at(0)->GetROOTHisto_binning3D().at(2),
+						SubDetectors->at(0)->GetROOTHisto_time().at(0),
+						SubDetectors->at(0)->GetROOTHisto_time().at(1),
+						SubDetectors->at(0)->GetROOTHisto_time().at(2),
+						SubDetectors->at(0)->GetROOTHisto_binning3D().at(3),
+						SubDetectors->at(0)->GetROOTHisto_binning3D().at(4),
+						SubDetectors->at(0)->GetROOTHisto_binning3D().at(5) };
 		*axis_range_plot_3D = temp3D;
 	} else {
 		float maxEnergy1D = 0;
@@ -442,7 +457,8 @@ void SetupHistoTitles(std::string subdetector_name, std::string layer, std::stri
 		std::string & histo_title3D, std::string & energyhisto_name1D, std::string & energyhisto_title1D,
 		std::string & energyhisto_name2D, std::string & energyhisto_title2D, std::string & energyhisto_name3D,
 		std::string & energyhisto_title3D, std::string & hitsperlayerhisto_name, std::string & hitsperlayerhisto_title,
-		std::string & particleoriginshisto_name, std::string & particleoriginshisto_title) {
+		std::string & particleoriginshisto_name, std::string & particleoriginshisto_title,
+		std::string &  histo_name_time3D, std::string &  histo_title_time3D) {
 
 	histo_name1D = "Hits_" + subdetector_name + "_Layer_" + layer;
 	histo_title1D = "Hit occupancy per cell for " + subdetector_name + " layer " + layer;
@@ -461,6 +477,8 @@ void SetupHistoTitles(std::string subdetector_name, std::string layer, std::stri
 	particleoriginshisto_name = "ParticleOrigins_" + subdetector_name + "_Layer_" + layer;
 	particleoriginshisto_title = "Origins of std::pair background particles for " + subdetector_name + " layer "
 			+ layer;
+	histo_name_time3D = "HitsTime_3D_" + subdetector_name + "_Layer_" + layer;
+	histo_title_time3D = "xz hitmap over hit time for " + subdetector_name + " layer " + layer;
 }
 
 void Setup_ParticleOriginsHisto(std::vector<TH2D*> & HistoVector, std::vector<float> axis_range_plot,

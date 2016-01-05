@@ -37,7 +37,10 @@ class Subdetector{
     }				
     std::vector<float> GetROOTHisto_binning3D() const{
       return ROOTHisto_binning3D;
-    }				
+    }
+    std::vector<float> GetROOTHisto_time() const{
+      return ROOTHisto_time;
+    }
 
   protected:
     LayerCodeInCellID *LayerInfo_;
@@ -49,7 +52,7 @@ class Subdetector{
     std::vector<float> ROOTHisto_binning1D;
     std::vector<float> ROOTHisto_binning2D;
     std::vector<float> ROOTHisto_binning3D;
-
+    std::vector<float> ROOTHisto_time;
 };
 class EcalBarrel : public Subdetector{
 

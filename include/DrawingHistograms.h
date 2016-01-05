@@ -45,6 +45,7 @@ std::vector<TH3D*> Hits_3D_;
 std::vector<TH1D*> Hits_Energy_Histo_;
 std::vector<TH2D*> Hits_Energy_2D_;
 std::vector<TH3D*> Hits_Energy_3D_;
+std::vector<TH2D*> Hits_Time_3D_;
 
 int NUMBER_OF_FILES;
 int first_layer_to_be_compared;
@@ -81,9 +82,10 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	std::vector<float> axis_range_plot_2D = { }; //xbins, xlow, xup, ybins, ylow, yup
 	std::vector<float> axis_range_plot_3D = { }; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup
 	std::vector<float> axis_range_plot_energy_1D = { }; //xbins, xlow, xup
+	std::vector<float> axis_range_plot_time_3D = { }; //zbins, zlow, zup, timebins, timelow, timeup, xbins, xlow, xup
 
 	Setup_BinningArrays(SubDetectors, &axis_range_plot_1D, &axis_range_plot_2D, &axis_range_plot_3D,
-			&axis_range_plot_energy_1D);
+			&axis_range_plot_energy_1D, &axis_range_plot_time_3D);
 	std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 	TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0] * 3, axis_range_plot_1D[1], axis_range_plot_1D[2] * 40);
 	///*MuonBarrel*/TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*1/5, 100, axis_range_plot_1D[2]);
@@ -132,27 +134,20 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		gROOT->ForceStyle();
 		gStyle->SetPalette(1);
 
-		std::string histo_name1D;
-		std::string histo_title1D;
-		std::string histo_name2D;
-		std::string histo_title2D;
-		std::string histo_name3D;
-		std::string histo_title3D;
-		std::string energyhisto_name1D;
-		std::string energyhisto_title1D;
-		std::string energyhisto_name2D;
-		std::string energyhisto_title2D;
-		std::string energyhisto_name3D;
-		std::string energyhisto_title3D;
-		std::string hitsperlayerhisto_name;
-		std::string hitsperlayerhisto_title;
-		std::string particleoriginshisto_name;
-		std::string particleoriginshisto_title;
+		std::string histo_name1D, histo_title1D;
+		std::string histo_name2D, histo_title2D;
+		std::string histo_name3D, histo_title3D;
+		std::string energyhisto_name1D, energyhisto_title1D;
+		std::string energyhisto_name2D, energyhisto_title2D;
+		std::string energyhisto_name3D, energyhisto_title3D;
+		std::string hitsperlayerhisto_name, hitsperlayerhisto_title;
+		std::string particleoriginshisto_name, particleoriginshisto_title;
+		std::string histo_name_time3D, histo_title_time3D;
 
 		SetupHistoTitles(subdetector_name, layerstring, histo_name1D, histo_title1D, histo_name2D, histo_title2D,
 				histo_name3D, histo_title3D, energyhisto_name1D, energyhisto_title1D, energyhisto_name2D,
 				energyhisto_title2D, energyhisto_name3D, energyhisto_title3D, hitsperlayerhisto_name,
-				hitsperlayerhisto_title, particleoriginshisto_name, particleoriginshisto_title);
+				hitsperlayerhisto_title, particleoriginshisto_name, particleoriginshisto_title, histo_name_time3D, histo_title_time3D);
 		Setup_ParticleOriginsHisto(ParticleOrigins_2D_, axis_range_plot_3D, particleoriginshisto_name,
 				particleoriginshisto_title, "cylindrical");
 		Setup_Histo(Hits_PerLayer_, axis_range_plot_1D, hitsperlayerhisto_name, hitsperlayerhisto_title);
@@ -162,6 +157,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		Setup_Histo(Hits_Energy_Histo_, axis_range_plot_energy_1D, energyhisto_name1D, energyhisto_title1D);
 		Setup_Histo(Hits_Energy_2D_, axis_range_plot_2D, energyhisto_name2D, energyhisto_title2D);
 		Setup_Histo(Hits_Energy_3D_, axis_range_plot_3D, energyhisto_name3D, energyhisto_title3D);
+		Setup_Histo(Hits_Time_3D_, axis_range_plot_time_3D, histo_name_time3D, histo_title_time3D);
 	}
 	std::vector<int> hitLayers;
 	for (int s = 0; s < SubDetectors->size(); ++s) {
@@ -208,6 +204,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				HitsPerLayerMap[Layer_no].at(fileIterator) += 1;
 
 				float energy = 0.;
+				float time = 0.;
 				float x = 0.;
 				float y = 0.;
 				float z = 0.;
@@ -218,6 +215,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 					z = data-> Get_z_hit_particle();
 					energy = data->Get_dEdx_hit();
 					vertex = data->Get_vertex_particle();
+					time = data->Get_time_contribution();
 				}
 				if (!YesNo_TrackerHistograms){
 					x = data-> Get_x_hit();
@@ -225,6 +223,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 					z = data-> Get_z_hit();
 					energy = data->Get_energy_hit();
 					vertex = data->Get_vertex_mother();
+					time = data->Get_time_hit();
 				}
 
 				HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(energy);
@@ -240,6 +239,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
 				ParticleOrigins_2D_.at(Layer_no)->Fill(vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
 				std::cout << "x_hit, y_hit = " << x << ", " << y << std::endl;
+				Hits_Time_3D_.at(Layer_no)->Fill(time, x, z);
 				Hits_2D_.at(Layer_no)->Fill(x, y);
 				Hits_3D_.at(Layer_no)->Fill(z, x, y);
 			}
