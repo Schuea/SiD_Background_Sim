@@ -211,7 +211,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 					z = data-> Get_z_hit_particle();
 					energy = data->Get_dEdx_hit();
 					vertex = data->Get_vertex_particle();
-					time = data->Get_time_contribution();
+					time = data->Get_time_hit();
 				}
 				if (!YesNo_TrackerHistograms){
 					x = data-> Get_x_hit();
@@ -219,7 +219,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 					z = data-> Get_z_hit();
 					energy = data->Get_energy_hit();
 					vertex = data->Get_vertex_mother();
-					time = data->Get_time_hit();
+					time = data->Get_time_contribution();
 				}
 
 				HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(energy);
