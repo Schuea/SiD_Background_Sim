@@ -165,3 +165,100 @@ int Subdetector::GetLayer(int const cellID){
   LayerInfo_ = new LayerCodeInCellID();
   return LayerInfo_->GetLayer(cellID,StartLayerBin_,LengthLayerBin_);
 }
+
+Subdetector::Subdetector(){
+}
+void Subdetector::Initialize(){
+}
+std::string Subdetector::GetName() const{
+  return Name_;
+}
+int Subdetector::GetStartLayerBin() const {
+  return StartLayerBin_;
+}				
+int Subdetector::GetLengthLayerBin() const {
+  return LengthLayerBin_;
+}				
+int Subdetector::GetNumberOfLayers() const {
+  return NumberOfLayers_;
+}	
+std::vector<float> Subdetector::GetROOTEnergyHisto_binning() const{
+  return ROOTEnergyHisto_binning;
+}				
+std::vector<float> Subdetector::GetROOTHisto_binning1D() const{
+  return ROOTHisto_binning1D;
+}				
+std::vector<float> Subdetector::GetROOTHisto_binning2D() const{
+  return ROOTHisto_binning2D;
+}				
+std::vector<float> Subdetector::GetROOTHisto_binning3D() const{
+  return ROOTHisto_binning3D;
+}				
+std::vector<float> Subdetector::GetROOTHisto_time() const{
+  return ROOTHisto_time;
+}
+
+EcalBarrel::EcalBarrel(){
+}
+EcalBarrel::~EcalBarrel(){
+}
+
+EcalEndcap::EcalEndcap() {
+}
+EcalEndcap::~EcalEndcap() {
+}
+
+HcalBarrel::HcalBarrel(){
+}
+HcalBarrel::~HcalBarrel(){
+}
+
+HcalEndcap::HcalEndcap(){
+}
+HcalEndcap::~HcalEndcap(){
+}
+
+MuonBarrel::MuonBarrel(){
+}
+MuonBarrel::~MuonBarrel(){
+}
+
+MuonEndcap::MuonEndcap(){
+}
+MuonEndcap::~MuonEndcap(){
+}
+
+BeamCal::BeamCal(){
+}
+BeamCal::~BeamCal(){
+}
+
+LumiCal::LumiCal(){
+}
+LumiCal::~LumiCal(){
+}
+
+SiVertexEndcap::SiVertexEndcap(){
+}
+SiVertexEndcap::~SiVertexEndcap(){
+}
+
+SiVertexBarrel::SiVertexBarrel(){
+}
+SiVertexBarrel::~SiVertexBarrel(){
+}
+
+SiTrackerEndcap::SiTrackerEndcap(){
+}
+SiTrackerEndcap::~SiTrackerEndcap(){
+}
+
+SiTrackerBarrel::SiTrackerBarrel(){
+}
+SiTrackerBarrel::~SiTrackerBarrel(){
+}
+
+SiTrackerForward::SiTrackerForward(){
+}
+SiTrackerForward::~SiTrackerForward(){
+}
