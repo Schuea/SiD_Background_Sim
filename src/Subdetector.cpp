@@ -10,7 +10,7 @@ void EcalBarrel::Initialize(){
   ROOTHisto_binning1D = {10, 0, 10};                                           
   ROOTHisto_binning2D = {70, -1500, 1500, 70, -1500, 1500}; //xbins, xlow, xup, ybins, ylow, yup
   ROOTHisto_binning3D = {100, -2000, 2000, 100, -1500, 1500, 100, -1500, 1500}; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup
-  ROOTHisto_time = {500, 0, 10000};
+  ROOTHisto_time = {500, 0, 5000};
 }								
 void EcalEndcap::Initialize(){
   Name_ = "EcalEndcap";
@@ -22,7 +22,7 @@ void EcalEndcap::Initialize(){
   ROOTHisto_binning1D = {15, 0, 15};                                           
   ROOTHisto_binning2D = {70, -1500, 1500, 70, -1500, 1500};                    
   ROOTHisto_binning3D = {70, -2000, 2000, 70, -1500, 1500, 70, -1500, 1500};
-  ROOTHisto_time = {500, 0, 10000};
+  ROOTHisto_time = {500, 0, 2000};
 }								
 void HcalBarrel::Initialize(){
   Name_ = "HcalBarrel";
@@ -34,7 +34,7 @@ void HcalBarrel::Initialize(){
   ROOTHisto_binning1D = {6, 0, 6};                                           
   ROOTHisto_binning2D = {70, -2500, 2500, 70, -2500, 2500};                    
   ROOTHisto_binning3D = {100, -3100, 3100, 70, -2500, 2500, 70, -2500, 2500};
-  ROOTHisto_time = {500, 0, 10000};
+  ROOTHisto_time = {500, 0, 5000};
 }								
 void HcalEndcap::Initialize(){
   Name_ = "HcalEndcap";
@@ -46,7 +46,7 @@ void HcalEndcap::Initialize(){
   ROOTHisto_binning1D = {50, 0, 50};                                           
   ROOTHisto_binning2D = {70, -1500, 1500, 70, -1500, 1500};                    
   ROOTHisto_binning3D = {100, -3100, 3100, 70, -1500, 1500, 70, -1500, 1500};
-  ROOTHisto_time = {500, 0, 10000};
+  ROOTHisto_time = {500, 0, 13000};
 }								
 void MuonBarrel::Initialize(){
   Name_ = "MuonBarrel";
@@ -70,7 +70,7 @@ void MuonEndcap::Initialize(){
   ROOTHisto_binning1D = {50, 0, 15000};                                           
   ROOTHisto_binning2D = {150, -6300, 6300, 150, -6300, 6300};                    
   ROOTHisto_binning3D = {150, -5700, 5700, 150, -6300, 6300, 150, -6300, 6300};
-  ROOTHisto_time = {500, 0, 10000};
+  ROOTHisto_time = {500, 0, 12000};
 }								
 void BeamCal::Initialize(){
   Name_ = "BeamCal";
@@ -82,7 +82,7 @@ void BeamCal::Initialize(){
   ROOTHisto_binning1D = {150, 0, 2000000};                                           
   ROOTHisto_binning2D = {100, -140, 140, 100, -140, 140};                    
   ROOTHisto_binning3D = {150, -3200, 3200, 100, -140, 140, 100, -140, 140};
-  ROOTHisto_time = {500, 0, 10000};
+  ROOTHisto_time = {500, 0, 15000};
 }								
 void LumiCal::Initialize(){
   Name_ = "LumiCal";
@@ -94,7 +94,7 @@ void LumiCal::Initialize(){
   ROOTHisto_binning1D = {100, 0, 210};                                           
   ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
-  ROOTHisto_time = {500, 0, 10000};
+  ROOTHisto_time = {200, 0, 3500};
 }								
 void SiVertexEndcap::Initialize(){
   Name_ = "SiVertexEndcap";
@@ -107,7 +107,7 @@ void SiVertexEndcap::Initialize(){
   ROOTHisto_binning1D = {100, 0, 210};                                           
   ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
-  ROOTHisto_time = {500, 0, 10000};
+  ROOTHisto_time = {200, 0, 2000};
 }
 void SiVertexBarrel::Initialize(){
   Name_ = "SiVertexBarrel";
@@ -120,7 +120,7 @@ void SiVertexBarrel::Initialize(){
   ROOTHisto_binning1D = {100, 0, 210};                                           
   ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
-  ROOTHisto_time = {500, 0, 10000};
+  ROOTHisto_time = {200, 0, 2000};
 }
 void SiTrackerEndcap::Initialize(){
   Name_ = "SiTrackerEndcap";
@@ -133,7 +133,7 @@ void SiTrackerEndcap::Initialize(){
   ROOTHisto_binning1D = {100, 0, 210};                                           
   ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
-  ROOTHisto_time = {500, 0, 10000};
+  ROOTHisto_time = {200, 0, 2000};
 }
 void SiTrackerBarrel::Initialize(){
   Name_ = "SiTrackerBarrel";
@@ -146,7 +146,7 @@ void SiTrackerBarrel::Initialize(){
   ROOTHisto_binning1D = {100, 0, 210};                                           
   ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
-  ROOTHisto_time = {500, 0, 10000};
+  ROOTHisto_time = {200, 0, 3500};
 }
 void SiTrackerForward::Initialize(){
   Name_ = "SiTrackerForward";
@@ -159,7 +159,7 @@ void SiTrackerForward::Initialize(){
   ROOTHisto_binning1D = {100, 0, 210};                                           
   ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
-  ROOTHisto_time = {500, 0, 10000};
+  ROOTHisto_time = {200, 0, 2000};
 }
 int Subdetector::GetLayer(int const cellID){
   LayerInfo_ = new LayerCodeInCellID();
