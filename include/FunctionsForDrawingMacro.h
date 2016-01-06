@@ -348,7 +348,8 @@ CellID * InitializeCellIDClass(std::string SubdetectorName, Data* data) {
 
 void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<float> *axis_range_plot_1D,
 		std::vector<float> *axis_range_plot_2D, std::vector<float> *axis_range_plot_3D,
-		std::vector<float> *axis_range_plot_energy_1D, std::vector<float> *axis_range_plot_rtime_2D,
+		std::vector<float> *axis_range_plot_energy_1D,
+		std::vector<float> *axis_range_plot_time, std::vector<float> *axis_range_plot_rtime_2D,
 		std::vector<float> *axis_range_plot_ztime_2D, std::vector<float> *axis_range_plot_time_3D) {
 
 		float maxEnergy1D = 0;
@@ -425,6 +426,8 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 		*axis_range_plot_ztime_2D = tempztime2D;
 		std::vector<float> temptime3D = { binstime, mintime, maxtime, zbins3D, zmin3D, zmax3D, rbins, 0, rmax };
 		*axis_range_plot_time_3D = temptime3D;
+		std::vector<float> temptime = { binstime, mintime, maxtime};
+		*axis_range_plot_time = temptime;
 
 }
 void SetupHistoTitles(std::string subdetector_name, std::string layer, std::string & histo_name1D,
@@ -433,6 +436,7 @@ void SetupHistoTitles(std::string subdetector_name, std::string layer, std::stri
 		std::string & energyhisto_name2D, std::string & energyhisto_title2D, std::string & energyhisto_name3D,
 		std::string & energyhisto_title3D, std::string & hitsperlayerhisto_name, std::string & hitsperlayerhisto_title,
 		std::string & particleoriginshisto_name, std::string & particleoriginshisto_title,
+		std::string &  histo_name_time, std::string &  histo_title_time,
 		std::string &  histo_name_rtime2D, std::string &  histo_title_rtime2D,
 		std::string &  histo_name_ztime2D, std::string &  histo_title_ztime2D,
 		std::string &  histo_name_time3D, std::string &  histo_title_time3D) {
@@ -454,8 +458,11 @@ void SetupHistoTitles(std::string subdetector_name, std::string layer, std::stri
 	particleoriginshisto_name = "ParticleOrigins_" + subdetector_name + "_Layer_" + layer;
 	particleoriginshisto_title = "Origins of std::pair background particles for " + subdetector_name + " layer "
 			+ layer;
+
+	histo_name_time = "HitsTime_" + subdetector_name + "_Layer_" + layer;
+	histo_title_time = "Hit time for " + subdetector_name + " layer " + layer;
 	histo_name_rtime2D = "HitsTime_rtime_2D_" + subdetector_name + "_Layer_" + layer;
-	histo_title_rtime2D = "radial position of hits over hit time for " + subdetector_name + " layer " + layer;
+	histo_title_rtime2D = "Radial position of hits over hit time for " + subdetector_name + " layer " + layer;
 	histo_name_ztime2D = "HitsTime_ztime_2D_" + subdetector_name + "_Layer_" + layer;
 	histo_title_ztime2D = "z position of hits over hit time for " + subdetector_name + " layer " + layer;
 	histo_name_time3D = "HitsTime_3D_" + subdetector_name + "_Layer_" + layer;
