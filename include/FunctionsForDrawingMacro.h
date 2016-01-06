@@ -348,60 +348,9 @@ CellID * InitializeCellIDClass(std::string SubdetectorName, Data* data) {
 
 void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<float> *axis_range_plot_1D,
 		std::vector<float> *axis_range_plot_2D, std::vector<float> *axis_range_plot_3D,
-		std::vector<float> *axis_range_plot_energy_1D, std::vector<float> *axis_range_plot_ztime_2D,
-		std::vector<float> *axis_range_plot_time_3D) {
+		std::vector<float> *axis_range_plot_energy_1D, std::vector<float> *axis_range_plot_rtime_2D,
+		std::vector<float> *axis_range_plot_ztime_2D, std::vector<float> *axis_range_plot_time_3D) {
 
-	if (SubDetectors->size() == 1) {
-
-		std::vector<float> temp1D =
-				{ SubDetectors->at(0)->GetROOTHisto_binning1D().at(0),
-						SubDetectors->at(0)->GetROOTHisto_binning1D().at(1),
-						SubDetectors->at(0)->GetROOTHisto_binning1D().at(2) };
-		*axis_range_plot_1D = temp1D;
-		std::vector<float> tempenergy1D =
-				{ SubDetectors->at(0)->GetROOTEnergyHisto_binning().at(0),
-						SubDetectors->at(0)->GetROOTEnergyHisto_binning().at(1),
-						SubDetectors->at(0)->GetROOTEnergyHisto_binning().at(2) };
-		*axis_range_plot_energy_1D = tempenergy1D;
-		std::vector<float> temp2D =
-				{ SubDetectors->at(0)->GetROOTHisto_binning2D().at(0),
-						SubDetectors->at(0)->GetROOTHisto_binning2D().at(1),
-						SubDetectors->at(0)->GetROOTHisto_binning2D().at(2),
-						SubDetectors->at(0)->GetROOTHisto_binning2D().at(3),
-						SubDetectors->at(0)->GetROOTHisto_binning2D().at(4),
-						SubDetectors->at(0)->GetROOTHisto_binning2D().at(5) };
-		*axis_range_plot_2D = temp2D;
-		std::vector<float> temp3D =
-				{ SubDetectors->at(0)->GetROOTHisto_binning3D().at(0),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(1),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(2),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(3),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(4),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(5),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(6),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(7),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(8) };
-		*axis_range_plot_3D = temp3D;
-		std::vector<float> tempztime2D =
-          {	SubDetectors->at(0)->GetROOTHisto_time().at(0),
-						SubDetectors->at(0)->GetROOTHisto_time().at(1),
-						SubDetectors->at(0)->GetROOTHisto_time().at(2),
-          	SubDetectors->at(0)->GetROOTHisto_binning3D().at(0),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(1),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(2) };
-		*axis_range_plot_ztime_2D = tempztime2D;
-		std::vector<float> temptime3D =
-          {	SubDetectors->at(0)->GetROOTHisto_time().at(0),
-						SubDetectors->at(0)->GetROOTHisto_time().at(1),
-						SubDetectors->at(0)->GetROOTHisto_time().at(2),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(0),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(1),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(2),
-					  SubDetectors->at(0)->GetROOTHisto_binning3D().at(3),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(4),
-						SubDetectors->at(0)->GetROOTHisto_binning3D().at(5) };
-		*axis_range_plot_time_3D = temptime3D;
-	} else {
 		float maxEnergy1D = 0;
 		float minEnergy1D = 0;
 		float binsEnergy1D = 0;
@@ -467,11 +416,16 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 		*axis_range_plot_2D = temp2D;
 		std::vector<float> temp3D = { zbins3D, zmin3D, zmax3D, xbins3D, xmin3D, xmax3D, ybins3D, ymin3D, ymax3D };
 		*axis_range_plot_3D = temp3D;
+
+		float rmax = sqrt(pow(xmax3D,2)+pow(ymax3D,2));
+		float rbins = rmax / 10;
+		std::vector<float> temprtime2D = { binstime, mintime, maxtime, rbins, 0, rmax };
+		*axis_range_plot_rtime_2D = temprtime2D;
 		std::vector<float> tempztime2D = { binstime, mintime, maxtime, zbins3D, zmin3D, zmax3D };
 		*axis_range_plot_ztime_2D = tempztime2D;
-		std::vector<float> temptime3D = { binstime, mintime, maxtime, zbins3D, zmin3D, zmax3D, xbins3D, xmin3D, xmax3D };
+		std::vector<float> temptime3D = { binstime, mintime, maxtime, zbins3D, zmin3D, zmax3D, rbins, 0, rmax };
 		*axis_range_plot_time_3D = temptime3D;
-	}
+
 }
 void SetupHistoTitles(std::string subdetector_name, std::string layer, std::string & histo_name1D,
 		std::string & histo_title1D, std::string & histo_name2D, std::string & histo_title2D, std::string & histo_name3D,
@@ -479,6 +433,7 @@ void SetupHistoTitles(std::string subdetector_name, std::string layer, std::stri
 		std::string & energyhisto_name2D, std::string & energyhisto_title2D, std::string & energyhisto_name3D,
 		std::string & energyhisto_title3D, std::string & hitsperlayerhisto_name, std::string & hitsperlayerhisto_title,
 		std::string & particleoriginshisto_name, std::string & particleoriginshisto_title,
+		std::string &  histo_name_rtime2D, std::string &  histo_title_rtime2D,
 		std::string &  histo_name_ztime2D, std::string &  histo_title_ztime2D,
 		std::string &  histo_name_time3D, std::string &  histo_title_time3D) {
 
@@ -487,22 +442,24 @@ void SetupHistoTitles(std::string subdetector_name, std::string layer, std::stri
 	histo_name2D = "Hits_2D_" + subdetector_name + "_Layer_" + layer;
 	histo_title2D = "HitMap for " + subdetector_name + " layer " + layer;
 	histo_name3D = "Hits_3D_" + subdetector_name + "_Layer_" + layer;
-	histo_title3D = "HitMap for " + subdetector_name + " layer " + layer;
+	histo_title3D = "HitMap for " + subdetector_name + " layer " + layer + ";z [mm];x[mm];y[mm]";
 	energyhisto_name1D = "Energy_" + subdetector_name + "_Layer_" + layer;
 	energyhisto_title1D = "Deposited hit energy for " + subdetector_name + " layer " + layer;
 	energyhisto_name2D = "Hits_Energy_2D_" + subdetector_name + "_Layer_" + layer;
 	energyhisto_title2D = "HitMap with the average hit energy per bin for " + subdetector_name + " layer " + layer;
 	energyhisto_name3D = "Hits_Energy_3D_" + subdetector_name + "_Layer_" + layer;
-	energyhisto_title3D = "HitMap with the hit energy for " + subdetector_name + " layer " + layer;
+	energyhisto_title3D = "HitMap with the hit energy for " + subdetector_name + " layer " + layer + ";z [mm];x[mm];y[mm]";
 	hitsperlayerhisto_name = "HitsPerLayer_" + subdetector_name + "_Layer_" + layer;
 	hitsperlayerhisto_title = "Hits for " + subdetector_name + " layer " + layer;
 	particleoriginshisto_name = "ParticleOrigins_" + subdetector_name + "_Layer_" + layer;
 	particleoriginshisto_title = "Origins of std::pair background particles for " + subdetector_name + " layer "
 			+ layer;
+	histo_name_rtime2D = "HitsTime_rtime_2D_" + subdetector_name + "_Layer_" + layer;
+	histo_title_rtime2D = "radial position of hits over hit time for " + subdetector_name + " layer " + layer;
 	histo_name_ztime2D = "HitsTime_ztime_2D_" + subdetector_name + "_Layer_" + layer;
 	histo_title_ztime2D = "z position of hits over hit time for " + subdetector_name + " layer " + layer;
 	histo_name_time3D = "HitsTime_3D_" + subdetector_name + "_Layer_" + layer;
-	histo_title_time3D = "xz hitmap over hit time for " + subdetector_name + " layer " + layer;
+	histo_title_time3D = "rz hitmap over hit time for " + subdetector_name + " layer " + layer + ";time [ns];z [mm];r [mm]";
 }
 
 void Setup_ParticleOriginsHisto(std::vector<TH2D*> & HistoVector, std::vector<float> axis_range_plot,
