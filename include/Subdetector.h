@@ -7,37 +7,21 @@
 class Subdetector{
 
   public:
-    Subdetector() {}
+    Subdetector();
 
     //virtual ~Subdetector() {}
 
-    virtual void Initialize(){}
+    virtual void Initialize();
 
-    std::string GetName() const{
-      return Name_;
-    }
-    int GetStartLayerBin() const {
-      return StartLayerBin_;
-    }				
-    int GetLengthLayerBin() const {
-      return LengthLayerBin_;
-    }				
-    int GetNumberOfLayers() const {
-      return NumberOfLayers_;
-    }	
+    std::string GetName() const;
+    int GetStartLayerBin() const;
+    int GetLengthLayerBin() const;				
+    int GetNumberOfLayers() const;	
     int GetLayer(int const cellID);
-    std::vector<float> GetROOTEnergyHisto_binning() const{
-      return ROOTEnergyHisto_binning;
-    }				
-    std::vector<float> GetROOTHisto_binning1D() const{
-      return ROOTHisto_binning1D;
-    }				
-    std::vector<float> GetROOTHisto_binning2D() const{
-      return ROOTHisto_binning2D;
-    }				
-    std::vector<float> GetROOTHisto_binning3D() const{
-      return ROOTHisto_binning3D;
-    }				
+    std::vector<float> GetROOTEnergyHisto_binning() const;
+    std::vector<float> GetROOTHisto_binning1D() const;
+    std::vector<float> GetROOTHisto_binning2D() const;
+    std::vector<float> GetROOTHisto_binning3D() const;
 
   protected:
     LayerCodeInCellID *LayerInfo_;
@@ -54,117 +38,117 @@ class Subdetector{
 class EcalBarrel : public Subdetector{
 
   public:
-    EcalBarrel() {}
+    EcalBarrel();
 
-    ~EcalBarrel() {}
+    ~EcalBarrel();
 
     void Initialize();
 };
 class EcalEndcap : public Subdetector{
 
   public:
-    EcalEndcap() {}
+    EcalEndcap();
 
-    ~EcalEndcap() {}
+    ~EcalEndcap();
 
     void Initialize();
 };
 class HcalBarrel : public Subdetector{
 
   public:
-    HcalBarrel() {}
+    HcalBarrel();
 
-    ~HcalBarrel() {}
+    ~HcalBarrel();
 
     void Initialize();
 };
 class HcalEndcap : public Subdetector{
 
   public:
-    HcalEndcap() {}
+    HcalEndcap();
 
-    ~HcalEndcap() {}
+    ~HcalEndcap();
 
     void Initialize();
 };
 class MuonBarrel : public Subdetector{
 
   public:
-    MuonBarrel() {}
+    MuonBarrel();
 
-    ~MuonBarrel() {}
+    ~MuonBarrel();
 
     void Initialize();
 };
 class MuonEndcap : public Subdetector{
 
   public:
-    MuonEndcap() {}
+    MuonEndcap();
 
-    ~MuonEndcap() {}
+    ~MuonEndcap();
 
     void Initialize();
 };
 class BeamCal : public Subdetector{
 
   public:
-    BeamCal() {}
+    BeamCal();
 
-    ~BeamCal() {}
+    ~BeamCal();
 
     void Initialize();
 };
 class LumiCal : public Subdetector{
 
   public:
-    LumiCal() {}
+    LumiCal();
 
-    ~LumiCal() {}
+    ~LumiCal();
 
     void Initialize();
 };
 class SiVertexEndcap : public Subdetector{
 
   public:
-    SiVertexEndcap() {}
+    SiVertexEndcap();
 
-    ~SiVertexEndcap() {}
+    ~SiVertexEndcap();
 
     void Initialize();
 };
 class SiVertexBarrel : public Subdetector{
 
   public:
-    SiVertexBarrel() {}
+    SiVertexBarrel();
 
-    ~SiVertexBarrel() {}
+    ~SiVertexBarrel();
 
     void Initialize();
 };
 class SiTrackerEndcap : public Subdetector{
 
   public:
-    SiTrackerEndcap() {}
+    SiTrackerEndcap();
 
-    ~SiTrackerEndcap() {}
+    ~SiTrackerEndcap();
 
     void Initialize();
 };
 class SiTrackerBarrel : public Subdetector{
 
   public:
-    SiTrackerBarrel() {}
+    SiTrackerBarrel();
 
-    ~SiTrackerBarrel() {}
+    ~SiTrackerBarrel();
 
     void Initialize();
 };
 class SiTrackerForward : public Subdetector{
 
   public:
-    SiTrackerForward() {}
+    SiTrackerForward();
 
-    ~SiTrackerForward() {}
+    ~SiTrackerForward();
 
     void Initialize();
 };
