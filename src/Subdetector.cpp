@@ -153,7 +153,6 @@ int Subdetector::GetLayer(int const cellID){
   return LayerInfo_->GetLayer(cellID,StartLayerBin_,LengthLayerBin_);
 }
 
-
 Subdetector::Subdetector(){
 }
 void Subdetector::Initialize(){
