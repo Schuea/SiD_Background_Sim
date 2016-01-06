@@ -13,6 +13,7 @@
 #include <sstream>
 #include <string>
 
+#include "UsefulFunctions.h"
 #include "DrawingHistograms.h"
 
 void Usage();
