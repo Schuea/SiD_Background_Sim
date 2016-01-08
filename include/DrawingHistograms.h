@@ -71,6 +71,11 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	TH1D* Particles = new TH1D("Particles", "Particles", 100, 180000, 220000);
 	TF1* gausfit_Particles = new TF1("gausfit", "gaus", 190000, 210000);
 
+	TH1D* DeadCells = new TH1D("DeadCells", "Dead cells (> 4 hits per cell) per bunch crossing", 500,0, 4500);
+	DeadCells->GetYaxis()->SetTitle("Count");
+	DeadCells->GetXaxis()->SetTitle("Number of bunch crossings");
+	DeadCells->GetXaxis()->CenterTitle();
+
 	bool YesNo_TrackerHistograms = DecideIfTrackerHistograms(argument_subdetectors);
 
 	std::string * subdetector_name2 = new std::string("");
@@ -154,7 +159,9 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				hitsperlayerhisto_title, particleoriginshisto_name, particleoriginshisto_title,
 				histo_name_time, histo_title_time, histo_name_rtime2D, histo_title_rtime2D,
 				histo_name_ztime2D, histo_title_ztime2D, histo_name_time3D, histo_title_time3D);
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
+
+		std::cout << __FILE__ << ": " << __LINE__ << std::endl;
+
 		Setup_ParticleOriginsHisto(ParticleOrigins_2D_, axis_range_plot_3D, particleoriginshisto_name,
 				particleoriginshisto_title, "cylindrical");
 		Setup_Histo(Hits_PerLayer_, axis_range_plot_1D, hitsperlayerhisto_name, hitsperlayerhisto_title);
@@ -169,7 +176,8 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		Setup_Histo(Hits_Time_rtime_2D_, axis_range_plot_rtime_2D, histo_name_rtime2D, histo_title_rtime2D);
 		Setup_Histo(Hits_Time_ztime_2D_, axis_range_plot_ztime_2D, histo_name_ztime2D, histo_title_ztime2D);
 		Setup_Histo(Hits_Time_3D_, axis_range_plot_time_3D, histo_name_time3D, histo_title_time3D);
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
+
+		std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 	}
 
 
@@ -295,6 +303,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
 			if (iterator->second > 0) {
 				Hits_Histo_.at(SubDetectors->at(s)->GetLayer(iterator->first))->Fill(iterator->second);
+				if (iterator->second > 4) DeadCells->Fill(iterator->second);
 			}
 		}
 	} //End of SubDetectors loop
@@ -512,6 +521,9 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	Files_Canvas->Clear();
 	Files_Canvas->SetLogy(1);
 	WritePrintHistogram(Files_Canvas, Hits, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+	Files_Canvas->Clear();
+	Files_Canvas->SetLogy(0);
+	WritePrintHistogram(Files_Canvas, DeadCells, "", "PDFCanvas_ParticlesHits_perFile.pdf");
 	std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 	PDF_Canvas_ParticlesHits_per_File->Print("PDFCanvas_ParticlesHits_perFile.pdf]");
 
