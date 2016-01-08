@@ -441,32 +441,35 @@ void SetupHistoTitles(std::string subdetector_name, std::string layer, std::stri
 		std::string &  histo_name_ztime2D, std::string &  histo_title_ztime2D,
 		std::string &  histo_name_time3D, std::string &  histo_title_time3D) {
 
+	std::stringstream layercount;
+	if (layer == std::string("all")) layercount << ", " << layer << " layers";
+	else layercount << ", " << layer << ". layer";
+
 	histo_name1D = "Hits_" + subdetector_name + "_Layer_" + layer;
-	histo_title1D = "Hit occupancy per cell for " + subdetector_name + " layer " + layer;
+	histo_title1D = "Hit occupancy per cell for " + subdetector_name + layercount;
 	histo_name2D = "Hits_2D_" + subdetector_name + "_Layer_" + layer;
-	histo_title2D = "HitMap for " + subdetector_name + " layer " + layer;
+	histo_title2D = "HitMap for " + subdetector_name + layercount;
 	histo_name3D = "Hits_3D_" + subdetector_name + "_Layer_" + layer;
-	histo_title3D = "HitMap for " + subdetector_name + " layer " + layer + ";z [mm];x[mm];y[mm]";
+	histo_title3D = "HitMap for " + subdetector_name + layercount+ ";z [mm];x[mm];y[mm]";
 	energyhisto_name1D = "Energy_" + subdetector_name + "_Layer_" + layer;
-	energyhisto_title1D = "Deposited hit energy for " + subdetector_name + " layer " + layer;
+	energyhisto_title1D = "Deposited hit energy for " + subdetector_name + layercount;
 	energyhisto_name2D = "Hits_Energy_2D_" + subdetector_name + "_Layer_" + layer;
-	energyhisto_title2D = "HitMap with the average hit energy per bin for " + subdetector_name + " layer " + layer;
+	energyhisto_title2D = "HitMap with the average hit energy per bin for " + subdetector_name + layercount;
 	energyhisto_name3D = "Hits_Energy_3D_" + subdetector_name + "_Layer_" + layer;
-	energyhisto_title3D = "HitMap with the hit energy for " + subdetector_name + " layer " + layer + ";z [mm];x[mm];y[mm]";
+	energyhisto_title3D = "HitMap with the hit energy for " + subdetector_name + layercount+ ";z [mm];x[mm];y[mm]";
 	hitsperlayerhisto_name = "HitsPerLayer_" + subdetector_name + "_Layer_" + layer;
-	hitsperlayerhisto_title = "Hits for " + subdetector_name + " layer " + layer;
+	hitsperlayerhisto_title = "Hits for " + subdetector_name + layercount;
 	particleoriginshisto_name = "ParticleOrigins_" + subdetector_name + "_Layer_" + layer;
-	particleoriginshisto_title = "Origins of std::pair background particles for " + subdetector_name + " layer "
-			+ layer;
+	particleoriginshisto_title = "Origins of std::pair background particles for " + subdetector_name + layercount;
 
 	histo_name_time = "HitsTime_" + subdetector_name + "_Layer_" + layer;
-	histo_title_time = "Hit time for " + subdetector_name + " layer " + layer;
+	histo_title_time = "Hit time for " + subdetector_name + layercount;
 	histo_name_rtime2D = "HitsTime_rtime_2D_" + subdetector_name + "_Layer_" + layer;
-	histo_title_rtime2D = "Radial position of hits over hit time for " + subdetector_name + " layer " + layer;
+	histo_title_rtime2D = "Radial position of hits over hit time for " + subdetector_name + layercount;
 	histo_name_ztime2D = "HitsTime_ztime_2D_" + subdetector_name + "_Layer_" + layer;
-	histo_title_ztime2D = "z position of hits over hit time for " + subdetector_name + " layer " + layer;
+	histo_title_ztime2D = "z position of hits over hit time for " + subdetector_name + layercount;
 	histo_name_time3D = "HitsTime_3D_" + subdetector_name + "_Layer_" + layer;
-	histo_title_time3D = "rz hitmap over hit time for " + subdetector_name + " layer " + layer + ";time [ns];z [mm];r [mm]";
+	histo_title_time3D = "rz hitmap over hit time for " + subdetector_name + layercount + ";time [ns];z [mm];r [mm]";
 }
 
 void Setup_ParticleOriginsHisto(std::vector<TH2D*> & HistoVector, std::vector<float> axis_range_plot,

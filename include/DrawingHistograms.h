@@ -111,20 +111,25 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	int CellIDkey = 0.;
 
 	std::map<int, std::vector<int> > HitsPerLayerMap;
+	Hits_Canvas_ = new TCanvas((Canvas_name + "_Hits_" + subdetector_name).c_str());
 
 	//Find the largest number of layers from all the subdetectors that are to be plotted
 	for (int s = 0; s < SubDetectors->size(); ++s) {
 		MaxNumberLayers = FindMax(SubDetectors->at(s)->GetNumberOfLayers(), MaxNumberLayers);
 	}
-	for (int l = 0; l < MaxNumberLayers; ++l) {
+	for (int l = 0; l <= MaxNumberLayers + 1; ++l) {//In the end, push back an additional histogram for all the layers together
 		for (int files = 1; files <= NUMBER_OF_FILES; ++files) {
 			HitsPerLayerMap[l].push_back(0);
 		}
 
 		std::stringstream layer;
 		layer << l;
-		std::string layerstring = layer.str();
-		Hits_Canvas_ = new TCanvas((Canvas_name + "_Hits_" + subdetector_name).c_str());
+		std::string layerstring;
+
+		if (l ==  MaxNumberLayers+1){
+			layerstring = "all";
+		}
+		else layerstring = layer.str();
 
 		gROOT->ForceStyle();
 		gStyle->SetPalette(1);
@@ -143,7 +148,6 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		std::string histo_name_ztime2D, histo_title_ztime2D;
 		std::string histo_name_time3D, histo_title_time3D;
 
-			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 		SetupHistoTitles(subdetector_name, layerstring, histo_name1D, histo_title1D, histo_name2D, histo_title2D,
 				histo_name3D, histo_title3D, energyhisto_name1D, energyhisto_title1D, energyhisto_name2D,
 				energyhisto_title2D, energyhisto_name3D, energyhisto_title3D, hitsperlayerhisto_name,
@@ -167,6 +171,9 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		Setup_Histo(Hits_Time_3D_, axis_range_plot_time_3D, histo_name_time3D, histo_title_time3D);
 			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 	}
+
+
+
 	std::vector<int> hitLayers;
 	for (int s = 0; s < SubDetectors->size(); ++s) {
 
@@ -244,16 +251,24 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				}
 				//Fill histograms:
 				Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
+				Hits_Energy_Histo_.at(MaxNumberLayers+1)->Fill(energy);
 				ParticleOrigins_2D_.at(Layer_no)->Fill(vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
+				ParticleOrigins_2D_.at(MaxNumberLayers+1)->Fill(vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
 
 				std::cout << "x_hit, y_hit = " << x << ", " << y << std::endl;
 				Hits_Time_rtime_2D_.at(Layer_no)->Fill(time, sqrt(pow(x,2)+pow(y,2)));
+				Hits_Time_rtime_2D_.at(MaxNumberLayers+1)->Fill(time, sqrt(pow(x,2)+pow(y,2)));
 				Hits_Time_ztime_2D_.at(Layer_no)->Fill(time, z);
+				Hits_Time_ztime_2D_.at(MaxNumberLayers+1)->Fill(time, z);
 				Hits_Time_3D_.at(Layer_no)->Fill(time, z, sqrt(pow(x,2)+pow(y,2)));
+				Hits_Time_3D_.at(MaxNumberLayers+1)->Fill(time, z, sqrt(pow(x,2)+pow(y,2)));
 				Hits_Time_.at(Layer_no)->Fill(time);
+				Hits_Time_.at(MaxNumberLayers+1)->Fill(time);
 
 				Hits_2D_.at(Layer_no)->Fill(x, y);
+				Hits_2D_.at(MaxNumberLayers+1)->Fill(x, y);
 				Hits_3D_.at(Layer_no)->Fill(z, x, y);
+				Hits_3D_.at(MaxNumberLayers+1)->Fill(z, x, y);
 			}
 			int const colorrangeweight = 1000000000;
 			Fill_Histogram_from_Map<TH2D*>(HitMapEnergy2D, &Hits_Energy_2D_, colorrangeweight);
