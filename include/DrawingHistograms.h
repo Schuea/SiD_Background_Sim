@@ -302,8 +302,11 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 
 	gStyle->SetOptStat(1);
 	//gStyle->SetOptStat(111111);
-	TCanvas* PDF_Canvas_1D2D_Hits_Layers = new TCanvas();
-	PDF_Canvas_1D2D_Hits_Layers->Print("PDFCanvas_1D2D_Hits_Layers.pdf[");
+	TCanvas* PDF_Canvas_Hits_Layers = new TCanvas();
+	PDF_Canvas_Hits_Layers->Print("PDFCanvas_Hits_Layers.pdf[");
+
+	TCanvas* PDF_Canvas_Hits_allLayers = new TCanvas(); //For all layers together
+	PDF_Canvas_Hits_allLayers->Print("PDFCanvas_Hits_allLayers.pdf[");
 
 	output_rootfile->cd();
 	for (signed int l = 0; l < hitLayers.size(); ++l) {
@@ -312,6 +315,8 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 
 		Hits_3D_.at(hitLayers.at(l))->Write();
 		Hits_Energy_3D_.at(hitLayers.at(l))->Write();
+		Hits_3D_.at(MaxNumberLayers+1)->Write();
+		Hits_Energy_3D_.at(MaxNumberLayers+1)->Write();
 
 		Hits_Canvas_->cd();
 
@@ -321,19 +326,24 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
 		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_2D_.at(hitLayers.at(l)), "colz",
-				"PDFCanvas_1D2D_Hits_Layers.pdf");
-		Hits_Canvas_->Update();
+				"PDFCanvas_Hits_Layers.pdf");
+		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_2D_.at(MaxNumberLayers+1), "colz",
+				"PDFCanvas_Hits_allLayers.pdf");
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
 		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Energy_2D_.at(hitLayers.at(l)), "colz",
-				"PDFCanvas_1D2D_Hits_Layers.pdf");
+				"PDFCanvas_Hits_Layers.pdf");
+		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Energy_2D_.at(MaxNumberLayers+1), "colz",
+				"PDFCanvas_Hits_allLayers.pdf");
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(1);
 		WritePrintHistogram<TH2D*>(Hits_Canvas_, ParticleOrigins_2D_.at(hitLayers.at(l)), "colz",
-				"PDFCanvas_1D2D_Hits_Layers.pdf");
+				"PDFCanvas_Hits_Layers.pdf");
+		WritePrintHistogram<TH2D*>(Hits_Canvas_, ParticleOrigins_2D_.at(MaxNumberLayers+1), "colz",
+				"PDFCanvas_Hits_allLayers.pdf");
 		Hits_Canvas_->Clear();
 		gStyle->SetStatX(0.87);
 		gROOT->ForceStyle();
@@ -341,46 +351,64 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
 		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_PerLayer_.at(hitLayers.at(l)), "",
-				"PDFCanvas_1D2D_Hits_Layers.pdf");
+				"PDFCanvas_Hits_Layers.pdf");
+		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_PerLayer_.at(MaxNumberLayers+1), "",
+				"PDFCanvas_Hits_allLayers.pdf");
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(1);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
-		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Histo_.at(hitLayers.at(l)), "", "PDFCanvas_1D2D_Hits_Layers.pdf");
+		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Histo_.at(hitLayers.at(l)), "",
+				"PDFCanvas_Hits_Layers.pdf");
+		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Histo_.at(MaxNumberLayers+1), "",
+				"PDFCanvas_Hits_allLayers.pdf");
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(1);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
 		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_.at(hitLayers.at(l)), "",
-				"PDFCanvas_1D2D_Hits_Layers.pdf");
+				"PDFCanvas_Hits_Layers.pdf");
+		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_.at(MaxNumberLayers+1), "",
+				"PDFCanvas_Hits_allLayers.pdf");
 
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(1);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
 		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Time_.at(hitLayers.at(l)), "",
-				"PDFCanvas_1D2D_Hits_Layers.pdf");
+				"PDFCanvas_Hits_Layers.pdf");
+		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Time_.at(MaxNumberLayers+1), "",
+				"PDFCanvas_Hits_allLayers.pdf");
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
 		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_rtime_2D_.at(hitLayers.at(l)), "",
-				"PDFCanvas_1D2D_Hits_Layers.pdf");
+				"PDFCanvas_Hits_Layers.pdf");
+		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_rtime_2D_.at(MaxNumberLayers+1), "",
+				"PDFCanvas_Hits_allLayers.pdf");
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
 		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_ztime_2D_.at(hitLayers.at(l)), "",
-						"PDFCanvas_1D2D_Hits_Layers.pdf");
+				"PDFCanvas_Hits_Layers.pdf");
+		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_ztime_2D_.at(MaxNumberLayers+1), "",
+				"PDFCanvas_Hits_allLayers.pdf");
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
 		WritePrintHistogram<TH3D*>(Hits_Canvas_, Hits_Time_3D_.at(hitLayers.at(l)), "",
-						"PDFCanvas_1D2D_Hits_Layers.pdf");
+				"PDFCanvas_Hits_Layers.pdf");
+		WritePrintHistogram<TH3D*>(Hits_Canvas_, Hits_Time_3D_.at(MaxNumberLayers+1), "",
+				"PDFCanvas_Hits_allLayers.pdf");
 	}
-	PDF_Canvas_1D2D_Hits_Layers->Print("PDFCanvas_1D2D_Hits_Layers.pdf]");
-	delete PDF_Canvas_1D2D_Hits_Layers;
+	PDF_Canvas_Hits_Layers->Print("PDFCanvas_Hits_Layers.pdf]");
+	delete PDF_Canvas_Hits_Layers;
+	PDF_Canvas_Hits_allLayers->Print("PDFCanvas_Hits_allLayers.pdf]");
+	delete PDF_Canvas_Hits_allLayers;
+
 
 	if (first_layer_to_be_compared >= 0) {
 
