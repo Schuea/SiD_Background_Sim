@@ -34,6 +34,7 @@
 #include "CreateCellID.h"
 #include "Subdetector.h"
 #include "LayerCodeInCellID.h"
+#include "CellHits.h"
 
 TFile* inputfile;
 TCanvas* Hits_Canvas_;
@@ -71,7 +72,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	TH1D* Particles = new TH1D("Particles", "Particles", 100, 180000, 220000);
 	TF1* gausfit_Particles = new TF1("gausfit", "gaus", 190000, 210000);
 
-	TH1D* DeadCells = new TH1D("DeadCells", "Dead cells (> 4 hits per cell) per bunch crossing", 500,0, 4500);
+	TH1D* DeadCells = new TH1D("DeadCells", "Dead cells (> 4 hits per cell) per bunch crossing", int((NUMBER_OF_FILES+50)/10),0, NUMBER_OF_FILES+50);
 	DeadCells->GetYaxis()->SetTitle("Count");
 	DeadCells->GetXaxis()->SetTitle("Number of bunch crossings");
 	DeadCells->GetXaxis()->CenterTitle();
@@ -185,7 +186,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	std::vector<int> hitLayers;
 	for (int s = 0; s < SubDetectors->size(); ++s) {
 
-		std::map<int, int> HitMap;  //cellid, count of hits per cell
+		std::map<int, int> HitMap;  //cellid, count of all hits per cell
 
 		//Getting the inputfile and its TTrees
 		for (int fileIterator = 0; fileIterator < NUMBER_OF_FILES; ++fileIterator) {
@@ -204,6 +205,8 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 					<< number_of_hits << " entries." << std::endl;
 
 			Data* data = SetBranches(SubdetectorTree);
+			CellHits HitCount;
+			HitCount.Set_BunchNumber(fileIterator+1);
 
 			std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D; //layer, bin, energies
 			std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy3D; //layer, bin, energies
@@ -222,6 +225,9 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				if (std::find(hitLayers.begin(), hitLayers.end(), Layer_no) == hitLayers.end()) {
 					hitLayers.push_back(Layer_no);
 				}
+
+				HitCount.Set_CellID(CellIDkey);
+				HitCount.Set_HitCount(HitCount.Get_HitCount()+1);
 
 				//Fill Maps:
 				HitsPerLayerMap[Layer_no].at(fileIterator) += 1;
@@ -303,7 +309,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
 			if (iterator->second > 0) {
 				Hits_Histo_.at(SubDetectors->at(s)->GetLayer(iterator->first))->Fill(iterator->second);
-				if (iterator->second > 4) DeadCells->Fill(iterator->second);
+				if (iterator->second > 4) DeadCells->Fill(iterator->first);
 			}
 		}
 	} //End of SubDetectors loop
