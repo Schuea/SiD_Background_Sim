@@ -8,23 +8,24 @@
 #ifndef CELLHITS_H_
 #define CELLHITS_H_
 
+#include <vector>
+
 class CellHits {
 public:
-	CellHits(): CellID(0), HitCount(0), BunchNumber(0){}
+	CellHits(): CellID(), HitCount(), BunchNumber(0){}
 	~CellHits(){}
 
 
-	int Get_CellID() const;
-	int Get_HitCount() const;
+	std::vector< int > Get_CellID() const;
+	std::vector< int > Get_HitCount() const;
 	int Get_BunchNumber() const;
 
-	void Set_CellID(int cellid);
-	void Set_HitCount(int hitcount);
-	void Set_BunchNumber(int bunchnumber);
+	void CheckCellID(int const id);
+	void Set_BunchNumber(int const bunchnumber);
 
 protected:
-	int CellID;
-	int HitCount;
+	std::vector< int > CellID;
+	std::vector< int > HitCount;
 	int BunchNumber;
 };
 
