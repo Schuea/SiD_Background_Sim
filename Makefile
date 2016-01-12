@@ -10,8 +10,9 @@ DATACLASS=objects/DataClass.o
 CREATECELLID=objects/CreateCellID.o
 SUBDETECTOR=objects/Subdetector.o
 LAYERCODE=objects/LayerCodeInCellID.o
+CELLHITS=objects/CellHits.o
 USEFULFUNCTIONS=objects/UsefulFunctions.o
-OBJECTS = $(DATACLASS) $(CREATECELLID) $(SUBDETECTOR) $(LAYERCODE) $(USEFULFUNCTIONS)
+OBJECTS = $(DATACLASS) $(CREATECELLID) $(SUBDETECTOR) $(LAYERCODE) $(CELLHITS) $(USEFULFUNCTIONS)
 
 all: Run
 
@@ -32,6 +33,9 @@ objects/Subdetector.o: src/Subdetector.cpp
 
 objects/CreateCellID.o: src/CreateCellID.cpp 
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+objects/CellHits.o: src/CellHits.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ 
 
 objects/UsefulFunctions.o: src/UsefulFunctions.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
