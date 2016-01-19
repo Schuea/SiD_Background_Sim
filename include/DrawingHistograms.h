@@ -78,6 +78,19 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	DeadCells->GetXaxis()->SetTitle("Number of bunch crossings");
 	DeadCells->GetXaxis()->CenterTitle();
 
+	std::vector<int> BunchNumbers_for_TotDeadCells; //Number of bunches for which the total number of dead cells will be plotted
+	for (int it = 1; it <= int(ceil(NUMBER_OF_FILES / 100)); ++it) {
+		//Fill the vector in steps of 100 up to the max number of bunches
+		if (100 * it < NUMBER_OF_FILES - 50)
+			BunchNumbers_for_TotDeadCells.push_back(100 * it);
+		//Close to the end (NUMBER_OF_FILES-50) check and then fill only one last time:
+		else if (100 * it > NUMBER_OF_FILES - 50 || it == int(ceil(NUMBER_OF_FILES / 100))) {
+			BunchNumbers_for_TotDeadCells.push_back(NUMBER_OF_FILES);
+		}
+	}
+	int TotDeadCells_x[BunchNumbers_for_TotDeadCells.size()];
+	int TotDeadCells_y[BunchNumbers_for_TotDeadCells.size()];
+
 	bool YesNo_TrackerHistograms = DecideIfTrackerHistograms(argument_subdetectors);
 
 	std::string * subdetector_name2 = new std::string("");
@@ -229,6 +242,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 
 				//This adds a hit to the Cell ID for a given bunch
 				HitCount->CheckCellID(CellIDkey);
+				HitCount->Set_BunchNumber(fileIterator + 1);
 
 				//Fill Maps:
 				HitsPerLayerMap[Layer_no].at(fileIterator) += 1;
@@ -288,6 +302,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				Hits_3D_.at(Layer_no)->Fill(z, x, y);
 				Hits_3D_.at(MaxNumberLayers + 1)->Fill(z, x, y);
 			}
+
 			AllHitCounts.push_back(HitCount);
 
 			int const colorrangeweight = 1000000000;
@@ -313,12 +328,30 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 			}
 		}
 
+		int totdead = 0;
+		std::map<int, int> bunch_totdead;
 		for (int i = 0; i < AllHitCounts.size(); ++i) {
 			for (int j = 0; j < AllHitCounts.at(i)->Get_CellID().size(); ++j) {
 				if (AllHitCounts.at(i)->Get_HitCount().at(j) > 4) {
+					std::cout << "AllHitCounts.at(i)->Get_BunchNumber() = " << AllHitCounts.at(i)->Get_BunchNumber()
+							<< std::endl;
 					DeadCells->Fill(AllHitCounts.at(i)->Get_BunchNumber());
+
+					totdead++;
 				}
 			}
+			for (int vector_it = 0; vector_it < BunchNumbers_for_TotDeadCells.size(); ++vector_it) {
+				if (AllHitCounts.at(i)->Get_BunchNumber() == BunchNumbers_for_TotDeadCells.at(vector_it)) {
+					bunch_totdead[BunchNumbers_for_TotDeadCells.at(vector_it)] = totdead;
+				}
+			}
+		}
+
+		int i = 0;
+		for (auto iterator = bunch_totdead.begin(); iterator != bunch_totdead.end(); iterator++) {
+			TotDeadCells_x[i] = iterator->first;
+			TotDeadCells_y[i] = iterator->second;
+			i++;
 		}
 
 		for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
@@ -330,6 +363,13 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		}
 	} //End of SubDetectors loop
 	std::cout << __FILE__ << ": " << __LINE__ << std::endl;
+
+	TGraph* TotDeadCells = new TGraph(BunchNumbers_for_TotDeadCells.size(), TotDeadCells_x, TotDeadCells_y);
+	TotDeadCells->SetTitle("Dead cells (> 4 hits per cell) for given number of bunch crossings");
+	TotDeadCells->SetMarkerStyle(20);
+	TotDeadCells->GetYaxis()->SetTitle("Count");
+	TotDeadCells->GetXaxis()->SetTitle("Number of bunch crossings");
+	TotDeadCells->GetXaxis()->CenterTitle();
 
 	gStyle->SetOptStat(1);
 	//gStyle->SetOptStat(111111);
@@ -551,6 +591,9 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	Files_Canvas->Clear();
 	Files_Canvas->SetLogy(0);
 	WritePrintHistogram(Files_Canvas, DeadCells, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+	Files_Canvas->Clear();
+	Files_Canvas->SetLogy(0);
+	WritePrintHistogram(Files_Canvas, TotDeadCells, "AP", "PDFCanvas_ParticlesHits_perFile.pdf");
 	std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 	PDF_Canvas_ParticlesHits_per_File->Print("PDFCanvas_ParticlesHits_perFile.pdf]");
 
