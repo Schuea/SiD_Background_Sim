@@ -35,6 +35,7 @@
 #include "Subdetector.h"
 #include "LayerCodeInCellID.h"
 #include "CellHits.h"
+#include "Time.h"
 
 TFile* inputfile;
 TCanvas* Hits_Canvas_;
@@ -199,6 +200,10 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	std::vector<int> hitLayers;
 	for (int s = 0; s < SubDetectors->size(); ++s) {
 
+		Time PassedTime;
+		int number_of_train = 0;
+		int number_of_bunch = 0;
+
 		std::map<int, int> HitMap;  //cellid, count of all hits per cell
 		std::vector<CellHits*> AllHitCounts;
 
@@ -218,6 +223,14 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 			std::cout << "The TTree " << SubdetectorTree->GetName() << " has " << number_of_hits << " entries."
 					<< std::endl;
 
+			if (NUMBER_OF_FILES <= 1312) {
+				number_of_train = 1;
+				number_of_bunch = NUMBER_OF_FILES;
+			} else if (NUMBER_OF_FILES > 1312 && NUMBER_OF_FILES <= 2624) {
+				number_of_train = 2;
+				number_of_bunch = NUMBER_OF_FILES - 1312;
+			}
+			PassedTime.Calculate_passedbytime(number_of_train, number_of_bunch);
 			Data* data = SetBranches(SubdetectorTree);
 
 			std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D; //layer, bin, energies
@@ -259,7 +272,8 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 					z = data->Get_z_hit_particle();
 					energy = data->Get_dEdx_hit();
 					vertex = data->Get_vertex_particle();
-					time = data->Get_time_hit();
+					//absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
+					time = data->Get_time_hit() + passedbytime;
 				}
 				if (!YesNo_TrackerHistograms) {
 					x = data->Get_x_hit();
@@ -267,7 +281,8 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 					z = data->Get_z_hit();
 					energy = data->Get_energy_hit();
 					vertex = data->Get_vertex_mother();
-					time = data->Get_time_contribution();
+					//absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
+					time = data->Get_time_contribution() + passedbytime;
 				}
 
 				HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(
