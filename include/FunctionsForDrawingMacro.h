@@ -349,6 +349,7 @@ CellID * InitializeCellIDClass(std::string SubdetectorName, Data* data) {
 void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<float> *axis_range_plot_1D,
 		std::vector<float> *axis_range_plot_2D, std::vector<float> *axis_range_plot_3D,
 		std::vector<float> *axis_range_plot_energy_1D,
+		float time_interval,
 		std::vector<float> *axis_range_plot_time, std::vector<float> *axis_range_plot_rtime_2D,
 		std::vector<float> *axis_range_plot_ztime_2D, std::vector<float> *axis_range_plot_time_3D) {
 
@@ -406,7 +407,7 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 			ybins3D = FindMax(SubDetectors->at(s)->GetROOTHisto_binning3D().at(6), ybins3D);
 
 			mintime = FindMin(SubDetectors->at(s)->GetROOTHisto_time().at(1), mintime);
-			maxtime = FindMax(SubDetectors->at(s)->GetROOTHisto_time().at(2), maxtime);
+			maxtime = time_interval + FindMax(SubDetectors->at(s)->GetROOTHisto_time().at(2), maxtime);
 			binstime = FindMax(SubDetectors->at(s)->GetROOTHisto_time().at(0), binstime);
 		}
 		std::vector<float> tempEnergy1D = { binsEnergy1D, minEnergy1D, maxEnergy1D };
@@ -436,10 +437,10 @@ void SetupHistoTitles(std::string subdetector_name, std::string layer, std::stri
 		std::string & energyhisto_name2D, std::string & energyhisto_title2D, std::string & energyhisto_name3D,
 		std::string & energyhisto_title3D, std::string & hitsperlayerhisto_name, std::string & hitsperlayerhisto_title,
 		std::string & particleoriginshisto_name, std::string & particleoriginshisto_title,
-		std::string &  histo_name_time, std::string &  histo_title_time,
-		std::string &  histo_name_rtime2D, std::string &  histo_title_rtime2D,
-		std::string &  histo_name_ztime2D, std::string &  histo_title_ztime2D,
-		std::string &  histo_name_time3D, std::string &  histo_title_time3D) {
+		std::string & histo_name_time, std::string &  histo_title_time,
+		std::string & histo_name_rtime2D, std::string &  histo_title_rtime2D,
+		std::string & histo_name_ztime2D, std::string &  histo_title_ztime2D,
+		std::string & histo_name_time3D, std::string &  histo_title_time3D) {
 
 	std::stringstream layercount;
 	if (layer == std::string("all")) layercount << ", " << layer << " layers";

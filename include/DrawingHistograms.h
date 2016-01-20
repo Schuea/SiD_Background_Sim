@@ -54,8 +54,8 @@ std::vector<TH2D*> Hits_Time_ztime_2D_;
 std::vector<TH3D*> Hits_Time_3D_;
 
 int NUMBER_OF_FILES;
-int first_layer_to_be_compared;
-int last_layer_to_be_compared;
+int first_layer_to_be_compared = -1;
+int last_layer_to_be_compared = -1;
 
 void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		std::vector<std::string> argument_subdetectors) {
@@ -108,13 +108,14 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	std::vector<float> axis_range_plot_3D = { }; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup
 	std::vector<float> axis_range_plot_energy_1D = { }; //xbins, xlow, xup
 
+	float time_interval_bunchspacing = NUMBER_OF_FILES * 554.0;//ns (one bunch spacing is 554 ns)
 	std::vector<float> axis_range_plot_time = { }; //timebins, timelow, timeup
 	std::vector<float> axis_range_plot_rtime_2D = { }; //timebins, timelow, timeup, rbins, rlow, rup
 	std::vector<float> axis_range_plot_ztime_2D = { }; //timebins, timelow, timeup, zbins, zlow, zup
 	std::vector<float> axis_range_plot_time_3D = { }; //timebins, timelow, timeup, zbins, zlow, zup, xbins, xlow, xup
 
 	Setup_BinningArrays(SubDetectors, &axis_range_plot_1D, &axis_range_plot_2D, &axis_range_plot_3D,
-			&axis_range_plot_energy_1D, &axis_range_plot_time, &axis_range_plot_rtime_2D, &axis_range_plot_ztime_2D,
+			&axis_range_plot_energy_1D, time_interval_bunchspacing, &axis_range_plot_time, &axis_range_plot_rtime_2D, &axis_range_plot_ztime_2D,
 			&axis_range_plot_time_3D);
 	std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 	TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0] * 3, axis_range_plot_1D[1], axis_range_plot_1D[2] * 40);
