@@ -108,15 +108,15 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	std::vector<float> axis_range_plot_3D = { }; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup
 	std::vector<float> axis_range_plot_energy_1D = { }; //xbins, xlow, xup
 
-	float time_interval_bunchspacing = NUMBER_OF_FILES * 554.0;//ns (one bunch spacing is 554 ns)
+	float time_interval_bunchspacing = NUMBER_OF_FILES * 554.0; //ns (one bunch spacing is 554 ns)
 	std::vector<float> axis_range_plot_time = { }; //timebins, timelow, timeup
 	std::vector<float> axis_range_plot_rtime_2D = { }; //timebins, timelow, timeup, rbins, rlow, rup
 	std::vector<float> axis_range_plot_ztime_2D = { }; //timebins, timelow, timeup, zbins, zlow, zup
 	std::vector<float> axis_range_plot_time_3D = { }; //timebins, timelow, timeup, zbins, zlow, zup, xbins, xlow, xup
 
 	Setup_BinningArrays(SubDetectors, &axis_range_plot_1D, &axis_range_plot_2D, &axis_range_plot_3D,
-			&axis_range_plot_energy_1D, time_interval_bunchspacing, &axis_range_plot_time, &axis_range_plot_rtime_2D, &axis_range_plot_ztime_2D,
-			&axis_range_plot_time_3D);
+			&axis_range_plot_energy_1D, time_interval_bunchspacing, &axis_range_plot_time, &axis_range_plot_rtime_2D,
+			&axis_range_plot_ztime_2D, &axis_range_plot_time_3D);
 	std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 	TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0] * 3, axis_range_plot_1D[1], axis_range_plot_1D[2] * 40);
 	///*MuonBarrel*/TH1D* Hits = new TH1D("Hits", "Hits", axis_range_plot_1D[0]*1/5, 100, axis_range_plot_1D[2]);
@@ -344,6 +344,13 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				}
 			}
 		}
+		for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
+			if (iterator->second > 0) {
+				Hits_Histo_.at(SubDetectors->at(s)->GetLayer(iterator->first))->Fill(iterator->second);
+				if (iterator->second > 4)
+					DeadCells->Fill(iterator->first);
+			}
+		}
 
 		int totdead = 0;
 		std::map<int, int> bunch_totdead;
@@ -363,7 +370,6 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				}
 			}
 		}
-
 		int i = 0;
 		for (auto iterator = bunch_totdead.begin(); iterator != bunch_totdead.end(); iterator++) {
 			TotDeadCells_x[i] = iterator->first;
@@ -371,13 +377,6 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 			i++;
 		}
 
-		for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
-			if (iterator->second > 0) {
-				Hits_Histo_.at(SubDetectors->at(s)->GetLayer(iterator->first))->Fill(iterator->second);
-				if (iterator->second > 4)
-					DeadCells->Fill(iterator->first);
-			}
-		}
 	} //End of SubDetectors loop
 	std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
