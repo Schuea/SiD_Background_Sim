@@ -12,7 +12,8 @@ SUBDETECTOR=objects/Subdetector.o
 LAYERCODE=objects/LayerCodeInCellID.o
 CELLHITS=objects/CellHits.o
 USEFULFUNCTIONS=objects/UsefulFunctions.o
-OBJECTS = $(DATACLASS) $(CREATECELLID) $(SUBDETECTOR) $(LAYERCODE) $(CELLHITS) $(USEFULFUNCTIONS)
+TIME=objects/Time.o
+OBJECTS = $(DATACLASS) $(CREATECELLID) $(SUBDETECTOR) $(LAYERCODE) $(CELLHITS) $(USEFULFUNCTIONS) $(TIME)
 
 all: Run
 
@@ -38,6 +39,9 @@ objects/CellHits.o: src/CellHits.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ 
 
 objects/UsefulFunctions.o: src/UsefulFunctions.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+objects/Time.o: src/Time.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:

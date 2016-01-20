@@ -231,6 +231,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				number_of_bunch = NUMBER_OF_FILES - 1312;
 			}
 			PassedTime.Calculate_passedbytime(number_of_train, number_of_bunch);
+
 			Data* data = SetBranches(SubdetectorTree);
 
 			std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D; //layer, bin, energies
@@ -261,7 +262,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				HitsPerLayerMap[Layer_no].at(fileIterator) += 1;
 
 				float energy = 0.;
-				float time = 0.;
+				float absolutetime = 0.;
 				float x = 0.;
 				float y = 0.;
 				float z = 0.;
@@ -273,7 +274,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 					energy = data->Get_dEdx_hit();
 					vertex = data->Get_vertex_particle();
 					//absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
-					time = data->Get_time_hit() + passedbytime;
+					absolutetime = data->Get_time_hit() + PassedTime.Get_passedbytime();
 				}
 				if (!YesNo_TrackerHistograms) {
 					x = data->Get_x_hit();
@@ -282,7 +283,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 					energy = data->Get_energy_hit();
 					vertex = data->Get_vertex_mother();
 					//absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
-					time = data->Get_time_contribution() + passedbytime;
+					absolutetime = data->Get_time_contribution() + PassedTime.Get_passedbytime();
 				}
 
 				HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(
@@ -303,14 +304,14 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 						sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
 
 				std::cout << "x_hit, y_hit = " << x << ", " << y << std::endl;
-				Hits_Time_rtime_2D_.at(Layer_no)->Fill(time, sqrt(pow(x, 2) + pow(y, 2)));
-				Hits_Time_rtime_2D_.at(MaxNumberLayers + 1)->Fill(time, sqrt(pow(x, 2) + pow(y, 2)));
-				Hits_Time_ztime_2D_.at(Layer_no)->Fill(time, z);
-				Hits_Time_ztime_2D_.at(MaxNumberLayers + 1)->Fill(time, z);
-				Hits_Time_3D_.at(Layer_no)->Fill(time, z, sqrt(pow(x, 2) + pow(y, 2)));
-				Hits_Time_3D_.at(MaxNumberLayers + 1)->Fill(time, z, sqrt(pow(x, 2) + pow(y, 2)));
-				Hits_Time_.at(Layer_no)->Fill(time);
-				Hits_Time_.at(MaxNumberLayers + 1)->Fill(time);
+				Hits_Time_rtime_2D_.at(Layer_no)->Fill(absolutetime, sqrt(pow(x, 2) + pow(y, 2)));
+				Hits_Time_rtime_2D_.at(MaxNumberLayers + 1)->Fill(absolutetime, sqrt(pow(x, 2) + pow(y, 2)));
+				Hits_Time_ztime_2D_.at(Layer_no)->Fill(absolutetime, z);
+				Hits_Time_ztime_2D_.at(MaxNumberLayers + 1)->Fill(absolutetime, z);
+				Hits_Time_3D_.at(Layer_no)->Fill(absolutetime, z, sqrt(pow(x, 2) + pow(y, 2)));
+				Hits_Time_3D_.at(MaxNumberLayers + 1)->Fill(absolutetime, z, sqrt(pow(x, 2) + pow(y, 2)));
+				Hits_Time_.at(Layer_no)->Fill(absolutetime);
+				Hits_Time_.at(MaxNumberLayers + 1)->Fill(absolutetime);
 
 				Hits_2D_.at(Layer_no)->Fill(x, y);
 				Hits_2D_.at(MaxNumberLayers + 1)->Fill(x, y);

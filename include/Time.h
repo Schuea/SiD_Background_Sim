@@ -8,6 +8,8 @@
 #ifndef TIME_H_
 #define TIME_H_
 
+#include <map>
+
 class Time {
 public:
 	Time();
@@ -18,7 +20,9 @@ public:
 	void Set_number_of_bunch(int bunch);
 	void Update_time_map();
 
-protected:
+	float Get_passedbytime()  const;
+
+private:
 	float bunch_spacing; //ns
 	float train_spacing; //ns = 200 ms
 	int number_of_bunch;
