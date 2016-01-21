@@ -352,47 +352,67 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		      std::string histo_name_time3D, histo_title_time3D;
 	        histo_name_time3D = "HitsTime_3D_" + subdetector_name;
 
-          Setup_HitsTime3D_Plots(0,100,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(100,200,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(200,300,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(300,400,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(400,500,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(500,600,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(600,700,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(700,800,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(800,900,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(900,1000,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(1000,1100,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(1100,1200,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(1200,1300,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(1300,1400,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(1400,1500,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(1500,1600,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(1600,1700,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(1700,1800,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(1800,1900,histo_title_time3D,Hits_Time_3D_);
-          Setup_HitsTime3D_Plots(1900,2000,histo_title_time3D,Hits_Time_3D_);  
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,0,100,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,100,200,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,200,300,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,300,400,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,400,500,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,500,600,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,600,700,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,700,800,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,800,900,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,900,1000,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1000,1100,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1100,1200,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1200,1300,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1300,1400,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1400,1500,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1500,1600,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1600,1700,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1700,1800,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1800,1900,subdetector_name);
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1900,2000,subdetector_name);  
+          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
 
-          Fill_HitsTime3D_Plots(0,100,Hits_Time_3D_.at(1));
-          Fill_HitsTime3D_Plots(100,200,Hits_Time_3D_.at(2));
-          Fill_HitsTime3D_Plots(200,300,Hits_Time_3D_.at(3));
-          Fill_HitsTime3D_Plots(300,400,Hits_Time_3D_.at(4));
-          Fill_HitsTime3D_Plots(400,500,Hits_Time_3D_.at(5));
-          Fill_HitsTime3D_Plots(500,600,Hits_Time_3D_.at(6));
-          Fill_HitsTime3D_Plots(600,700,Hits_Time_3D_.at(7));
-          Fill_HitsTime3D_Plots(700,800,Hits_Time_3D_.at(8));
-          Fill_HitsTime3D_Plots(800,900,Hits_Time_3D_.at(9));
-          Fill_HitsTime3D_Plots(900,1000,Hits_Time_3D_.at(10));
-          Fill_HitsTime3D_Plots(1000,1100,Hits_Time_3D_.at(11));
-          Fill_HitsTime3D_Plots(1100,1200,Hits_Time_3D_.at(12));
-          Fill_HitsTime3D_Plots(1200,1300,Hits_Time_3D_.at(13));
-          Fill_HitsTime3D_Plots(1300,1400,Hits_Time_3D_.at(14));
-          Fill_HitsTime3D_Plots(1400,1500,Hits_Time_3D_.at(15));
-          Fill_HitsTime3D_Plots(1500,1600,Hits_Time_3D_.at(16));
-          Fill_HitsTime3D_Plots(1600,1700,Hits_Time_3D_.at(17));
-          Fill_HitsTime3D_Plots(1700,1800,Hits_Time_3D_.at(18));
-          Fill_HitsTime3D_Plots(1800,1900,Hits_Time_3D_.at(19));
-          Fill_HitsTime3D_Plots(1900,2000,Hits_Time_3D_.at(20));  
+          Fill_HitsTime3D_Plots(absolutetime,0,100,Hits_Time_3D_.at(0),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,100,200,Hits_Time_3D_.at(1),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,200,300,Hits_Time_3D_.at(2),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,300,400,Hits_Time_3D_.at(3),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,400,500,Hits_Time_3D_.at(4),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,500,600,Hits_Time_3D_.at(5),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,600,700,Hits_Time_3D_.at(6),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,700,800,Hits_Time_3D_.at(7),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,800,900,Hits_Time_3D_.at(8),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,900,1000,Hits_Time_3D_.at(9),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,1000,1100,Hits_Time_3D_.at(10),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,1100,1200,Hits_Time_3D_.at(11),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,1200,1300,Hits_Time_3D_.at(12),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,1300,1400,Hits_Time_3D_.at(13),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,1400,1500,Hits_Time_3D_.at(14),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,1500,1600,Hits_Time_3D_.at(15),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,1600,1700,Hits_Time_3D_.at(16),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,1700,1800,Hits_Time_3D_.at(17),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,1800,1900,Hits_Time_3D_.at(18),x,y,z);
+          Fill_HitsTime3D_Plots(absolutetime,1900,2000,Hits_Time_3D_.at(19),x,y,z);  
         } 
         
 			}
@@ -481,7 +501,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	PDF_Canvas_Hits_allLayers->Print("PDFCanvas_Hits_allLayers.pdf[");
 
 	output_rootfile->cd();
-	for (signed int t = 0; t < int(2000/time_step); ++t) {
+	for (signed int t = 0; t < 20; ++t) {
 		Hits_Time_3D_.at(t)->Write();
   }  
 	for (signed int l = 0; l < hitLayers.size(); ++l) {
@@ -660,7 +680,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		delete Hits_PerLayer_.at(l), Hits_Histo_.at(l), Hits_2D_.at(l), Hits_3D_.at(l);
 		delete Hits_Energy_Histo_.at(l), Hits_Energy_2D_.at(l), Hits_Energy_3D_.at(l), Hits_Time_ztime_2D_.at(l);
 	} 
-	for (signed int t = 0; t < int(2000/time_step); ++t) {
+	for (signed int t = 0; t < 20; ++t) {
     delete Hits_Time_3D_.at(t);
   }    
 	delete Hits_Canvas_;

@@ -155,15 +155,16 @@ void WritePrintHistogram(TCanvas* Canvas_, T Histos_, std::string drawingoption,
 	Canvas_->Print(PDFName.c_str());
 }
 
-void Setup_HitsTime3D_Plots(int timelow, int timehigh, std::string* title, std::vector<TH3D*>& histos){
-  if (absolutetime > timelow && absolutetime < timehigh){
+std::string Setup_HitsTime3D_PlotsTitle(float time, float timelow, float timehigh, std::string subdetector_name){
+  std::string title;
+  if (time > timelow && time < timehigh){
     title = "Hitmap of hits between "+std::to_string(timelow)+" and "+std::to_string(timehigh)+"ns for " + subdetector_name + ";z [mm];x [mm];y [mm]";
-    Setup_Histo(histos, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
   }
+  return title;
 }
 
-void Fill_HitsTime3D_Plots(int timelow, int timehigh, TH3D* histo){
-  if (absolutetime > timelow && absolutetime < timehigh){
+void Fill_HitsTime3D_Plots(float time, float timelow, float timehigh, TH3D* histo, float x, float y, float z){
+  if (time > timelow && time < timehigh){
     histo->Fill(z, x, y);
   }
 }
