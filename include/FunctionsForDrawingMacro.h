@@ -439,8 +439,7 @@ void SetupHistoTitles(std::string subdetector_name, std::string layer, std::stri
 		std::string & particleoriginshisto_name, std::string & particleoriginshisto_title,
 		std::string & histo_name_time, std::string &  histo_title_time,
 		std::string & histo_name_rtime2D, std::string &  histo_title_rtime2D,
-		std::string & histo_name_ztime2D, std::string &  histo_title_ztime2D,
-		std::string & histo_name_time3D, std::string &  histo_title_time3D) {
+		std::string & histo_name_ztime2D, std::string &  histo_title_ztime2D) {
 
 	std::stringstream layercount;
 	if (layer == std::string("all")) layercount << ", " << layer << " layers";
@@ -469,8 +468,6 @@ void SetupHistoTitles(std::string subdetector_name, std::string layer, std::stri
 	histo_title_rtime2D = "Radial position of hits over hit time for " + subdetector_name + layercount.str();
 	histo_name_ztime2D = "HitsTime_ztime_2D_" + subdetector_name + "_Layer_" + layer;
 	histo_title_ztime2D = "z position of hits over hit time for " + subdetector_name + layercount.str();
-	histo_name_time3D = "HitsTime_3D_" + subdetector_name + "_Layer_" + layer;
-	histo_title_time3D = "rz hitmap over hit time for " + subdetector_name + layercount.str() + ";time [ns];z [mm];r [mm]";
 }
 
 void Setup_ParticleOriginsHisto(std::vector<TH2D*> & HistoVector, std::vector<float> axis_range_plot,

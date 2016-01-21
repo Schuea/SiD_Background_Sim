@@ -57,6 +57,8 @@ int NUMBER_OF_FILES;
 int first_layer_to_be_compared = -1;
 int last_layer_to_be_compared = -1;
 
+int time_step = 500;
+
 void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		std::vector<std::string> argument_subdetectors) {
 	TH1::SetDefaultSumw2();
@@ -169,14 +171,12 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		std::string histo_name_time, histo_title_time;
 		std::string histo_name_rtime2D, histo_title_rtime2D;
 		std::string histo_name_ztime2D, histo_title_ztime2D;
-		std::string histo_name_time3D, histo_title_time3D;
 
 		SetupHistoTitles(subdetector_name, layerstring, histo_name1D, histo_title1D, histo_name2D, histo_title2D,
 				histo_name3D, histo_title3D, energyhisto_name1D, energyhisto_title1D, energyhisto_name2D,
 				energyhisto_title2D, energyhisto_name3D, energyhisto_title3D, hitsperlayerhisto_name,
 				hitsperlayerhisto_title, particleoriginshisto_name, particleoriginshisto_title, histo_name_time,
-				histo_title_time, histo_name_rtime2D, histo_title_rtime2D, histo_name_ztime2D, histo_title_ztime2D,
-				histo_name_time3D, histo_title_time3D);
+				histo_title_time, histo_name_rtime2D, histo_title_rtime2D, histo_name_ztime2D, histo_title_ztime2D);
 
 		std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
@@ -193,10 +193,15 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		Setup_Histo(Hits_Time_, axis_range_plot_time, histo_name_time, histo_title_time);
 		Setup_Histo(Hits_Time_rtime_2D_, axis_range_plot_rtime_2D, histo_name_rtime2D, histo_title_rtime2D);
 		Setup_Histo(Hits_Time_ztime_2D_, axis_range_plot_ztime_2D, histo_name_ztime2D, histo_title_ztime2D);
-		Setup_Histo(Hits_Time_3D_, axis_range_plot_time_3D, histo_name_time3D, histo_title_time3D);
 
 		std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 	}
+  for (int time_steps = 0; time_steps <= int(time_interval_bunchspacing/time_step); ++time_steps){
+		std::string histo_name_time3D, histo_title_time3D;
+	  histo_name_time3D = "HitsTime_3D_" + subdetector_name;
+	  histo_title_time3D = "Hitmap in time steps of 500ns for " + subdetector_name + ";z [mm];x [mm];y [mm]";
+		Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  }  
 
 	std::vector<int> hitLayers;
 	for (int s = 0; s < SubDetectors->size(); ++s) {
@@ -205,7 +210,8 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		int number_of_train = 0;
 		int number_of_bunch = 0;
 
-		std::map<int, int> HitMap;  //cellid, count of all hits per cell
+		std::map< int, int > HitMap;  //cellid, count of all hits per cell
+	//std::map< int, std::vector< std::pair<int, int> >  > HitTimeMap;  //int(time), pair(cellid, count of all hits per cell)
 		std::vector<CellHits*> AllHitCounts;
 
 		//Getting the inputfile and its TTrees
@@ -297,7 +303,30 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				} else {
 					HitMap[CellIDkey] += 1;
 				}
+
+        /*
+        //There are indefinitely many absolutetimes -> will crash program
+        //Store only hits of every time step
+        if (fmod(absolutetime, time_step) < 1){  
+          if (HitTimeMap.find(int(absolutetime)) == HitTimeMap.end()){
+            HitTimeMap[int(absolutetime)].push_back(std::pair< int, int >(CellIDkey, 1));
+          } else {
+            iterator = std::find_if(HitTimeMap[int(absolutetime)].begin(), HitTimeMap[int(absolutetime)].end(), CompareFirst(CellIDkey));
+            if (iterator == HitTimeMap[int(absolutetime)].end()){
+              HitTimeMap[int(absolutetime)].push_back(std::pair< int, int >(CellIDkey, 1));
+            } else {
+              HitTimeMap[int(absolutetime)].at(iterator).second += 1;
+            }
+          }
+        }
+        */
+
 				//Fill histograms:
+				Hits_2D_.at(Layer_no)->Fill(x, y);
+				Hits_2D_.at(MaxNumberLayers + 1)->Fill(x, y);
+				Hits_3D_.at(Layer_no)->Fill(z, x, y);
+				Hits_3D_.at(MaxNumberLayers + 1)->Fill(z, x, y);
+
 				Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
 				Hits_Energy_Histo_.at(MaxNumberLayers + 1)->Fill(energy);
 				ParticleOrigins_2D_.at(Layer_no)->Fill(vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
@@ -309,15 +338,12 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				Hits_Time_rtime_2D_.at(MaxNumberLayers + 1)->Fill(absolutetime, sqrt(pow(x, 2) + pow(y, 2)));
 				Hits_Time_ztime_2D_.at(Layer_no)->Fill(absolutetime, z);
 				Hits_Time_ztime_2D_.at(MaxNumberLayers + 1)->Fill(absolutetime, z);
-				Hits_Time_3D_.at(Layer_no)->Fill(absolutetime, z, sqrt(pow(x, 2) + pow(y, 2)));
-				Hits_Time_3D_.at(MaxNumberLayers + 1)->Fill(absolutetime, z, sqrt(pow(x, 2) + pow(y, 2)));
+				//Hits_Time_3D_.at(Layer_no)->Fill(absolutetime, z, sqrt(pow(x, 2) + pow(y, 2)));
+				//Hits_Time_3D_.at(MaxNumberLayers + 1)->Fill(absolutetime, z, sqrt(pow(x, 2) + pow(y, 2)));
 				Hits_Time_.at(Layer_no)->Fill(absolutetime);
 				Hits_Time_.at(MaxNumberLayers + 1)->Fill(absolutetime);
-
-				Hits_2D_.at(Layer_no)->Fill(x, y);
-				Hits_2D_.at(MaxNumberLayers + 1)->Fill(x, y);
-				Hits_3D_.at(Layer_no)->Fill(z, x, y);
-				Hits_3D_.at(MaxNumberLayers + 1)->Fill(z, x, y);
+			
+        if (fmod(absolutetime, time_step) < 1) Hits_Time_3D_.at(int(absolutetime))->Fill(z, x, y);
 			}
 
 			AllHitCounts.push_back(HitCount);
@@ -351,6 +377,14 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 					DeadCells->Fill(iterator->first);
 			}
 		}
+    
+    /*
+    for (auto iterator = HitTimeMap.begin(); iterator != HitTimeMap.end(); iterator++) {
+      for (auto e = iterator->second.begin(); e != iterator->second.end(); ++e) {
+        Hits_Time_3D_.at(HitTimeMap.first)->Fill(e.second);
+      }      
+    } 
+    */
 
 		int totdead = 0;
 		std::map<int, int> bunch_totdead;
@@ -396,6 +430,9 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	PDF_Canvas_Hits_allLayers->Print("PDFCanvas_Hits_allLayers.pdf[");
 
 	output_rootfile->cd();
+	for (signed int t = 0; t < int(time_interval_bunchspacing/time_step); ++t) {
+		Hits_Time_3D_.at(t)->Write();
+  }  
 	for (signed int l = 0; l < hitLayers.size(); ++l) {
 
 		std::cout << "Printing plots for layer number " << hitLayers.at(l) << std::endl;
@@ -578,9 +615,11 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	}
 	for (signed int l = 0; l < MaxNumberLayers; ++l) {
 		delete Hits_PerLayer_.at(l), Hits_Histo_.at(l), Hits_2D_.at(l), Hits_3D_.at(l);
-		delete Hits_Energy_Histo_.at(l), Hits_Energy_2D_.at(l), Hits_Energy_3D_.at(l), Hits_Time_ztime_2D_.at(l), Hits_Time_3D_.at(
-				l);
-	}
+		delete Hits_Energy_Histo_.at(l), Hits_Energy_2D_.at(l), Hits_Energy_3D_.at(l), Hits_Time_ztime_2D_.at(l);
+	} 
+	for (signed int t = 0; t < int(time_interval_bunchspacing/time_step); ++t) {
+    Hits_Time_3D_.at(t);
+  }    
 	delete Hits_Canvas_;
 	output_rootfile->Write();
 
