@@ -524,14 +524,6 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		if (l == 0)
 			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_ztime_2D_.at(MaxNumberLayers + 1), "",
 					"PDFCanvas_Hits_allLayers.pdf");
-		Hits_Canvas_->Update();
-		Hits_Canvas_->SetLogy(0);
-		Hits_Canvas_->SetLogx(0);
-		Hits_Canvas_->SetLogz(0);
-		WritePrintHistogram<TH3D*>(Hits_Canvas_, Hits_Time_3D_.at(hitLayers.at(l)), "", "PDFCanvas_Hits_Layers.pdf");
-		if (l == 0)
-			WritePrintHistogram<TH3D*>(Hits_Canvas_, Hits_Time_3D_.at(MaxNumberLayers + 1), "",
-					"PDFCanvas_Hits_allLayers.pdf");
 	}
 	PDF_Canvas_Hits_Layers->Print("PDFCanvas_Hits_Layers.pdf]");
 	delete PDF_Canvas_Hits_Layers;
@@ -618,7 +610,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		delete Hits_Energy_Histo_.at(l), Hits_Energy_2D_.at(l), Hits_Energy_3D_.at(l), Hits_Time_ztime_2D_.at(l);
 	} 
 	for (signed int t = 0; t < int(time_interval_bunchspacing/time_step); ++t) {
-    Hits_Time_3D_.at(t);
+    delete Hits_Time_3D_.at(t);
   }    
 	delete Hits_Canvas_;
 	output_rootfile->Write();
