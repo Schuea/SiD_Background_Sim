@@ -7,22 +7,33 @@
 
 #include "CellHits.h"
 
-int CellHits::Get_CellID() const{
+std::vector< int > CellHits::Get_CellID() const{
 	return CellID;
 }
-int CellHits::Get_HitCount() const{
+std::vector< int > CellHits::Get_HitCount() const{
 	return HitCount;
 }
 int CellHits::Get_BunchNumber() const{
 	return BunchNumber;
 }
 
-void CellHits::Set_CellID(int cellid) {
-	CellID = cellid;
+void CellHits::CheckCellID(int const id){
+  bool cell_exists(false);
+  int cell_element(-1);
+  for(int i = 0; i < CellID.size(); ++i){
+    if(CellID.at(i) == id){
+      cell_exists = true;
+      cell_element = i;
+      break;
+    }
+  }
+  if(cell_exists){
+    HitCount.at(cell_element) += 1;
+  } else{
+    CellID.push_back(id);
+    HitCount.push_back(1);
+  }
 }
-void CellHits::Set_HitCount(int hitcount) {
-	HitCount = hitcount;
-}
-void CellHits::Set_BunchNumber(int bunchnumber) {
+void CellHits::Set_BunchNumber(int const bunchnumber) {
 	BunchNumber = bunchnumber;
 }
