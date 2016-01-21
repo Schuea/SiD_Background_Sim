@@ -57,7 +57,7 @@ int NUMBER_OF_FILES;
 int first_layer_to_be_compared = -1;
 int last_layer_to_be_compared = -1;
 
-int time_step = 500;
+int time_step = 100;
 
 void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 		std::vector<std::string> argument_subdetectors) {
@@ -199,7 +199,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
   for (int time_steps = 0; time_steps <= int(time_interval_bunchspacing/time_step); ++time_steps){
 		std::string histo_name_time3D, histo_title_time3D;
 	  histo_name_time3D = "HitsTime_3D_" + subdetector_name;
-	  histo_title_time3D = "Hitmap in time steps of 500ns for " + subdetector_name + ";z [mm];x [mm];y [mm]";
+	  histo_title_time3D = "Hitmap in time steps of "+ std::to_string(time_step) +"ns for " + subdetector_name + ";z [mm];x [mm];y [mm]";
 		Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
   }  
 
@@ -230,12 +230,12 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 			std::cout << "The TTree " << SubdetectorTree->GetName() << " has " << number_of_hits << " entries."
 					<< std::endl;
 
-			if (NUMBER_OF_FILES <= 1312) {
+			if ((fileIterator + 1) <= 1312) {//number of bunches starts with 1, not 0
 				number_of_train = 1;
-				number_of_bunch = NUMBER_OF_FILES;
-			} else if (NUMBER_OF_FILES > 1312 && NUMBER_OF_FILES <= 2624) {
+				number_of_bunch = fileIterator + 1;
+			} else if ((fileIterator + 1) > 1312 && (fileIterator + 1) <= 2624) {
 				number_of_train = 2;
-				number_of_bunch = NUMBER_OF_FILES - 1312;
+				number_of_bunch = (fileIterator + 1) - 1312;
 			}
 			PassedTime.Calculate_passedbytime(number_of_train, number_of_bunch);
 
@@ -343,7 +343,10 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 				Hits_Time_.at(Layer_no)->Fill(absolutetime);
 				Hits_Time_.at(MaxNumberLayers + 1)->Fill(absolutetime);
 			
-        if (fmod(absolutetime, time_step) < 1) Hits_Time_3D_.at(int(absolutetime))->Fill(z, x, y);
+        if (fmod(absolutetime, time_step) < 10){
+          std::cout << "Filling hits into 3D plot for the time " << std::to_string(absolutetime) << std::endl;
+          Hits_Time_3D_.at(floor(absolutetime/time_step))->Fill(z, x, y);
+        }  
 			}
 
 			AllHitCounts.push_back(HitCount);
