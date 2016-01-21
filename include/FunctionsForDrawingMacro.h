@@ -155,11 +155,9 @@ void WritePrintHistogram(TCanvas* Canvas_, T Histos_, std::string drawingoption,
 	Canvas_->Print(PDFName.c_str());
 }
 
-std::string Setup_HitsTime3D_PlotsTitle(float time, float timelow, float timehigh, std::string subdetector_name){
+std::string Setup_HitsTime3D_PlotsTitle(float timelow, float timehigh, std::string subdetector_name){
   std::string title;
-  if (time > timelow && time < timehigh){
-    title = "Hitmap of hits between "+std::to_string(timelow)+" and "+std::to_string(timehigh)+"ns for " + subdetector_name + ";z [mm];x [mm];y [mm]";
-  }
+  title = "Hitmap of hits between "+std::to_string(timelow)+" and "+std::to_string(timehigh)+"ns for " + subdetector_name + ";z [mm];x [mm];y [mm]";
   return title;
 }
 

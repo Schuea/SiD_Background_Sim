@@ -138,6 +138,51 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 	std::map<int, std::vector<int> > HitsPerLayerMap;
 	Hits_Canvas_ = new TCanvas((Canvas_name + "_Hits_" + subdetector_name).c_str());
 
+  std::string histo_name_time3D, histo_title_time3D;
+  histo_name_time3D = "HitsTime_3D_" + subdetector_name;
+
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(0,100,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(100,200,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(200,300,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(300,400,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(400,500,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(500,600,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(600,700,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(700,800,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(800,900,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(900,1000,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(1000,1100,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(1100,1200,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(1200,1300,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(1300,1400,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(1400,1500,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(1500,1600,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(1600,1700,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(1700,1800,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(1800,1900,subdetector_name);
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+  histo_title_time3D = Setup_HitsTime3D_PlotsTitle(1900,2000,subdetector_name);  
+  Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
+
+
 	//Find the largest number of layers from all the subdetectors that are to be plotted
 	for (int s = 0; s < SubDetectors->size(); ++s) {
 		MaxNumberLayers = FindMax(SubDetectors->at(s)->GetNumberOfLayers(), MaxNumberLayers);
@@ -349,51 +394,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
         if (fileIterator == 0){
           std::cout << "Filling hits into 3D plot for the time " << std::to_string(absolutetime) << std::endl;
           //Hits_Time_3D_.at(floor(absolutetime/time_step))->Fill(z, x, y);
-		      std::string histo_name_time3D, histo_title_time3D;
-	        histo_name_time3D = "HitsTime_3D_" + subdetector_name;
-
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,0,100,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,100,200,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,200,300,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,300,400,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,400,500,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,500,600,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,600,700,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,700,800,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,800,900,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,900,1000,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1000,1100,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1100,1200,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1200,1300,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1300,1400,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1400,1500,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1500,1600,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1600,1700,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1700,1800,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1800,1900,subdetector_name);
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-          histo_title_time3D = Setup_HitsTime3D_PlotsTitle(absolutetime,1900,2000,subdetector_name);  
-          Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
-
-          Fill_HitsTime3D_Plots(absolutetime,0,100,Hits_Time_3D_.at(0),x,y,z);
+		      Fill_HitsTime3D_Plots(absolutetime,0,100,Hits_Time_3D_.at(0),x,y,z);
           Fill_HitsTime3D_Plots(absolutetime,100,200,Hits_Time_3D_.at(1),x,y,z);
           Fill_HitsTime3D_Plots(absolutetime,200,300,Hits_Time_3D_.at(2),x,y,z);
           Fill_HitsTime3D_Plots(absolutetime,300,400,Hits_Time_3D_.at(3),x,y,z);
