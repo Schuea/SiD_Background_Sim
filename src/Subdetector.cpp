@@ -19,10 +19,10 @@ void EcalEndcap::Initialize(){
   NumberOfLayers_ = 31;
 
   ROOTEnergyHisto_binning = {40., 0., 0.01};
-  ROOTHisto_binning1D = {15, 0, 15};                                           
+  ROOTHisto_binning1D = {25, 0, 25};                                           
   ROOTHisto_binning2D = {70, -1500, 1500, 70, -1500, 1500};                    
   ROOTHisto_binning3D = {70, -2000, 2000, 70, -1500, 1500, 70, -1500, 1500};
-  ROOTHisto_time = {500, 0, 2000};
+  ROOTHisto_time = {250, 0, 1000};
 }								
 void HcalBarrel::Initialize(){
   Name_ = "HcalBarrel";

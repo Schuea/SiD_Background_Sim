@@ -77,12 +77,12 @@ void WritePrintComparedHistogram(TCanvas* Canvas_, std::vector<T> Histos_, std::
 	Histos_.at(firstlayer)->SetLineColor(2);
 	Histos_.at(firstlayer)->SetMarkerStyle(20);
 	Histos_.at(firstlayer)->SetMarkerColor(2);
-	if (Normalizing)
+	if (Normalizing){
 		Histos_.at(firstlayer)->GetYaxis()->SetTitle("Normalized entries");
-	if (Normalizing)
 		Histos_.at(firstlayer)->Scale(1.0 / Histos_.at(firstlayer)->Integral());
+  }
 	Histos_.at(firstlayer)->Draw(drawingoption.c_str());
-	TPaveStats *st1 = (TPaveStats*) Histos_.at(firstlayer)->FindObject("stats");
+  TPaveStats *st1 = (TPaveStats*) Histos_.at(firstlayer)->FindObject("stats");
 	double statboxsize = st1->GetY2NDC() - st1->GetY1NDC();
 	st1->SetTextColor(2);
 	st1->SetY1NDC(0.78);
@@ -103,10 +103,10 @@ void WritePrintComparedHistogram(TCanvas* Canvas_, std::vector<T> Histos_, std::
 			Histos_.at(l)->SetLineColor(l + 3);
 			Histos_.at(l)->SetMarkerColor(l + 3);
 		}
-		if (Normalizing)
+		if (Normalizing){
 			Histos_.at(l)->GetYaxis()->SetTitle("Normalized entries");
-		if (Normalizing)
 			Histos_.at(l)->Scale(1.0 / Histos_.at(l)->Integral());
+    }
 		Histos_.at(l)->Draw("sames");
 		TPaveStats *st = (TPaveStats*) Histos_.at(l)->FindObject("stats");
 		if (l < 3)
@@ -116,6 +116,7 @@ void WritePrintComparedHistogram(TCanvas* Canvas_, std::vector<T> Histos_, std::
 		st->SetY2NDC(((TPaveStats*) Histos_.at(l - 1)->FindObject("stats"))->GetY1NDC()); //new x start position
 		st->SetY1NDC(st->GetY2NDC() - statboxsize); //new x end position
 	}
+	Canvas_->Update();
 	Canvas_->Write();
 	std::stringstream CanvasName_eps, CanvasName_C;
 	CanvasName_eps << Canvas_->GetName() << "_" << Histos_.at(firstlayer)->GetName() << "_" << firstlayer << "-"

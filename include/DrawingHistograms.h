@@ -720,7 +720,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 			std::stringstream new_histo_perlayer_title;
 			new_histo_perlayer_title << "Hits per layer for " << subdetector_name << " layers "
 					<< first_layer_to_be_compared << " - " << end_of_range
-					<< ";Count;Number of hits per bunch crossing";
+					<< ";Number of hits per bunch crossing;Count";
 			WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_PerLayer_, new_histo_perlayer_title.str(), hitLayers,
 					first_layer_to_be_compared, end_of_range, false, "", "PDFCanvas_Hits_CompareLayers.pdf");
 
@@ -729,8 +729,8 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 			Hits_Canvas_->SetLogy(1);
 			std::stringstream new_histo_title;
 			new_histo_title << "Hit occupancy per cell for " << subdetector_name << " layers "
-					<< first_layer_to_be_compared << " - " << end_of_range << ";Count;Number of hits per cell";
-			WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_Histo_, new_histo_title.str(), hitLayers,
+					<< first_layer_to_be_compared << " - " << end_of_range << ";Number of hits per cell;Count";
+      WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_Histo_, new_histo_title.str(), hitLayers,
 					first_layer_to_be_compared, end_of_range, true, "", "PDFCanvas_Hits_CompareLayers.pdf");
 
 			Hits_Canvas_->Clear();
@@ -738,7 +738,7 @@ void DrawingMacro(std::string outputname, std::vector<std::string> inputnames,
 			Hits_Canvas_->SetLogy(1);
 			std::stringstream new_Energy_histo_title;
 			new_Energy_histo_title << "Deposited hit energy for " << subdetector_name << " layers "
-					<< first_layer_to_be_compared << " - " << end_of_range << ";Count;Deposited hit energy";
+					<< first_layer_to_be_compared << " - " << end_of_range << ";Deposited hit energy;Count";
 			WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_, new_Energy_histo_title.str(),
 					hitLayers, first_layer_to_be_compared, end_of_range, true, "", "PDFCanvas_Hits_CompareLayers.pdf");
 			std::cout << __FILE__ << ": " << __LINE__ << std::endl;
