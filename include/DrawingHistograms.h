@@ -40,41 +40,68 @@
 
 class DrawingHistograms{
   public:
-    DrawingHistograms(std::string _outputname, std::vector<std::string> _inputnames, std::vector<std::string> _argument_subdetectors);
+    DrawingHistograms(std::string _outputname, std::vector<std::string> _inputnames, std::vector<std::string> _argument_subdetectors, int NUMBER_OF_FILES, int first_layer_to_be_compared, int last_layer_to_be_compared);
     void DrawingMacro();
+  
   private:
-    std::string outputname;
-    std::string Canvas_name;
-    std::vector< std::string > inputnames;
-    std::vector< std::string > argument_subdetectors;
-    TFile *output_rootfile;
-    TH2D *ParticlesVSEvent;
-    TH1D *Particles;
-    TF1 *gausfit_Particles;
-    TH1D *DeadCells;
-    TCanvas *Files_Canvas;
-    TFile* inputfile;
-    TCanvas* Hits_Canvas_;
-    std::vector<TH2D*> ParticleOrigins_2D_;
-    std::vector<TH1D*> Hits_PerLayer_;
-    std::vector<TH1D*> Hits_Histo_;
-    std::vector<TH2D*> Hits_2D_;
-    std::vector<TH3D*> Hits_3D_;
-    std::vector<TH1D*> Hits_Energy_Histo_;
-    std::vector<TH2D*> Hits_Energy_2D_;
-    std::vector<TH3D*> Hits_Energy_3D_;
-    std::vector<TH1D*> Hits_Time_;
-    std::vector<TH2D*> Hits_Time_rtime_2D_;
-    std::vector<TH2D*> Hits_Time_ztime_2D_;
-    std::vector<TH3D*> Hits_Time_3D_;
+    int number_of_files;
     int first_layer_to_be_compared;
     int last_layer_to_be_compared;
 
-
     bool YesNo_TrackerHistograms;
-    int number_of_files;
+    std::string outputname;
+    std::vector< std::string > inputnames;
+    std::vector< std::string > argument_subdetectors;
+    TFile* inputfile;
+    TFile *output_rootfile;
+    std::string Canvas_name;
+    TCanvas *Files_Canvas_;
+    TCanvas* Hits_Canvas_;
+    TH1D *DeadCells;
+    TH1D *Hits;
+    TH1D *Particles;
+    TH2D *ParticlesVSEvent;
+    TF1 *gausfit_Particles;
+    std::vector< TH2D* > ParticleOrigins_2D_;
+    std::vector< TH1D* > Hits_PerLayer_;
+    std::vector< TH1D* > Hits_Histo_;
+    std::vector< TH2D* > Hits_2D_;
+    std::vector< TH3D* > Hits_3D_;
+    std::vector< TH1D* > Hits_Energy_Histo_;
+    std::vector< TH2D* > Hits_Energy_2D_;
+    std::vector< TH3D* > Hits_Energy_3D_;
+    std::vector< TH1D* > Hits_Time_;
+    std::vector< TH2D* > Hits_Time_rtime_2D_;
+    std::vector< TH2D* > Hits_Time_ztime_2D_;
+    std::vector< TH3D* > Hits_Time_3D_;
 
-    void Setup();
+    std::vector< int > BunchNumbers_for_TotDeadCells;   
+    int* TotDeadCells_x;
+    int* TotDeadCells_y;
+    
+    float time_interval_bunchspacing;
+
+    std::vector< float > axis_range_plot_1D; //xbins, xlow, xup
+    std::vector< float > axis_range_plot_2D; //xbins, xlow, xup, ybins, ylow, yup
+    std::vector< float > axis_range_plot_3D; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup
+    std::vector< float > axis_range_plot_energy_1D; //xbins, xlow, xup
+    std::vector< float > axis_range_plot_time; //timebins, timelow, timeup
+    std::vector< float > axis_range_plot_rtime_2D; //timebins, timelow, timeup, rbins, rlow, rup
+    std::vector< float > axis_range_plot_ztime_2D; //timebins, timelow, timeup, zbins, zlow, zup
+    std::vector< float > axis_range_plot_time_3D; //timebins, timelow, timeup, zbins, zlow, zup, xbins, xlow, xup
+
+    std::vector<Subdetector*> * SubDetectors;
+    std::string subdetector_name;
+  
+    std::map<int, std::vector<int> > HitsPerLayerMap;
+  
+    void Initialize();
+    void SetupGeneralHistograms();
+    void Setup_SubDetector_vector();
+    void Setup_Maps();
+    int Find_MaxNumberLayers();
+    void SetupLayerHistograms();
+    void Open_inputfile(int number_of_file);
 };
 
 #endif /*DRAWINGHISTOS*/

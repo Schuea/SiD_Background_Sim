@@ -14,27 +14,27 @@
 #include <string>
 
 #include "UsefulFunctions.h"
+#include "FunctionsForDrawingMacro.h"
 #include "DrawingHistograms.h"
 
 void Usage();
-void CheckArguments(int argc, char * argv[], std::vector<std::string> *inputfilenames, std::vector<std::string> *subdetectors, std::string *outputfilename);
-extern int NUMBER_OF_FILES;
-extern int first_layer_to_be_compared;
-extern int last_layer_to_be_compared;
-extern bool NUMBER_OF_FILES_set = false;
-extern bool inputfile_set = false;
-extern bool outputfile_set = false;
-extern bool subdetector_set = false;
-
+void CheckArguments(int argc, char * argv[], std::vector<std::string> *inputfilenames, std::vector<std::string> *subdetectors, std::string *outputfilename, int & NUMBER_OF_FILES, int & first_layer_to_be_compared, int & last_layer_to_be_compared);
+bool NUMBER_OF_FILES_set = false;
+bool inputfile_set = false;
+bool outputfile_set = false;
+bool subdetector_set = false;
 
 int main(int argc, char * argv[]){
 
   std::vector<std::string> *inputfilenames = new std::vector<std::string>();
   std::vector<std::string> *subdetectors = new std::vector<std::string>();
   std::string *outputfilename = new std::string("");
+  int NUMBER_OF_FILES;
   NUMBER_OF_FILES = 0;
+  int first_layer_to_be_compared;
+  int last_layer_to_be_compared;
 
-  CheckArguments(argc, argv, inputfilenames, subdetectors, outputfilename);
+  CheckArguments(argc, argv, inputfilenames, subdetectors, outputfilename, NUMBER_OF_FILES, first_layer_to_be_compared, last_layer_to_be_compared);
 
   if (!inputfile_set || !outputfile_set || !subdetector_set || !NUMBER_OF_FILES_set) {
     std::cerr
@@ -44,7 +44,7 @@ int main(int argc, char * argv[]){
   }
 
   try {
-    DrawingHistograms program(*outputfilename, *inputfilenames, *subdetectors);
+    DrawingHistograms program(*outputfilename, *inputfilenames, *subdetectors, NUMBER_OF_FILES, first_layer_to_be_compared, last_layer_to_be_compared);
     program.DrawingMacro();
     //DrawingMacro(*outputfilename, *inputfilenames, *subdetectors);
   } catch (std::exception& e) {
@@ -54,7 +54,7 @@ int main(int argc, char * argv[]){
   return 0;
 }
 
-void CheckArguments(int argc, char * argv[],  std::vector<std::string> *inputfilenames, std::vector<std::string> *subdetectors, std::string *outputfilename){
+void CheckArguments(int argc, char * argv[],  std::vector<std::string> *inputfilenames, std::vector<std::string> *subdetectors, std::string *outputfilename, int & NUMBER_OF_FILES, int & first_layer_to_be_compared, int & last_layer_to_be_compared){
   if (argc < 2) {
     Usage();
   }

@@ -12,37 +12,44 @@ DRAWINGHISTOGRAMS=objects/DrawingHistograms.o
 SUBDETECTOR=objects/Subdetector.o
 LAYERCODE=objects/LayerCodeInCellID.o
 CELLHITS=objects/CellHits.o
-USEFULFUNCTIONS=objects/UsefulFunctions.o
-OBJECTS = $(DATACLASS) $(CREATECELLID) $(SUBDETECTOR) $(LAYERCODE) $(CELLHITS) $(USEFULFUNCTIONS) $(DRAWINGHISTOGRAMS)
+USEFULFUNCTIONS=objects/UsefulFunctions.o objects/FunctionsForDrawingMacro.o
+TIME=objects/Time.o
+OBJECTS = $(DATACLASS) $(CREATECELLID) $(SUBDETECTOR) $(LAYERCODE) $(CELLHITS) $(USEFULFUNCTIONS) $(DRAWINGHISTOGRAMS) $(TIME)
 
 all: Run
 
 Run: $(MAIN) $(OBJECTS)
-	$(CC) $(CFLAGS) $(INCLUDES) $^ -o $@ $(LIBS)
+	@$(CC) $(CFLAGS) $(INCLUDES) $^ -o $@ $(LIBS)
 
 objects/main.o: ../src/main.cpp 
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 objects/DataClass.o: ../src/DataClass.cpp 
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 objects/LayerCodeInCellID.o: ../src/LayerCodeInCellID.cpp 
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 objects/Subdetector.o: ../src/Subdetector.cpp 
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 objects/CreateCellID.o: ../src/CreateCellID.cpp 
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 objects/CellHits.o: ../src/CellHits.cpp 
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 objects/DrawingHistograms.o: ../src/DrawingHistograms.cpp
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 objects/UsefulFunctions.o: ../src/UsefulFunctions.cpp
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+objects/FunctionsForDrawingMacro.o: ../src/FunctionsForDrawingMacro.cpp
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+objects/Time.o: ../src/Time.cpp
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	-rm -f objects/*.o ./Run
