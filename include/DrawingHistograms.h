@@ -51,27 +51,27 @@ class DrawingHistograms{
     TF1 *gausfit_Particles;
     TH1D *DeadCells;
     TCanvas *Files_Canvas;
-TFile* inputfile;
-  TCanvas* Hits_Canvas_;
-  std::vector<TH2D*> ParticleOrigins_2D_;
-  std::vector<TH1D*> Hits_PerLayer_;
-  std::vector<TH1D*> Hits_Histo_;
-  std::vector<TH2D*> Hits_2D_;
-  std::vector<TH3D*> Hits_3D_;
-  std::vector<TH1D*> Hits_Energy_Histo_;
-  std::vector<TH2D*> Hits_Energy_2D_;
-  std::vector<TH3D*> Hits_Energy_3D_;
-  std::vector<TH1D*> Hits_Time_;
-  std::vector<TH2D*> Hits_Time_rtime_2D_;
-  std::vector<TH2D*> Hits_Time_ztime_2D_;
-  std::vector<TH3D*> Hits_Time_3D_;
+    TFile* inputfile;
+    TCanvas* Hits_Canvas_;
+    std::vector<TH2D*> ParticleOrigins_2D_;
+    std::vector<TH1D*> Hits_PerLayer_;
+    std::vector<TH1D*> Hits_Histo_;
+    std::vector<TH2D*> Hits_2D_;
+    std::vector<TH3D*> Hits_3D_;
+    std::vector<TH1D*> Hits_Energy_Histo_;
+    std::vector<TH2D*> Hits_Energy_2D_;
+    std::vector<TH3D*> Hits_Energy_3D_;
+    std::vector<TH1D*> Hits_Time_;
+    std::vector<TH2D*> Hits_Time_rtime_2D_;
+    std::vector<TH2D*> Hits_Time_ztime_2D_;
+    std::vector<TH3D*> Hits_Time_3D_;
     int first_layer_to_be_compared;
-  int last_layer_to_be_compared;
+    int last_layer_to_be_compared;
 
 
     bool YesNo_TrackerHistograms;
     int number_of_files;
-  
+
     void Setup();
 };
 
