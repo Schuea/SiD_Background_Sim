@@ -27,7 +27,7 @@ extern bool outputfile_set = false;
 extern bool subdetector_set = false;
 
 
-  int main(int argc, char * argv[]){
+int main(int argc, char * argv[]){
 
   std::vector<std::string> *inputfilenames = new std::vector<std::string>();
   std::vector<std::string> *subdetectors = new std::vector<std::string>();
@@ -44,7 +44,9 @@ extern bool subdetector_set = false;
   }
 
   try {
-    DrawingMacro(*outputfilename, *inputfilenames, *subdetectors);
+    DrawingHistograms program(*outputfilename, *inputfilenames, *subdetectors);
+    program.DrawingMacro();
+    //DrawingMacro(*outputfilename, *inputfilenames, *subdetectors);
   } catch (std::exception& e) {
     std::cerr << "Something went wrong with drawing or saving the histograms.\n" << e.what();
   }

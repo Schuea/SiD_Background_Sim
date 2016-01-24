@@ -15,16 +15,15 @@ public:
 	CellHits(): CellID(), HitCount(), BunchNumber(0){}
 	~CellHits(){}
 
-
-	std::vector< int > Get_CellID() const;
+  std::vector< int > Get_CellID() const;
 	std::vector< int > Get_HitCount() const;
 	int Get_BunchNumber() const;
 
-	void CheckCellID(int const id);
+  void CheckCellID(int const id);
 	void Set_BunchNumber(int const bunchnumber);
 
 protected:
-	std::vector< int > CellID;
+  std::vector< int > CellID;
 	std::vector< int > HitCount;
 	int BunchNumber;
 };
