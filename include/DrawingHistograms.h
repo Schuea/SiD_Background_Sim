@@ -28,6 +28,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <map>
 
 #include "FunctionsForDrawingMacro.h"
@@ -80,6 +81,7 @@ class DrawingHistograms{
     int* TotDeadCells_y;
     
     float time_interval_bunchspacing;
+    std::pair < int, int> Number_train_bunch;
 
     std::vector< float > axis_range_plot_1D; //xbins, xlow, xup
     std::vector< float > axis_range_plot_2D; //xbins, xlow, xup, ybins, ylow, yup
@@ -93,15 +95,24 @@ class DrawingHistograms{
     std::vector<Subdetector*> * SubDetectors;
     std::string subdetector_name;
   
-    std::map<int, std::vector<int> > HitsPerLayerMap;
+    std::vector< int > hitLayers;
+    int MaxNumberLayers;
+ 
+    std::map< int, int > HitMap;  //cellid, count of all hits per cell
+    std::map< int, std::vector<int> > HitsPerLayerMap;
   
     void Initialize();
     void SetupGeneralHistograms();
     void Setup_SubDetector_vector();
-    void Setup_Maps();
+    void Setup_HitsPerLayerMap(int layer);
     int Find_MaxNumberLayers();
-    void SetupLayerHistograms();
+    void SetupLayerHistograms(std::string layerstring);
+    std::pair< int, int > Set_train_bunch_number(int number_of_file);
     void Open_inputfile(int number_of_file);
+    void Filling_Data_for_SubDetectors(int subdetector_iterator);
+    void Setup_for_inputfiles(int file_iterator, int subdetector_iterator, Time & time, std::vector< CellHits* > & AllHitCounts);
+    void Filling_Data_of_hits(int file_iterator, int subdetector_iterator, Data* data, CellHits* HitCount, Time & time,
+        std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D, std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy3D);
 };
 
 #endif /*DRAWINGHISTOS*/

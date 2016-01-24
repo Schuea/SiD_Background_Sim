@@ -1,6 +1,7 @@
 #include "DrawingHistograms.h"
 #include "FunctionsForDrawingMacro.h"
 
+
   DrawingHistograms::DrawingHistograms(std::string _outputname, std::vector<std::string> _inputnames, std::vector<std::string> _argument_subdetectors, int NUMBER_OF_FILES, int FIRST_LAYER_TO_BE_COMPARED, int LAST_LAYER_TO_BE_COMPARED)
 : outputname(_outputname), 
   inputnames(_inputnames), 
@@ -29,6 +30,8 @@
   Hits_Time_rtime_2D_(),
   Hits_Time_ztime_2D_(),
   Hits_Time_3D_(),
+  time_interval_bunchspacing(0),
+  Number_train_bunch(),
   BunchNumbers_for_TotDeadCells(),   
   TotDeadCells_x(nullptr),
   TotDeadCells_y(nullptr),
@@ -43,6 +46,9 @@
   axis_range_plot_time_3D(),
   SubDetectors(nullptr),
   subdetector_name(""),
+  hitLayers(),
+  MaxNumberLayers(0),
+  HitMap(),
   HitsPerLayerMap()
 {}
 
@@ -54,7 +60,7 @@ void DrawingHistograms::Initialize(){
   output_rootfile = new TFile(outputname.c_str(), "RECREATE");
   std::size_t found = outputname.find_last_of(".");
   Canvas_name = outputname.substr(0, found);
-  Files_Canvas = new TCanvas((Canvas_name + "_HitsPerFile").c_str());
+  Files_Canvas_ = new TCanvas((Canvas_name + "_HitsPerFile").c_str());
   Hits_Canvas_ = new TCanvas((Canvas_name + "_Hits_" + subdetector_name).c_str());
   
   YesNo_TrackerHistograms = DecideIfTrackerHistograms(argument_subdetectors);
@@ -150,7 +156,7 @@ void DrawingHistograms::SetupGeneralHistograms(){
   Setup_Histo(Hits_Time_3D_, axis_range_plot_3D, histo_name_time3D, histo_title_time3D);
 }  
 
-void DrawingHistograms::Setupt_SubDetector_vector(){
+void DrawingHistograms::Setup_SubDetector_vector(){
   std::string * subdetector_name2 = new std::string("");
   SubDetectors = new std::vector<Subdetector*>();
   SetupSubDetectorsVector(SubDetectors, subdetector_name2, argument_subdetectors);
@@ -162,9 +168,9 @@ void DrawingHistograms::Setupt_SubDetector_vector(){
   }
 }  
 
-void DrawingHistograms::Setup_Maps(){
+void DrawingHistograms::Setup_HitsPerLayerMap(int layer){
   for (int files = 1; files <= number_of_files; ++files) {
-    HitsPerLayerMap[l].push_back(0);
+    HitsPerLayerMap[layer].push_back(0);
   }
 }
 
@@ -232,6 +238,208 @@ std::pair< int, int > DrawingHistograms::Set_train_bunch_number(int number_of_fi
   return std::pair< int, int > (number_of_train, number_of_bunch);
 }
 
+void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator){
+  Time PassedTime;
+
+  std::vector< CellHits* > AllHitCounts;
+
+  //Getting the inputfile and its TTrees
+  for (int fileIterator = 0; fileIterator < number_of_files; ++fileIterator) {
+    Setup_for_inputfiles(fileIterator, subdetector_iterator, PassedTime, AllHitCounts);
+  } //End of loop through inputfiles
+
+  for (auto iterator = HitsPerLayerMap.begin(); iterator != HitsPerLayerMap.end(); iterator++) {
+    for (auto e = iterator->second.begin(); e != iterator->second.end(); ++e) {
+      if (*e > 0) {
+        Hits_PerLayer_.at(iterator->first)->Fill(*e);
+      }
+    }
+  }
+  for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
+    if (iterator->second > 0) {
+      Hits_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first))->Fill(iterator->second);
+      if (iterator->second > 4)
+        DeadCells->Fill(iterator->first);
+    }
+  }
+
+  int totdead = 0;
+  std::map<int, int> bunch_totdead;
+  for (int i = 0; i < AllHitCounts.size(); ++i) {
+    for (int j = 0; j < AllHitCounts.at(i)->Get_CellID().size(); ++j) {
+      if (AllHitCounts.at(i)->Get_HitCount().at(j) > 4) {
+        std::cout << "AllHitCounts.at(i)->Get_BunchNumber() = " << AllHitCounts.at(i)->Get_BunchNumber()
+          << std::endl;
+        DeadCells->Fill(AllHitCounts.at(i)->Get_BunchNumber());
+
+        totdead++;
+      }
+    }
+    for (int vector_it = 0; vector_it < BunchNumbers_for_TotDeadCells.size(); ++vector_it) {
+      if (AllHitCounts.at(i)->Get_BunchNumber() == BunchNumbers_for_TotDeadCells.at(vector_it)) {
+        bunch_totdead[BunchNumbers_for_TotDeadCells.at(vector_it)] = totdead;
+      }
+    }
+  }
+  int i = 0;
+  for (auto iterator = bunch_totdead.begin(); iterator != bunch_totdead.end(); iterator++) {
+    TotDeadCells_x[i] = iterator->first;
+    TotDeadCells_y[i] = iterator->second;
+    i++;
+  }
+}
+
+void DrawingHistograms::Setup_for_inputfiles(int file_iterator, int subdetector_iterator, Time & PassedTime, std::vector< CellHits* > & AllHitCounts){
+  Open_inputfile(file_iterator);
+  TTree* Tree_MCP;
+  inputfile->GetObject("Tree_MCP", Tree_MCP);
+  TTree *SubdetectorTree = Get_TTree(inputfile, SubDetectors->at(subdetector_iterator)->GetName());
+
+  int number_of_hits = SubdetectorTree->GetEntries();
+  std::cout << "The TTree " << SubdetectorTree->GetName() << " has " << number_of_hits << " entries." << std::endl;
+
+  Number_train_bunch = Set_train_bunch_number(file_iterator);
+
+  PassedTime.Calculate_passedbytime(Number_train_bunch.first, Number_train_bunch.second);
+
+  Data* data = SetBranches(SubdetectorTree);
+  CellHits *HitCount = new CellHits();
+
+  std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D; //layer, bin, energies
+  std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy3D; //layer, bin, energies
+
+  for (std::size_t i = 0; i < number_of_hits; i++) {
+    SubdetectorTree->GetEntry(i);
+    Filling_Data_of_hits(file_iterator, subdetector_iterator, data, HitCount, PassedTime, HitMapEnergy2D, HitMapEnergy3D);
+  }
+  AllHitCounts.push_back(HitCount);
+
+  int const colorrangeweight = 1000000000;
+  Fill_Histogram_from_Map<TH2D*>(HitMapEnergy2D, &Hits_Energy_2D_, colorrangeweight);
+  Fill_Histogram_from_Map<TH3D*>(HitMapEnergy3D, &Hits_Energy_3D_, colorrangeweight);
+
+  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
+
+  int number_of_particles = 0;
+  number_of_particles = Tree_MCP->GetEntries();
+  ParticlesVSEvent->Fill(file_iterator, number_of_particles);
+  Particles->Fill(number_of_particles);
+  Hits->Fill(number_of_hits);
+  inputfile->Close();
+  delete inputfile;
+}
+
+void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_iterator, Data* data, CellHits* HitCount, Time & PassedTime, 
+    std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D, std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy3D){
+
+  CellID *SubdetectorCells = InitializeCellIDClass(SubDetectors->at(subdetector_iterator)->GetName(), data);
+  std::cout << SubdetectorCells << std::endl;
+  SubdetectorCells->CreateCellID();
+  int CellIDkey = 0.;
+  CellIDkey = SubdetectorCells->CellID_ToINTconversion(SubdetectorCells->GetCellID());
+  LayerCodeInCellID LayerInfo;
+  int Layer_no = LayerInfo.GetLayer(SubdetectorCells->GetCellID(), SubDetectors->at(subdetector_iterator)->GetStartLayerBin(),
+      SubDetectors->at(subdetector_iterator)->GetLengthLayerBin());
+  if (std::find(hitLayers.begin(), hitLayers.end(), Layer_no) == hitLayers.end()) {
+    hitLayers.push_back(Layer_no);
+  }
+
+  //This adds a hit to the Cell ID for a given bunch
+  HitCount->CheckCellID(CellIDkey);
+  HitCount->Set_BunchNumber(file_iterator + 1);
+
+  //Fill Maps:
+  HitsPerLayerMap[Layer_no].at(file_iterator) += 1;
+
+  float energy = 0.;
+  float absolutetime = 0.;
+  float x = 0.;
+  float y = 0.;
+  float z = 0.;
+  std::array<double, 3> vertex = { 0 };
+  if (YesNo_TrackerHistograms) {
+    x = data->Get_x_hit_particle();
+    y = data->Get_y_hit_particle();
+    z = data->Get_z_hit_particle();
+    energy = data->Get_dEdx_hit();
+    vertex = data->Get_vertex_particle();
+    //absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
+    absolutetime = data->Get_time_hit() + PassedTime.Get_passedbytime();
+  }
+  if (!YesNo_TrackerHistograms) {
+    x = data->Get_x_hit();
+    y = data->Get_y_hit();
+    z = data->Get_z_hit();
+    energy = data->Get_energy_hit();
+    vertex = data->Get_vertex_mother();
+    //absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
+    absolutetime = data->Get_time_contribution() + PassedTime.Get_passedbytime();
+  }
+
+  HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(
+      energy);
+  HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(
+      energy);
+
+  if (HitMap.find(CellIDkey) == HitMap.end()) {
+    HitMap[CellIDkey] = 1;
+  } else {
+    HitMap[CellIDkey] += 1;
+  }
+  //Fill histograms:
+  Hits_2D_.at(Layer_no)->Fill(x, y);
+  Hits_2D_.at(MaxNumberLayers + 1)->Fill(x, y);
+  Hits_3D_.at(Layer_no)->Fill(z, x, y);
+  Hits_3D_.at(MaxNumberLayers + 1)->Fill(z, x, y);
+
+  Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
+  Hits_Energy_Histo_.at(MaxNumberLayers + 1)->Fill(energy);
+  ParticleOrigins_2D_.at(Layer_no)->Fill(vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
+  ParticleOrigins_2D_.at(MaxNumberLayers + 1)->Fill(vertex[2],
+      sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
+
+  std::cout << "x_hit, y_hit = " << x << ", " << y << std::endl;
+  Hits_Time_rtime_2D_.at(Layer_no)->Fill(absolutetime, sqrt(pow(x, 2) + pow(y, 2)));
+  Hits_Time_rtime_2D_.at(MaxNumberLayers + 1)->Fill(absolutetime, sqrt(pow(x, 2) + pow(y, 2)));
+  Hits_Time_ztime_2D_.at(Layer_no)->Fill(absolutetime, z);
+  Hits_Time_ztime_2D_.at(MaxNumberLayers + 1)->Fill(absolutetime, z);
+  //Hits_Time_3D_.at(Layer_no)->Fill(absolutetime, z, sqrt(pow(x, 2) + pow(y, 2)));
+  //Hits_Time_3D_.at(MaxNumberLayers + 1)->Fill(absolutetime, z, sqrt(pow(x, 2) + pow(y, 2)));
+  Hits_Time_.at(Layer_no)->Fill(absolutetime);
+  Hits_Time_.at(MaxNumberLayers + 1)->Fill(absolutetime);
+
+  if (file_iterator == 0) {
+    std::cout << "Filling hits into 3D plot for the time " << std::to_string(absolutetime) << std::endl;
+    //Hits_Time_3D_.at(floor(absolutetime/time_step))->Fill(z, x, y);
+    Fill_HitsTime3D_Plots(absolutetime, 0, 2, Hits_Time_3D_.at(0), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 2, 4, Hits_Time_3D_.at(1), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 4, 6, Hits_Time_3D_.at(2), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 6, 8, Hits_Time_3D_.at(3), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 8, 12, Hits_Time_3D_.at(4), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 12, 16, Hits_Time_3D_.at(5), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 16, 20, Hits_Time_3D_.at(6), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 20, 50, Hits_Time_3D_.at(7), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 50, 100, Hits_Time_3D_.at(8), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 100, 200, Hits_Time_3D_.at(9), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 200, 300, Hits_Time_3D_.at(10), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 300, 400, Hits_Time_3D_.at(11), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 400, 500, Hits_Time_3D_.at(12), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 500, 600, Hits_Time_3D_.at(13), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 600, 700, Hits_Time_3D_.at(14), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 700, 800, Hits_Time_3D_.at(15), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 800, 900, Hits_Time_3D_.at(16), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 900, 1000, Hits_Time_3D_.at(17), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 1000, 1250, Hits_Time_3D_.at(18), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 1250, 1500, Hits_Time_3D_.at(19), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 1500, 2000, Hits_Time_3D_.at(20), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 2000, 2500, Hits_Time_3D_.at(21), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 2500, 3000, Hits_Time_3D_.at(22), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 3000, 4000, Hits_Time_3D_.at(23), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 4000, 6000, Hits_Time_3D_.at(24), x, y, z);
+    Fill_HitsTime3D_Plots(absolutetime, 6000, 10000, Hits_Time_3D_.at(25), x, y, z);
+  }
+}
+
 void DrawingHistograms::DrawingMacro(){
   Initialize();
   Setup_SubDetector_vector();
@@ -240,12 +448,12 @@ void DrawingHistograms::DrawingMacro(){
       &axis_range_plot_energy_1D, time_interval_bunchspacing, &axis_range_plot_time, &axis_range_plot_rtime_2D,
       &axis_range_plot_ztime_2D, &axis_range_plot_time_3D);
 
-  SetupHistograms();
+  SetupGeneralHistograms();
   
-  int MaxNumberLayers = Find_MaxNumberLayers();
+  MaxNumberLayers = Find_MaxNumberLayers();
   for (int l = 0; l <= MaxNumberLayers + 1; ++l) {//In the end, push back an additional histogram for all the layers together
 
-    Setup_Maps();
+    Setup_HitsPerLayerMap(l);
 
     std::string layerstring;
     if (l == MaxNumberLayers + 1) layerstring = "all";
@@ -254,214 +462,9 @@ void DrawingHistograms::DrawingMacro(){
     SetupLayerHistograms(layerstring);
   }
 
-  std::vector<int> hitLayers;
   for (int s = 0; s < SubDetectors->size(); ++s) {
-
-    Time PassedTime;
-    std::pair < int, int> Number_train_bunch (0, 0);
-
-    std::map<int, int> HitMap;  //cellid, count of all hits per cell
-    std::vector<CellHits*> AllHitCounts;
-
-    //Getting the inputfile and its TTrees
-    for (int fileIterator = 0; fileIterator < number_of_files; ++fileIterator) {
-      Open_inputfile(fileIterator);
-      TTree* Tree_MCP = inputfile->GetObject("Tree_MCP", Tree_MCP);
-      TTree *SubdetectorTree = Get_TTree(inputfile, SubDetectors->at(s)->GetName());
-      
-      int number_of_hits = SubdetectorTree->GetEntries();
-      std::cout << "The TTree " << SubdetectorTree->GetName() << " has " << number_of_hits << " entries." << std::endl;
-
-      Number_train_bunch = Set_train_bunch_number(fileIterator);
-
-      PassedTime.Calculate_passedbytime(Number_train_bunch.first, Number_train_bunch.second);
-
-      Data* data = SetBranches(SubdetectorTree);
-      CellHits *HitCount = new CellHits();
-
-      std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D; //layer, bin, energies
-      std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy3D; //layer, bin, energies
-
-      for (std::size_t i = 0; i < number_of_hits; i++) {
-        SubdetectorTree->GetEntry(i);
-
-        CellID *SubdetectorCells = InitializeCellIDClass(SubDetectors->at(s)->GetName(), data);
-        std::cout << SubdetectorCells << std::endl;
-        SubdetectorCells->CreateCellID();
-        int CellIDkey = 0.;
-        CellIDkey = SubdetectorCells->CellID_ToINTconversion(SubdetectorCells->GetCellID());
-        LayerCodeInCellID LayerInfo;
-        int Layer_no = LayerInfo.GetLayer(SubdetectorCells->GetCellID(), SubDetectors->at(s)->GetStartLayerBin(),
-            SubDetectors->at(s)->GetLengthLayerBin());
-        if (std::find(hitLayers.begin(), hitLayers.end(), Layer_no) == hitLayers.end()) {
-          hitLayers.push_back(Layer_no);
-        }
-
-        //This adds a hit to the Cell ID for a given bunch
-        HitCount->CheckCellID(CellIDkey);
-        HitCount->Set_BunchNumber(fileIterator + 1);
-
-        //Fill Maps:
-        HitsPerLayerMap[Layer_no].at(fileIterator) += 1;
-
-        float energy = 0.;
-        float absolutetime = 0.;
-        float x = 0.;
-        float y = 0.;
-        float z = 0.;
-        std::array<double, 3> vertex = { 0 };
-        if (YesNo_TrackerHistograms) {
-          x = data->Get_x_hit_particle();
-          y = data->Get_y_hit_particle();
-          z = data->Get_z_hit_particle();
-          energy = data->Get_dEdx_hit();
-          vertex = data->Get_vertex_particle();
-          //absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
-          absolutetime = data->Get_time_hit() + PassedTime.Get_passedbytime();
-        }
-        if (!YesNo_TrackerHistograms) {
-          x = data->Get_x_hit();
-          y = data->Get_y_hit();
-          z = data->Get_z_hit();
-          energy = data->Get_energy_hit();
-          vertex = data->Get_vertex_mother();
-          //absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
-          absolutetime = data->Get_time_contribution() + PassedTime.Get_passedbytime();
-        }
-
-        HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(
-            energy);
-        HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(
-            energy);
-
-        if (HitMap.find(CellIDkey) == HitMap.end()) {
-          HitMap[CellIDkey] = 1;
-        } else {
-          HitMap[CellIDkey] += 1;
-        }
-        //Fill histograms:
-        Hits_2D_.at(Layer_no)->Fill(x, y);
-        Hits_2D_.at(MaxNumberLayers + 1)->Fill(x, y);
-        Hits_3D_.at(Layer_no)->Fill(z, x, y);
-        Hits_3D_.at(MaxNumberLayers + 1)->Fill(z, x, y);
-
-        Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
-        Hits_Energy_Histo_.at(MaxNumberLayers + 1)->Fill(energy);
-        ParticleOrigins_2D_.at(Layer_no)->Fill(vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
-        ParticleOrigins_2D_.at(MaxNumberLayers + 1)->Fill(vertex[2],
-            sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
-
-        std::cout << "x_hit, y_hit = " << x << ", " << y << std::endl;
-        Hits_Time_rtime_2D_.at(Layer_no)->Fill(absolutetime, sqrt(pow(x, 2) + pow(y, 2)));
-        Hits_Time_rtime_2D_.at(MaxNumberLayers + 1)->Fill(absolutetime, sqrt(pow(x, 2) + pow(y, 2)));
-        Hits_Time_ztime_2D_.at(Layer_no)->Fill(absolutetime, z);
-        Hits_Time_ztime_2D_.at(MaxNumberLayers + 1)->Fill(absolutetime, z);
-        //Hits_Time_3D_.at(Layer_no)->Fill(absolutetime, z, sqrt(pow(x, 2) + pow(y, 2)));
-        //Hits_Time_3D_.at(MaxNumberLayers + 1)->Fill(absolutetime, z, sqrt(pow(x, 2) + pow(y, 2)));
-        Hits_Time_.at(Layer_no)->Fill(absolutetime);
-        Hits_Time_.at(MaxNumberLayers + 1)->Fill(absolutetime);
-
-        if (fileIterator == 0) {
-          std::cout << "Filling hits into 3D plot for the time " << std::to_string(absolutetime) << std::endl;
-          //Hits_Time_3D_.at(floor(absolutetime/time_step))->Fill(z, x, y);
-          Fill_HitsTime3D_Plots(absolutetime, 0, 2, Hits_Time_3D_.at(0), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 2, 4, Hits_Time_3D_.at(1), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 4, 6, Hits_Time_3D_.at(2), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 6, 8, Hits_Time_3D_.at(3), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 8, 12, Hits_Time_3D_.at(4), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 12, 16, Hits_Time_3D_.at(5), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 16, 20, Hits_Time_3D_.at(6), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 20, 50, Hits_Time_3D_.at(7), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 50, 100, Hits_Time_3D_.at(8), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 100, 200, Hits_Time_3D_.at(9), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 200, 300, Hits_Time_3D_.at(10), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 300, 400, Hits_Time_3D_.at(11), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 400, 500, Hits_Time_3D_.at(12), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 500, 600, Hits_Time_3D_.at(13), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 600, 700, Hits_Time_3D_.at(14), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 700, 800, Hits_Time_3D_.at(15), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 800, 900, Hits_Time_3D_.at(16), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 900, 1000, Hits_Time_3D_.at(17), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 1000, 1250, Hits_Time_3D_.at(18), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 1250, 1500, Hits_Time_3D_.at(19), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 1500, 2000, Hits_Time_3D_.at(20), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 2000, 2500, Hits_Time_3D_.at(21), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 2500, 3000, Hits_Time_3D_.at(22), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 3000, 4000, Hits_Time_3D_.at(23), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 4000, 6000, Hits_Time_3D_.at(24), x, y, z);
-          Fill_HitsTime3D_Plots(absolutetime, 6000, 10000, Hits_Time_3D_.at(25), x, y, z);
-        }
-        std::cout << __FILE__ << ": " << __LINE__ << std::endl;
-
-      }
-      std::cout << __FILE__ << ": " << __LINE__ << std::endl;
-      AllHitCounts.push_back(HitCount);
-
-      int const colorrangeweight = 1000000000;
-      Fill_Histogram_from_Map<TH2D*>(HitMapEnergy2D, &Hits_Energy_2D_, colorrangeweight);
-      Fill_Histogram_from_Map<TH3D*>(HitMapEnergy3D, &Hits_Energy_3D_, colorrangeweight);
-
-      std::cout << __FILE__ << ": " << __LINE__ << std::endl;
-
-      int number_of_particles = 0;
-      number_of_particles = Tree_MCP->GetEntries();
-      ParticlesVSEvent->Fill(fileIterator, number_of_particles);
-      Particles->Fill(number_of_particles);
-      Hits->Fill(number_of_hits);
-      inputfile->Close();
-      delete inputfile;
-    } //End of loop through inputfiles
-
-    for (auto iterator = HitsPerLayerMap.begin(); iterator != HitsPerLayerMap.end(); iterator++) {
-      for (auto e = iterator->second.begin(); e != iterator->second.end(); ++e) {
-        if (*e > 0) {
-          Hits_PerLayer_.at(iterator->first)->Fill(*e);
-        }
-      }
-    }
-    for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
-      if (iterator->second > 0) {
-        Hits_Histo_.at(SubDetectors->at(s)->GetLayer(iterator->first))->Fill(iterator->second);
-        if (iterator->second > 4)
-          DeadCells->Fill(iterator->first);
-      }
-    }
-
-    /*
-       for (auto iterator = HitTimeMap.begin(); iterator != HitTimeMap.end(); iterator++) {
-       for (auto e = iterator->second.begin(); e != iterator->second.end(); ++e) {
-       Hits_Time_3D_.at(HitTimeMap.first)->Fill(e.second);
-       }
-       }
-     */
-
-    int totdead = 0;
-    std::map<int, int> bunch_totdead;
-    for (int i = 0; i < AllHitCounts.size(); ++i) {
-      for (int j = 0; j < AllHitCounts.at(i)->Get_CellID().size(); ++j) {
-        if (AllHitCounts.at(i)->Get_HitCount().at(j) > 4) {
-          std::cout << "AllHitCounts.at(i)->Get_BunchNumber() = " << AllHitCounts.at(i)->Get_BunchNumber()
-            << std::endl;
-          DeadCells->Fill(AllHitCounts.at(i)->Get_BunchNumber());
-
-          totdead++;
-        }
-      }
-      for (int vector_it = 0; vector_it < BunchNumbers_for_TotDeadCells.size(); ++vector_it) {
-        if (AllHitCounts.at(i)->Get_BunchNumber() == BunchNumbers_for_TotDeadCells.at(vector_it)) {
-          bunch_totdead[BunchNumbers_for_TotDeadCells.at(vector_it)] = totdead;
-        }
-      }
-    }
-    int i = 0;
-    for (auto iterator = bunch_totdead.begin(); iterator != bunch_totdead.end(); iterator++) {
-      TotDeadCells_x[i] = iterator->first;
-      TotDeadCells_y[i] = iterator->second;
-      i++;
-    }
-
+    Filling_Data_for_SubDetectors(s);
   } //End of SubDetectors loop
-  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
   TGraph* TotDeadCells = new TGraph(BunchNumbers_for_TotDeadCells.size(), TotDeadCells_x, TotDeadCells_y);
   TotDeadCells->SetTitle("Dead cells (> 4 hits per cell) for given number of bunch crossings");
@@ -723,32 +726,32 @@ void DrawingHistograms::DrawingMacro(){
   PDF_Canvas_ParticlesHits_per_File->Print("PDFCanvas_ParticlesHits_perFile.pdf[");
   std::stringstream FilesCanvasName_eps, FilesCanvasName_C;
 
-  Files_Canvas->cd();
+  Files_Canvas_->cd();
 
   gStyle->SetOptStat(1);
   //gStyle->SetOptStat(111111);
 
-  Files_Canvas->Clear();
-  Files_Canvas->SetLogy(0);
-  WritePrintHistogram(Files_Canvas, ParticlesVSEvent, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+  Files_Canvas_->Clear();
+  Files_Canvas_->SetLogy(0);
+  WritePrintHistogram(Files_Canvas_, ParticlesVSEvent, "", "PDFCanvas_ParticlesHits_perFile.pdf");
   std::cout << __FILE__ << ": " << __LINE__ << std::endl;
-  Files_Canvas->Clear();
-  Files_Canvas->SetLogy(0);
-  WritePrintHistogram(Files_Canvas, Particles, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+  Files_Canvas_->Clear();
+  Files_Canvas_->SetLogy(0);
+  WritePrintHistogram(Files_Canvas_, Particles, "", "PDFCanvas_ParticlesHits_perFile.pdf");
   std::cout << __FILE__ << ": " << __LINE__ << std::endl;
-  Files_Canvas->Clear();
-  Files_Canvas->SetLogy(1);
-  WritePrintHistogram(Files_Canvas, Hits, "", "PDFCanvas_ParticlesHits_perFile.pdf");
-  Files_Canvas->Clear();
-  Files_Canvas->SetLogy(0);
-  WritePrintHistogram(Files_Canvas, DeadCells, "", "PDFCanvas_ParticlesHits_perFile.pdf");
-  Files_Canvas->Clear();
-  Files_Canvas->SetLogy(0);
-  WritePrintHistogram(Files_Canvas, TotDeadCells, "AP", "PDFCanvas_ParticlesHits_perFile.pdf");
+  Files_Canvas_->Clear();
+  Files_Canvas_->SetLogy(1);
+  WritePrintHistogram(Files_Canvas_, Hits, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+  Files_Canvas_->Clear();
+  Files_Canvas_->SetLogy(0);
+  WritePrintHistogram(Files_Canvas_, DeadCells, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+  Files_Canvas_->Clear();
+  Files_Canvas_->SetLogy(0);
+  WritePrintHistogram(Files_Canvas_, TotDeadCells, "AP", "PDFCanvas_ParticlesHits_perFile.pdf");
   std::cout << __FILE__ << ": " << __LINE__ << std::endl;
   PDF_Canvas_ParticlesHits_per_File->Print("PDFCanvas_ParticlesHits_perFile.pdf]");
 
   delete PDF_Canvas_ParticlesHits_per_File;
-  delete Files_Canvas;
+  delete Files_Canvas_;
 
 } //End of function DrawingMacro 
