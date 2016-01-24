@@ -329,14 +329,46 @@ void DrawingHistograms::Setup_for_inputfiles(int file_iterator, int subdetector_
   delete inputfile;
 }
 
+void DrawingHistograms::Define_Data_Variables(Data* data, Time & time, float & energy, float & absolutetime, float & x, float & y, float & z, std::array< double, 3> & vertex){
+  if (YesNo_TrackerHistograms) {
+    x = data->Get_x_hit_particle();
+    y = data->Get_y_hit_particle();
+    z = data->Get_z_hit_particle();
+    energy = data->Get_dEdx_hit();
+    vertex = data->Get_vertex_particle();
+    //absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
+    absolutetime = data->Get_time_hit() + time.Get_passedbytime();
+  }
+  if (!YesNo_TrackerHistograms) {
+    x = data->Get_x_hit();
+    y = data->Get_y_hit();
+    z = data->Get_z_hit();
+    energy = data->Get_energy_hit();
+    vertex = data->Get_vertex_mother();
+    //absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
+    absolutetime = data->Get_time_contribution() + time.Get_passedbytime();
+  }
+}  
+void DrawingHistograms::Fill_Histo(std::vector< TH1D*> Histo, int Layerno, float variable1){
+  Histo.at(Layerno)->Fill(variable1);
+  Histo.at(MaxNumberLayers + 1)->Fill(variable1);
+}
+void DrawingHistograms::Fill_Histo(std::vector< TH2D*> Histo, int Layerno, float variable1, float variable2){
+  Histo.at(Layerno)->Fill(variable1, variable2);
+  Histo.at(MaxNumberLayers + 1)->Fill(variable1, variable2);
+}
+void DrawingHistograms::Fill_Histo(std::vector< TH3D* > Histo, int Layerno, float variable1, float variable2, float variable3){
+  Histo.at(Layerno)->Fill(variable1, variable2, variable3);
+  Histo.at(MaxNumberLayers+1)->Fill(variable1, variable2, variable3);
+}
+
 void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_iterator, Data* data, CellHits* HitCount, Time & PassedTime, 
     std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D, std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy3D){
 
   CellID *SubdetectorCells = InitializeCellIDClass(SubDetectors->at(subdetector_iterator)->GetName(), data);
-  std::cout << SubdetectorCells << std::endl;
   SubdetectorCells->CreateCellID();
-  int CellIDkey = 0.;
-  CellIDkey = SubdetectorCells->CellID_ToINTconversion(SubdetectorCells->GetCellID());
+  int CellIDkey = SubdetectorCells->CellID_ToINTconversion(SubdetectorCells->GetCellID());
+  
   LayerCodeInCellID LayerInfo;
   int Layer_no = LayerInfo.GetLayer(SubdetectorCells->GetCellID(), SubDetectors->at(subdetector_iterator)->GetStartLayerBin(),
       SubDetectors->at(subdetector_iterator)->GetLengthLayerBin());
@@ -348,65 +380,34 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
   HitCount->CheckCellID(CellIDkey);
   HitCount->Set_BunchNumber(file_iterator + 1);
 
-  //Fill Maps:
-  HitsPerLayerMap[Layer_no].at(file_iterator) += 1;
-
   float energy = 0.;
   float absolutetime = 0.;
   float x = 0.;
   float y = 0.;
   float z = 0.;
   std::array<double, 3> vertex = { 0 };
-  if (YesNo_TrackerHistograms) {
-    x = data->Get_x_hit_particle();
-    y = data->Get_y_hit_particle();
-    z = data->Get_z_hit_particle();
-    energy = data->Get_dEdx_hit();
-    vertex = data->Get_vertex_particle();
-    //absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
-    absolutetime = data->Get_time_hit() + PassedTime.Get_passedbytime();
-  }
-  if (!YesNo_TrackerHistograms) {
-    x = data->Get_x_hit();
-    y = data->Get_y_hit();
-    z = data->Get_z_hit();
-    energy = data->Get_energy_hit();
-    vertex = data->Get_vertex_mother();
-    //absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
-    absolutetime = data->Get_time_contribution() + PassedTime.Get_passedbytime();
-  }
 
-  HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(
-      energy);
-  HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(
-      energy);
-
+  Define_Data_Variables(data, PassedTime, energy, absolutetime, x, y, z, vertex);
+  
+  //Fill Maps:
+  HitsPerLayerMap[Layer_no].at(file_iterator) += 1;
+  HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(energy);
+  HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(energy);
   if (HitMap.find(CellIDkey) == HitMap.end()) {
     HitMap[CellIDkey] = 1;
   } else {
     HitMap[CellIDkey] += 1;
   }
   //Fill histograms:
-  Hits_2D_.at(Layer_no)->Fill(x, y);
-  Hits_2D_.at(MaxNumberLayers + 1)->Fill(x, y);
-  Hits_3D_.at(Layer_no)->Fill(z, x, y);
-  Hits_3D_.at(MaxNumberLayers + 1)->Fill(z, x, y);
-
-  Hits_Energy_Histo_.at(Layer_no)->Fill(energy);
-  Hits_Energy_Histo_.at(MaxNumberLayers + 1)->Fill(energy);
-  ParticleOrigins_2D_.at(Layer_no)->Fill(vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
-  ParticleOrigins_2D_.at(MaxNumberLayers + 1)->Fill(vertex[2],
-      sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
+  Fill_Histo(Hits_2D_, Layer_no, x, y);
+  Fill_Histo(Hits_3D_, Layer_no, z, x, y);
+  Fill_Histo(Hits_Energy_Histo_, Layer_no, energy);
+  Fill_Histo(ParticleOrigins_2D_, Layer_no, vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
 
   std::cout << "x_hit, y_hit = " << x << ", " << y << std::endl;
-  Hits_Time_rtime_2D_.at(Layer_no)->Fill(absolutetime, sqrt(pow(x, 2) + pow(y, 2)));
-  Hits_Time_rtime_2D_.at(MaxNumberLayers + 1)->Fill(absolutetime, sqrt(pow(x, 2) + pow(y, 2)));
-  Hits_Time_ztime_2D_.at(Layer_no)->Fill(absolutetime, z);
-  Hits_Time_ztime_2D_.at(MaxNumberLayers + 1)->Fill(absolutetime, z);
-  //Hits_Time_3D_.at(Layer_no)->Fill(absolutetime, z, sqrt(pow(x, 2) + pow(y, 2)));
-  //Hits_Time_3D_.at(MaxNumberLayers + 1)->Fill(absolutetime, z, sqrt(pow(x, 2) + pow(y, 2)));
-  Hits_Time_.at(Layer_no)->Fill(absolutetime);
-  Hits_Time_.at(MaxNumberLayers + 1)->Fill(absolutetime);
+  Fill_Histo(Hits_Time_rtime_2D_, Layer_no, absolutetime, sqrt(pow(x, 2) + pow(y, 2)));
+  Fill_Histo(Hits_Time_ztime_2D_, Layer_no, absolutetime, z);
+  Fill_Histo(Hits_Time_, Layer_no, absolutetime);
 
   if (file_iterator == 0) {
     std::cout << "Filling hits into 3D plot for the time " << std::to_string(absolutetime) << std::endl;
