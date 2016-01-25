@@ -4,7 +4,7 @@
 // Description : Executable ROOT macro for drawing std::maps of the hits in certain
 //				 calorimeter layers
 //============================================================================
-
+ 
 #include "TFile.h"
 #include "TTree.h"
 
