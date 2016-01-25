@@ -11,7 +11,7 @@ class LayerCodeInCellID {
     virtual ~LayerCodeInCellID() {}
 
     int GetLayer(std::string const CellID, int const StartBin_layers, int const LengthBin_layers);
-    int GetLayer(int const cellid, int const StartBin_layers, int const LengthBin_layers);
+    int GetLayer(unsigned long const cellid, int const StartBin_layers, int const LengthBin_layers);
 
   private:
     unsigned long Layer;

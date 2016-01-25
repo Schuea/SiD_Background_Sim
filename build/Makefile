@@ -40,7 +40,7 @@ objects/CellHits.o: ../src/CellHits.cpp
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 objects/DrawingHistograms.o: ../src/DrawingHistograms.cpp
-	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 objects/UsefulFunctions.o: ../src/UsefulFunctions.cpp
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
@@ -52,4 +52,4 @@ objects/Time.o: ../src/Time.cpp
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	-rm -f objects/*.o ./Run
+	@-rm -f objects/*.o ./Run

@@ -235,14 +235,12 @@ std::pair< int, int > DrawingHistograms::Set_train_bunch_number(int number_of_fi
 
 void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator){
   Time PassedTime;
-
   std::vector< CellHits* > AllHitCounts;
 
   //Getting the inputfile and its TTrees
   for (int fileIterator = 0; fileIterator < number_of_files; ++fileIterator) {
     Setup_for_inputfiles(fileIterator, subdetector_iterator, PassedTime, AllHitCounts);
   } //End of loop through inputfiles
-
   for (auto iterator = HitsPerLayerMap.begin(); iterator != HitsPerLayerMap.end(); iterator++) {
     for (auto e = iterator->second.begin(); e != iterator->second.end(); ++e) {
       if (*e > 0) {
@@ -253,6 +251,7 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator){
   }
   for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
     if (iterator->second > 0) {
+    	std::cout << "iterator->first = "<< iterator->first << std::endl;
     	std::cout << "Hits_Histo_.at(" << SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first) << ") = " << iterator->second << std::endl;
     	Hits_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first))->Fill(iterator->second);
       Hits_Histo_.at(MaxNumberLayers + 1)->Fill(iterator->second);
@@ -397,7 +396,6 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
   Fill_Histo(Hits_3D_, Layer_no, z, x, y);
   Fill_Histo(Hits_Energy_Histo_, Layer_no, energy);
   Fill_Histo(ParticleOrigins_2D_, Layer_no, vertex[2], sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)));
-
   std::cout << "x_hit, y_hit = " << x << ", " << y << std::endl;
   Fill_Histo(Hits_Time_rtime_2D_, Layer_no, absolutetime, sqrt(pow(x, 2) + pow(y, 2)));
   Fill_Histo(Hits_Time_ztime_2D_, Layer_no, absolutetime, z);

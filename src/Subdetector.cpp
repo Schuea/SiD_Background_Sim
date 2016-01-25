@@ -161,7 +161,7 @@ void SiTrackerForward::Initialize(){
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
   ROOTHisto_time = {200, 0, 2000};
 }
-int Subdetector::GetLayer(int const cellID){
+int Subdetector::GetLayer(unsigned long const cellID){
   LayerInfo_ = new LayerCodeInCellID();
   return LayerInfo_->GetLayer(cellID,StartLayerBin_,LengthLayerBin_);
 }

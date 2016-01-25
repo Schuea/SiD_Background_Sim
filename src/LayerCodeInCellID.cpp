@@ -34,7 +34,7 @@ int LayerCodeInCellID::GetLayer(std::string const CellID, int const StartBin_lay
   else throw std::runtime_error("You didn't initialize the class with an ID!");
 }				
 
-int LayerCodeInCellID::GetLayer(int const cellid, int const StartBin_layers, int const LengthBin_layers){
+int LayerCodeInCellID::GetLayer(unsigned long const cellid, int const StartBin_layers, int const LengthBin_layers){
   std::bitset<64> cellidbit(cellid);
 
   Layer = -1;
