@@ -98,7 +98,7 @@ class DrawingHistograms{
     std::vector< int > hitLayers;
     int MaxNumberLayers;
  
-    std::map< int, int > HitMap;  //cellid, count of all hits per cell
+    std::map< unsigned long, int > HitMap;  //cellid, count of all hits per cell
     std::map< int, std::vector<int> > HitsPerLayerMap;
   
     void Initialize();
@@ -112,7 +112,7 @@ class DrawingHistograms{
     void Filling_Data_for_SubDetectors(int subdetector_iterator);
     void Setup_for_inputfiles(int file_iterator, int subdetector_iterator, Time & time, std::vector< CellHits* > & AllHitCounts);
     void Filling_Data_of_hits(int file_iterator, int subdetector_iterator, Data* data, CellHits* HitCount, Time & time,
-        std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D, std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy3D);
+        std::map< std::pair<int, int>, std::vector<float> > &HitMapEnergy2D, std::map< std::pair<int, int>, std::vector<float> > &HitMapEnergy3D);
     void Define_Data_Variables(Data* data, Time & time, float & energy, float & absolutetime, float & x, float & y, float & z, std::array< double, 3> & vertex);
     void Fill_Histo(std::vector< TH1D* > Histo, int Layerno, float variable1);
     void Fill_Histo(std::vector< TH2D* > Histo, int Layerno, float variable1, float variable2);

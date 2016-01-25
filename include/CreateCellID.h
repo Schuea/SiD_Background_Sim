@@ -16,7 +16,7 @@ class CellID{
     virtual void CreateCellID();
     virtual std::string GetCellID() const;
     
-    int CellID_ToINTconversion(std::string const CellIDstring) const;
+    unsigned long CellID_ToINTconversion(std::string const CellIDstring) const;
   private:
     CellID();
     CellID(float const ID);  //Float arguments are not allowed -> set them to negative to make it throw exception

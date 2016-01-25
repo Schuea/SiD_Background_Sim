@@ -160,12 +160,7 @@ void DrawingHistograms::Setup_SubDetector_vector(){
   std::string * subdetector_name2 = new std::string("");
   SubDetectors = new std::vector<Subdetector*>();
   SetupSubDetectorsVector(SubDetectors, subdetector_name2, argument_subdetectors);
-  std::string subdetector_name = *subdetector_name2;
-
-  std::cout << "Subdetectors: " << std::endl;
-  for (int i = 0; i < SubDetectors->size(); ++i) {
-    std::cout << SubDetectors->at(i)->GetName() << std::endl;
-  }
+  subdetector_name = (*subdetector_name2);
 }  
 
 void DrawingHistograms::Setup_HitsPerLayerMap(int layer){
@@ -252,12 +247,15 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator){
     for (auto e = iterator->second.begin(); e != iterator->second.end(); ++e) {
       if (*e > 0) {
         Hits_PerLayer_.at(iterator->first)->Fill(*e);
+        Hits_PerLayer_.at(MaxNumberLayers + 1)->Fill(*e);
       }
     }
   }
   for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
     if (iterator->second > 0) {
-      Hits_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first))->Fill(iterator->second);
+    	std::cout << "Hits_Histo_.at(" << SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first) << ") = " << iterator->second << std::endl;
+    	Hits_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first))->Fill(iterator->second);
+      Hits_Histo_.at(MaxNumberLayers + 1)->Fill(iterator->second);
       if (iterator->second > 4)
         DeadCells->Fill(iterator->first);
     }
@@ -268,8 +266,6 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator){
   for (int i = 0; i < AllHitCounts.size(); ++i) {
     for (int j = 0; j < AllHitCounts.at(i)->Get_CellID().size(); ++j) {
       if (AllHitCounts.at(i)->Get_HitCount().at(j) > 4) {
-        std::cout << "AllHitCounts.at(i)->Get_BunchNumber() = " << AllHitCounts.at(i)->Get_BunchNumber()
-          << std::endl;
         DeadCells->Fill(AllHitCounts.at(i)->Get_BunchNumber());
 
         totdead++;
@@ -299,7 +295,6 @@ void DrawingHistograms::Setup_for_inputfiles(int file_iterator, int subdetector_
   std::cout << "The TTree " << SubdetectorTree->GetName() << " has " << number_of_hits << " entries." << std::endl;
 
   Number_train_bunch = Set_train_bunch_number(file_iterator);
-
   PassedTime.Calculate_passedbytime(Number_train_bunch.first, Number_train_bunch.second);
 
   Data* data = SetBranches(SubdetectorTree);
@@ -318,7 +313,6 @@ void DrawingHistograms::Setup_for_inputfiles(int file_iterator, int subdetector_
   Fill_Histogram_from_Map<TH2D*>(HitMapEnergy2D, &Hits_Energy_2D_, colorrangeweight);
   Fill_Histogram_from_Map<TH3D*>(HitMapEnergy3D, &Hits_Energy_3D_, colorrangeweight);
 
-  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 
   int number_of_particles = 0;
   number_of_particles = Tree_MCP->GetEntries();
@@ -363,14 +357,14 @@ void DrawingHistograms::Fill_Histo(std::vector< TH3D* > Histo, int Layerno, floa
 }
 
 void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_iterator, Data* data, CellHits* HitCount, Time & PassedTime, 
-    std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy2D, std::map<std::pair<int, int>, std::vector<float> > HitMapEnergy3D){
+    std::map<std::pair<int, int>, std::vector<float> > &HitMapEnergy2D, std::map<std::pair<int, int>, std::vector<float> > &HitMapEnergy3D){
 
   CellID *SubdetectorCells = InitializeCellIDClass(SubDetectors->at(subdetector_iterator)->GetName(), data);
   SubdetectorCells->CreateCellID();
-  int CellIDkey = SubdetectorCells->CellID_ToINTconversion(SubdetectorCells->GetCellID());
+  unsigned long const CellIDkey = SubdetectorCells->CellID_ToINTconversion(SubdetectorCells->GetCellID());
   
   LayerCodeInCellID LayerInfo;
-  int Layer_no = LayerInfo.GetLayer(SubdetectorCells->GetCellID(), SubDetectors->at(subdetector_iterator)->GetStartLayerBin(),
+  int const Layer_no = LayerInfo.GetLayer(SubdetectorCells->GetCellID(), SubDetectors->at(subdetector_iterator)->GetStartLayerBin(),
       SubDetectors->at(subdetector_iterator)->GetLengthLayerBin());
   if (std::find(hitLayers.begin(), hitLayers.end(), Layer_no) == hitLayers.end()) {
     hitLayers.push_back(Layer_no);
@@ -442,13 +436,11 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
 }
 
 void DrawingHistograms::DrawingMacro(){
-  Initialize();
   Setup_SubDetector_vector();
-
+  Initialize();
   Setup_BinningArrays(SubDetectors, &axis_range_plot_1D, &axis_range_plot_2D, &axis_range_plot_3D,
       &axis_range_plot_energy_1D, time_interval_bunchspacing, &axis_range_plot_time, &axis_range_plot_rtime_2D,
       &axis_range_plot_ztime_2D, &axis_range_plot_time_3D);
-
   SetupGeneralHistograms();
   
   MaxNumberLayers = Find_MaxNumberLayers();
@@ -474,8 +466,8 @@ void DrawingHistograms::DrawingMacro(){
   TotDeadCells->GetXaxis()->SetTitle("Number of bunch crossings");
   TotDeadCells->GetXaxis()->CenterTitle();
 
-  gStyle->SetOptStat(1);
-  //gStyle->SetOptStat(111111);
+  //gStyle->SetOptStat(1);
+  gStyle->SetOptStat(111111);
   TCanvas* PDF_Canvas_Hits_Layers = new TCanvas();
   PDF_Canvas_Hits_Layers->Print("PDFCanvas_Hits_Layers.pdf[");
 
@@ -704,7 +696,6 @@ void DrawingHistograms::DrawingMacro(){
         << first_layer_to_be_compared << " - " << end_of_range << ";Deposited hit energy;Count";
       WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_, new_Energy_histo_title.str(),
           hitLayers, first_layer_to_be_compared, end_of_range, true, "", "PDFCanvas_Hits_CompareLayers.pdf");
-      std::cout << __FILE__ << ": " << __LINE__ << std::endl;
     } //End of if-to-be-compared loop
     else {
       std::cerr << "The first or the last (or both) layer of your given range has no hits!\n"
@@ -735,11 +726,9 @@ void DrawingHistograms::DrawingMacro(){
   Files_Canvas_->Clear();
   Files_Canvas_->SetLogy(0);
   WritePrintHistogram(Files_Canvas_, ParticlesVSEvent, "", "PDFCanvas_ParticlesHits_perFile.pdf");
-  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
   Files_Canvas_->Clear();
   Files_Canvas_->SetLogy(0);
   WritePrintHistogram(Files_Canvas_, Particles, "", "PDFCanvas_ParticlesHits_perFile.pdf");
-  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
   Files_Canvas_->Clear();
   Files_Canvas_->SetLogy(1);
   WritePrintHistogram(Files_Canvas_, Hits, "", "PDFCanvas_ParticlesHits_perFile.pdf");
@@ -749,7 +738,6 @@ void DrawingHistograms::DrawingMacro(){
   Files_Canvas_->Clear();
   Files_Canvas_->SetLogy(0);
   WritePrintHistogram(Files_Canvas_, TotDeadCells, "AP", "PDFCanvas_ParticlesHits_perFile.pdf");
-  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
   PDF_Canvas_ParticlesHits_per_File->Print("PDFCanvas_ParticlesHits_perFile.pdf]");
 
   delete PDF_Canvas_ParticlesHits_per_File;
