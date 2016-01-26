@@ -8,6 +8,8 @@
 #ifndef CELLHITS_H_
 #define CELLHITS_H_
 
+#include <iostream>
+
 #include <vector>
 #include <map>
 #include <cmath>

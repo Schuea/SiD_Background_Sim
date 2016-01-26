@@ -4,15 +4,61 @@
 DrawingHistograms::DrawingHistograms(std::string _outputname, std::vector<std::string> _inputnames,
 		std::vector<std::string> _argument_subdetectors, int NUMBER_OF_FILES, int FIRST_LAYER_TO_BE_COMPARED,
 		int LAST_LAYER_TO_BE_COMPARED) :
-		outputname(_outputname), inputnames(_inputnames), argument_subdetectors(_argument_subdetectors), number_of_files(
-				NUMBER_OF_FILES), first_layer_to_be_compared(FIRST_LAYER_TO_BE_COMPARED), last_layer_to_be_compared(
-				LAST_LAYER_TO_BE_COMPARED), inputfile(nullptr), output_rootfile(nullptr), Canvas_name(""), Files_Canvas_(
-				nullptr), Hits_Canvas_(nullptr), DeadCells(nullptr), Particles(nullptr), ParticlesVSEvent(nullptr), gausfit_Particles(
-				nullptr), Occupancy_r_Histo_(nullptr), Occupancy_phi_Histo_(nullptr), ParticleOrigins_2D_(), Hits_PerLayer_(), Hits_Histo_(), Hits_2D_(), Hits_3D_(), Hits_Energy_Histo_(), Hits_Energy_2D_(), Hits_Energy_3D_(), Hits_Time_(), Hits_Time_rtime_2D_(), Hits_Time_ztime_2D_(), Hits_Time_3D_(), time_interval_bunchspacing(
-				0), Number_train_bunch(), BunchNumbers_for_TotDeadCells(), TotDeadCells_x(nullptr), TotDeadCells_y(
-				nullptr), YesNo_TrackerHistograms(false), axis_range_occupancy_plot(), axis_range_occupancy_r_plot(), axis_range_occupancy_phi_plot(), axis_range_plot_1D(), axis_range_plot_2D(), axis_range_plot_3D(), axis_range_plot_energy_1D(), axis_range_plot_time(), axis_range_plot_rtime_2D(), axis_range_plot_ztime_2D(), axis_range_plot_time_3D(), SubDetectors(
-				nullptr), subdetector_name(""), hitLayers(), MaxNumberLayers(0), HitMap(), HitsPerLayerMap() {
-}
+		outputname(_outputname), 
+    inputnames(_inputnames), 
+    argument_subdetectors(_argument_subdetectors), 
+    number_of_files(NUMBER_OF_FILES), 
+    first_layer_to_be_compared(FIRST_LAYER_TO_BE_COMPARED), 
+    last_layer_to_be_compared(LAST_LAYER_TO_BE_COMPARED), 
+    inputfile(nullptr), 
+    output_rootfile(nullptr), 
+    Canvas_name(""), 
+    Files_Canvas_(nullptr), 
+    Hits_Canvas_(nullptr), 
+    DeadCells(nullptr), 
+    Particles(nullptr), 
+    ParticlesVSEvent(nullptr), 
+    gausfit_Particles(nullptr), 
+    Occupancy_r_Histo_(nullptr), 
+    Occupancy_phi_Histo_(nullptr), 
+    ParticleOrigins_2D_(), 
+    Hits_PerLayer_(), 
+    Hits_Histo_(), 
+    Hits_2D_(), 
+    Hits_3D_(), 
+    Hits_Energy_Histo_(), 
+    Hits_Energy_2D_(), 
+    Hits_Energy_3D_(), 
+    Hits_Time_(), 
+    Hits_Time_rtime_2D_(), 
+    Hits_Time_ztime_2D_(), 
+    Hits_Time_3D_(), 
+    time_interval_bunchspacing(0), 
+    Number_train_bunch(), 
+    BunchNumbers_for_TotDeadCells(), 
+    TotDeadCells_x(nullptr), 
+    TotDeadCells_y(nullptr), 
+    YesNo_TrackerHistograms(false), 
+    axis_range_occupancy_plot(), 
+    axis_range_occupancy_r_plot(), 
+    axis_range_occupancy_phi_plot(), 
+    axis_range_plot_1D(), 
+    axis_range_plot_2D(), 
+    axis_range_plot_3D(), 
+    axis_range_plot_energy_1D(), 
+    axis_range_plot_time(), 
+    axis_range_plot_rtime_2D(), 
+    axis_range_plot_ztime_2D(), 
+    axis_range_plot_time_3D(), 
+    SubDetectors(nullptr), 
+    subdetector_name(""), 
+    hitLayers(), 
+    MaxNumberLayers(0), 
+    HitMap(), 
+    HitsPerLayerMap() {}
+    
+DrawingHistograms::~DrawingHistograms()
+{}
 
 void DrawingHistograms::Initialize() {
 	TH1::SetDefaultSumw2();
@@ -68,15 +114,19 @@ void DrawingHistograms::SetupGeneralHistograms() {
 	std::string occupancy_phi_histo_name = "Occupancy_phi_" + subdetector_name + "_all_layers";
 	std::string occupancy_phi_histo_title = "Hit occupancy per cell over phi for all layers of " + subdetector_name
 			+ ";phi [Radians];Average occupancy";
-	Occupancy_r_Histo_ = new TH2D(occupancy_r_histo_name.c_str(), occupancy_r_histo_title.c_str(),
-			axis_range_occupancy_r_plot.at(0), axis_range_occupancy_r_plot.at(1), axis_range_occupancy_r_plot.at(2),
-			axis_range_occupancy_r_plot.at(3), axis_range_occupancy_r_plot.at(4), axis_range_occupancy_r_plot.at(5));
+	//Occupancy_r_Histo_ = new TH2D(occupancy_r_histo_name.c_str(), occupancy_r_histo_title.c_str(),
+	//		axis_range_occupancy_r_plot.at(0), axis_range_occupancy_r_plot.at(1), axis_range_occupancy_r_plot.at(2),
+	//		axis_range_occupancy_r_plot.at(3), axis_range_occupancy_r_plot.at(4), axis_range_occupancy_r_plot.at(5));
+	Occupancy_r_Histo_ = new TH1D(occupancy_r_histo_name.c_str(), occupancy_r_histo_title.c_str(),
+			axis_range_occupancy_r_plot.at(0), axis_range_occupancy_r_plot.at(1), axis_range_occupancy_r_plot.at(2));
 	Occupancy_r_Histo_->GetXaxis()->CenterTitle();
 	Occupancy_r_Histo_->GetYaxis()->CenterTitle();
-	Occupancy_phi_Histo_ = new TH2D(occupancy_phi_histo_name.c_str(), occupancy_phi_histo_title.c_str(),
-			axis_range_occupancy_phi_plot.at(0), axis_range_occupancy_phi_plot.at(1), axis_range_occupancy_phi_plot.at(2),
-			axis_range_occupancy_phi_plot.at(3), axis_range_occupancy_phi_plot.at(4),
-			axis_range_occupancy_phi_plot.at(5));
+	//Occupancy_phi_Histo_ = new TH2D(occupancy_phi_histo_name.c_str(), occupancy_phi_histo_title.c_str(),
+	//		axis_range_occupancy_phi_plot.at(0), axis_range_occupancy_phi_plot.at(1), axis_range_occupancy_phi_plot.at(2),
+	//		axis_range_occupancy_phi_plot.at(3), axis_range_occupancy_phi_plot.at(4),
+	//		axis_range_occupancy_phi_plot.at(5));
+	Occupancy_phi_Histo_ = new TH1D(occupancy_phi_histo_name.c_str(), occupancy_phi_histo_title.c_str(),
+			axis_range_occupancy_phi_plot.at(0), axis_range_occupancy_phi_plot.at(1), axis_range_occupancy_phi_plot.at(2));
 	Occupancy_phi_Histo_->GetXaxis()->CenterTitle();
 	Occupancy_phi_Histo_->GetYaxis()->CenterTitle();
 
@@ -228,7 +278,7 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 	for (int fileIterator = 0; fileIterator < number_of_files; ++fileIterator) {
 		Setup_for_inputfiles(fileIterator, subdetector_iterator, PassedTime, AllHitCounts);
 	} //End of loop through inputfiles
-	for (auto iterator = HitsPerLayerMap.begin(); iterator != HitsPerLayerMap.end(); iterator++) {
+	for (auto iterator = HitsPerLayerMap.begin(); iterator != HitsPerLayerMap.end(); ++iterator) {
 		for (auto e = iterator->second.begin(); e != iterator->second.end(); ++e) {
 			if (*e > 0) {
 				Hits_PerLayer_.at(iterator->first)->Fill(*e);
@@ -236,7 +286,7 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 			}
 		}
 	}
-	for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
+	for (auto iterator = HitMap.begin(); iterator != HitMap.end(); ++iterator) {
 		if (iterator->second > 0) {
 			Hits_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first))->Fill(iterator->second);
 			Hits_Histo_.at(MaxNumberLayers + 1)->Fill(iterator->second);
@@ -246,29 +296,34 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 	}
 
 	int totdead = 0;
-	std::map<int, int> bunch_totdead;
+  std::map< int, std::vector< float > > average_occupancy_r;
+  std::map< int, std::vector< float > > average_occupancy_phi;
+	std::map< int, int > bunch_totdead;
 	for (int i = 0; i < AllHitCounts.size(); ++i) {
 		AllHitCounts.at(i)->Check_Rad_Position();
-		std::cout << __FILE__ << __LINE__ << std::endl;
+		//std::cout << "Average Occupancy phi:" << std::endl;
 		AllHitCounts.at(i)->Check_Phi_Position();
-		std::cout << __FILE__ << __LINE__ << std::endl;
-		for (auto iterator = AllHitCounts.at(i)->Get_AverageOccupancy_Rad().begin();
-				iterator != AllHitCounts.at(i)->Get_AverageOccupancy_Rad().end(); iterator++) {
-			Occupancy_r_Histo_->Fill(iterator->first, iterator->second.second); //first = radius, second.second = average occupancy
+		
+    //for (auto iterator = AllHitCounts.at(i)->Get_AverageOccupancy_Rad().begin();
+		//		iterator != AllHitCounts.at(i)->Get_AverageOccupancy_Rad().end(); ++iterator) {
+    for(int k = 250; k <= 1500; k += 250){
+		  std::cout << "AverageOccupancy_Rad.size() = " << AllHitCounts.at(i)->Get_AverageOccupancy_Rad().size() << std::endl;
+      std::cout << k << "," << AllHitCounts.at(i)->Get_AverageOccupancy_Rad()[k].second << std::endl;
+      average_occupancy_r[k].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Rad()[k].second);
+      //average_occupancy_r[iterator->first].push_back(iterator->second.second);
 		}
-		std::cout << __FILE__ << __LINE__ << std::endl;
-		for (auto iterator = AllHitCounts.at(i)->Get_AverageOccupancy_Phi().begin();
-				iterator != AllHitCounts.at(i)->Get_AverageOccupancy_Phi().end(); iterator++) {
-		std::cout << "AverageOccupancy_Phi.size() = " << AllHitCounts.at(i)->Get_AverageOccupancy_Phi().size() << std::endl;
-		std::cout << __FILE__ << __LINE__ << std::endl;
-		std::cout << iterator->first << std::endl;
-			std::cout << __FILE__ << __LINE__ << std::endl;
-		std::cout << iterator->second.second << std::endl;
-			Occupancy_phi_Histo_->Fill(iterator->first, iterator->second.second); //first = phi, second.second = average occupancy
-			std::cout << __FILE__ << __LINE__ << std::endl;
-
-		}
-		std::cout << __FILE__ << __LINE__ << std::endl;
+    
+    for (int k = 1; k <= AllHitCounts.at(i)->Get_AverageOccupancy_Phi().size();++k) {
+      //for (auto iterator = AllHitCounts.at(i)->Get_AverageOccupancy_Phi().begin();
+      //	iterator != AllHitCounts.at(i)->Get_AverageOccupancy_Phi().end(); ++iterator) {
+      std::cout << "AverageOccupancy_Phi.size() = " << AllHitCounts.at(i)->Get_AverageOccupancy_Phi().size() << std::endl;
+      //Occupancy_phi_Histo_->Fill(iterator->first, iterator->second.second); //first = phi, second.second = average occupancy
+      average_occupancy_phi[k].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Phi()[k].second);
+    }
+		//for (int j = 0; j < AllHitCounts.at(i)->Get_CellID().size(); ++j) {
+    //  Occupancy_r_Histo_->Fill(AllHitCounts.at(i)->Get_Position_Radius().at(j),AllHitCounts.at(i)->Get_HitCount().at(j));
+    //  Occupancy_phi_Histo_->Fill(AllHitCounts.at(i)->Get_Position_Phi().at(j),AllHitCounts.at(i)->Get_HitCount().at(j));
+    //}
 
 		for (int j = 0; j < AllHitCounts.at(i)->Get_CellID().size(); ++j) {
 			if (AllHitCounts.at(i)->Get_HitCount().at(j) > 4) {
@@ -281,9 +336,31 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 				bunch_totdead[BunchNumbers_for_TotDeadCells.at(vector_it)] = totdead;
 			}
 		}
-	}
+	} 
+  for (auto iterator=average_occupancy_phi.begin(); iterator != average_occupancy_phi.end(); ++iterator) {
+    float average = 0;
+    for (int v = 0; v < iterator->second.size(); ++v){
+      std::cout << "Occupancy phi average = " << average << std::endl;
+      average += iterator->second.at(v);
+    }  
+    average /= float(iterator->second.size());
+    Occupancy_phi_Histo_->SetBinContent(iterator->first, average); //first = phi
+  }
+  for (auto iterator=average_occupancy_r.begin(); iterator != average_occupancy_r.end(); ++iterator) {
+    float average = 0;
+    for (int v = 0; v < iterator->second.size(); ++v){
+      std::cout << "Occupancy r average = " << average << std::endl;
+      average += iterator->second.at(v);
+    }  
+    average /= float(iterator->second.size());
+    Occupancy_r_Histo_->SetBinContent(iterator->first/250, average); //first = phi
+  }
+  //TProfile *AverageOccupancyRadius = Occupancy_r_Histo_->ProfileX();
+  //TCanvas phillcanvas;
+  //AverageOccupancyRadius->Draw();
+  //phillcanvas.Print("PhillRocks.pdf");
 	int i = 0;
-	for (auto iterator = bunch_totdead.begin(); iterator != bunch_totdead.end(); iterator++) {
+	for (auto iterator = bunch_totdead.begin(); iterator != bunch_totdead.end(); ++iterator) {
 		TotDeadCells_x[i] = iterator->first;
 		TotDeadCells_y[i] = iterator->second;
 		i++;

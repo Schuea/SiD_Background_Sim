@@ -42,6 +42,7 @@
 class DrawingHistograms{
   public:
     DrawingHistograms(std::string _outputname, std::vector<std::string> _inputnames, std::vector<std::string> _argument_subdetectors, int NUMBER_OF_FILES, int first_layer_to_be_compared, int last_layer_to_be_compared);
+    ~DrawingHistograms();
     void DrawingMacro();
   
   private:
@@ -63,8 +64,8 @@ class DrawingHistograms{
     TH1D *Particles;
     TH2D *ParticlesVSEvent;
     TF1 *gausfit_Particles;
-    TH2D* Occupancy_r_Histo_;
-    TH2D* Occupancy_phi_Histo_;
+    TH1D* Occupancy_r_Histo_;
+    TH1D* Occupancy_phi_Histo_;
     std::vector< TH2D* > ParticleOrigins_2D_;
     std::vector< TH1D* > Hits_PerLayer_;
     std::vector< TH1D* > Hits_Histo_;

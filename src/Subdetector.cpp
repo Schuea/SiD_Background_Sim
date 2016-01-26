@@ -23,8 +23,8 @@ void EcalEndcap::Initialize(){
 
   ROOTEnergyHisto_binning = {40., 0., 0.01};
   ROOTHisto_binning_occupancy = {12, 0, 12};
-  ROOTHisto_binning_occupancy_r = {70, 0, 1500, 12, 0, 12};
-  ROOTHisto_binning_occupancy_phi = {6, 0, 6.3, 12, 0, 12};
+  ROOTHisto_binning_occupancy_r = {6, 0, 1500, 12, 0, 12};
+  ROOTHisto_binning_occupancy_phi = {7, 0, 7, 12, 0, 12};
   ROOTHisto_binning1D = {35, 0, 70};
   ROOTHisto_binning2D = {70, -1500, 1500, 70, -1500, 1500};                    
   ROOTHisto_binning3D = {70, -2000, 2000, 70, -1500, 1500, 70, -1500, 1500};
