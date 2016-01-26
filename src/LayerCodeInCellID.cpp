@@ -21,7 +21,7 @@ int LayerCodeInCellID::FindLayer(std::string const CellID_, int const StartBin_l
   std::bitset<64> LayerIDbit (LayerID.str());
   int tempLayer = -1;
   tempLayer = LayerIDbit.to_ulong();
-  std::cout << tempLayer << std::endl;
+  //std::cout << tempLayer << std::endl;
   return tempLayer;
 }
 

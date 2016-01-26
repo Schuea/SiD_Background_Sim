@@ -63,6 +63,8 @@ class DrawingHistograms{
     TH1D *Particles;
     TH2D *ParticlesVSEvent;
     TF1 *gausfit_Particles;
+    TH2D* Occupancy_r_Histo_;
+    TH2D* Occupancy_phi_Histo_;
     std::vector< TH2D* > ParticleOrigins_2D_;
     std::vector< TH1D* > Hits_PerLayer_;
     std::vector< TH1D* > Hits_Histo_;
@@ -84,6 +86,8 @@ class DrawingHistograms{
     std::pair < int, int> Number_train_bunch;
 
     std::vector< float > axis_range_occupancy_plot; //xbins, xlow, xup
+    std::vector< float > axis_range_occupancy_r_plot; //rbins, rlow, rup, ybins, ylow, yup
+    std::vector< float > axis_range_occupancy_phi_plot; //phibins, philow, phiup, ybins, ylow, yu
     std::vector< float > axis_range_plot_1D; //xbins, xlow, xup
     std::vector< float > axis_range_plot_2D; //xbins, xlow, xup, ybins, ylow, yup
     std::vector< float > axis_range_plot_3D; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup

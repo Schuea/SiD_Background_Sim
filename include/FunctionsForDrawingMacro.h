@@ -42,19 +42,23 @@ template< class T > void Fill_Histogram_from_Map(std::map< std::pair< int, int >
 TTree* Get_TTree(TFile* inputfile, std::string subdetector_name);
 
 void Setup_BinningArrays(std::vector< Subdetector* > * SubDetectors, std::vector<float> *axis_range_occupancy_plot_,
+		std::vector<float> *axis_range_occupancy_r_plot_, std::vector<float> *axis_range_occupancy_phi_plot_,
 		std::vector< float > *axis_range_plot_1D, std::vector< float > *axis_range_plot_2D, std::vector< float > *axis_range_plot_3D,
 		std::vector< float > *axis_range_plot_energy_1D, float time_interval, std::vector< float > *axis_range_plot_time,
 		std::vector< float > *axis_range_plot_rtime_2D, std::vector< float > *axis_range_plot_ztime_2D,
 		std::vector< float > *axis_range_plot_time_3D);
-void SetupHistoTitles(std::string subdetector_name, std::string layer, std::string & histo_name1D,
-		std::string & histo_title1D, std::string & histo_name2D, std::string & histo_title2D,
-		std::string & histo_name3D, std::string & histo_title3D, std::string & energyhisto_name1D,
-		std::string & energyhisto_title1D, std::string & energyhisto_name2D, std::string & energyhisto_title2D,
-		std::string & energyhisto_name3D, std::string & energyhisto_title3D, std::string & hitsperlayerhisto_name,
-		std::string & hitsperlayerhisto_title, std::string & particleoriginshisto_name,
-		std::string & particleoriginshisto_title, std::string & histo_name_time, std::string & histo_title_time,
-		std::string & histo_name_rtime2D, std::string & histo_title_rtime2D, std::string & histo_name_ztime2D,
-		std::string & histo_title_ztime2D);
+void SetupHistoTitles(std::string subdetector_name, std::string layer,
+		std::string & histo_name1D,	std::string & histo_title1D,
+		std::string & histo_name2D, std::string & histo_title2D,
+		std::string & histo_name3D, std::string & histo_title3D,
+		std::string & energyhisto_name1D, std::string & energyhisto_title1D,
+		std::string & energyhisto_name2D, std::string & energyhisto_title2D,
+		std::string & energyhisto_name3D, std::string & energyhisto_title3D,
+		std::string & hitsperlayerhisto_name, std::string & hitsperlayerhisto_title,
+		std::string & particleoriginshisto_name, std::string & particleoriginshisto_title,
+		std::string & histo_name_time, std::string & histo_title_time,
+		std::string & histo_name_rtime2D, std::string & histo_title_rtime2D,
+		std::string & histo_name_ztime2D, std::string & histo_title_ztime2D);
 
 void Setup_ParticleOriginsHisto(std::vector< TH2D* > & HistoVector, std::vector< float > axis_range_plot,	std::string histo_name, std::string histo_title, std::string coordinate_system);
 

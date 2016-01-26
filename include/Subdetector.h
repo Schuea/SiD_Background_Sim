@@ -18,6 +18,8 @@ class Subdetector{
 
 	std::vector<float> GetROOTEnergyHisto_binning() const;
 	std::vector<float> GetROOTHisto_binning_occupancy() const;
+	std::vector<float> GetROOTHisto_binning_occupancy_r() const;
+	std::vector<float> GetROOTHisto_binning_occupancy_phi() const;
 	std::vector<float> GetROOTHisto_binning1D() const;
     std::vector<float> GetROOTHisto_binning2D() const;
     std::vector<float> GetROOTHisto_binning3D() const;
@@ -31,6 +33,8 @@ class Subdetector{
     int NumberOfLayers_;
     std::vector<float> ROOTEnergyHisto_binning;
     std::vector<float> ROOTHisto_binning_occupancy;
+    std::vector<float> ROOTHisto_binning_occupancy_r;
+    std::vector<float> ROOTHisto_binning_occupancy_phi;
     std::vector<float> ROOTHisto_binning1D;
     std::vector<float> ROOTHisto_binning2D;
     std::vector<float> ROOTHisto_binning3D;
