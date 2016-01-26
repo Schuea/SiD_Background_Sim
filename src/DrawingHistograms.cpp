@@ -36,6 +36,7 @@
   TotDeadCells_x(nullptr),
   TotDeadCells_y(nullptr),
   YesNo_TrackerHistograms(false),
+  axis_range_occupancy_plot(),
   axis_range_plot_1D(),
   axis_range_plot_2D(),
   axis_range_plot_3D(),
@@ -201,7 +202,7 @@ void DrawingHistograms::SetupLayerHistograms(std::string layerstring){
     Setup_ParticleOriginsHisto(ParticleOrigins_2D_, axis_range_plot_3D, particleoriginshisto_name,
         particleoriginshisto_title, "cylindrical");
     Setup_Histo(Hits_PerLayer_, axis_range_plot_1D, hitsperlayerhisto_name, hitsperlayerhisto_title);
-    Setup_Histo(Hits_Histo_, axis_range_plot_1D, histo_name1D, histo_title1D);
+    Setup_Histo(Hits_Histo_, axis_range_occupancy_plot, histo_name1D, histo_title1D);
     Setup_Histo(Hits_2D_, axis_range_plot_2D, histo_name2D, histo_title2D);
     Setup_Histo(Hits_3D_, axis_range_plot_3D, histo_name3D, histo_title3D);
     Setup_Histo(Hits_Energy_Histo_, axis_range_plot_energy_1D, energyhisto_name1D, energyhisto_title1D);
@@ -251,9 +252,7 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator){
   }
   for (auto iterator = HitMap.begin(); iterator != HitMap.end(); iterator++) {
     if (iterator->second > 0) {
-    	std::cout << "iterator->first = "<< iterator->first << std::endl;
-    	std::cout << "Hits_Histo_.at(" << SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first) << ") = " << iterator->second << std::endl;
-    	Hits_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first))->Fill(iterator->second);
+      Hits_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first))->Fill(iterator->second);
       Hits_Histo_.at(MaxNumberLayers + 1)->Fill(iterator->second);
       if (iterator->second > 4)
         DeadCells->Fill(iterator->first);
@@ -436,7 +435,7 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
 void DrawingHistograms::DrawingMacro(){
   Setup_SubDetector_vector();
   Initialize();
-  Setup_BinningArrays(SubDetectors, &axis_range_plot_1D, &axis_range_plot_2D, &axis_range_plot_3D,
+  Setup_BinningArrays(SubDetectors, &axis_range_occupancy_plot, &axis_range_plot_1D, &axis_range_plot_2D, &axis_range_plot_3D,
       &axis_range_plot_energy_1D, time_interval_bunchspacing, &axis_range_plot_time, &axis_range_plot_rtime_2D,
       &axis_range_plot_ztime_2D, &axis_range_plot_time_3D);
   SetupGeneralHistograms();
@@ -464,8 +463,8 @@ void DrawingHistograms::DrawingMacro(){
   TotDeadCells->GetXaxis()->SetTitle("Number of bunch crossings");
   TotDeadCells->GetXaxis()->CenterTitle();
 
-  //gStyle->SetOptStat(1);
-  gStyle->SetOptStat(111111);
+  gStyle->SetOptStat(1);
+  //gStyle->SetOptStat(111111);
   TCanvas* PDF_Canvas_Hits_Layers = new TCanvas();
   PDF_Canvas_Hits_Layers->Print("PDFCanvas_Hits_Layers.pdf[");
 

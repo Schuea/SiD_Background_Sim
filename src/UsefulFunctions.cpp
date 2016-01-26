@@ -1,5 +1,6 @@
 #include "UsefulFunctions.h"
 
+
 float FindMax(float const value, float max){
   if (value > max)  max = value;
   return max;

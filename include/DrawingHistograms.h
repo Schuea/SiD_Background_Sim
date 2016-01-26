@@ -83,6 +83,7 @@ class DrawingHistograms{
     float time_interval_bunchspacing;
     std::pair < int, int> Number_train_bunch;
 
+    std::vector< float > axis_range_occupancy_plot; //xbins, xlow, xup
     std::vector< float > axis_range_plot_1D; //xbins, xlow, xup
     std::vector< float > axis_range_plot_2D; //xbins, xlow, xup, ybins, ylow, yup
     std::vector< float > axis_range_plot_3D; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup

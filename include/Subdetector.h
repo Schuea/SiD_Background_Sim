@@ -16,8 +16,9 @@ class Subdetector{
     int GetNumberOfLayers() const;	
     int GetLayer(unsigned long const cellID);
 
-		std::vector<float> GetROOTEnergyHisto_binning() const;
-    std::vector<float> GetROOTHisto_binning1D() const;
+	std::vector<float> GetROOTEnergyHisto_binning() const;
+	std::vector<float> GetROOTHisto_binning_occupancy() const;
+	std::vector<float> GetROOTHisto_binning1D() const;
     std::vector<float> GetROOTHisto_binning2D() const;
     std::vector<float> GetROOTHisto_binning3D() const;
     std::vector<float> GetROOTHisto_time() const;
@@ -29,6 +30,7 @@ class Subdetector{
     int StartLayerBin_;
     int NumberOfLayers_;
     std::vector<float> ROOTEnergyHisto_binning;
+    std::vector<float> ROOTHisto_binning_occupancy;
     std::vector<float> ROOTHisto_binning1D;
     std::vector<float> ROOTHisto_binning2D;
     std::vector<float> ROOTHisto_binning3D;

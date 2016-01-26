@@ -7,6 +7,7 @@ void EcalBarrel::Initialize(){
   NumberOfLayers_ = 31;
 
   ROOTEnergyHisto_binning = {40., 0., 0.01};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
   ROOTHisto_binning1D = {10, 0, 10};                                           
   ROOTHisto_binning2D = {70, -1500, 1500, 70, -1500, 1500}; //xbins, xlow, xup, ybins, ylow, yup
   ROOTHisto_binning3D = {100, -2000, 2000, 100, -1500, 1500, 100, -1500, 1500}; //zbins, zlow, zup, xbins, xlow, xup, ybins, ylow, yup
@@ -19,7 +20,8 @@ void EcalEndcap::Initialize(){
   NumberOfLayers_ = 31;
 
   ROOTEnergyHisto_binning = {40., 0., 0.01};
-  ROOTHisto_binning1D = {25, 0, 100};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
+  ROOTHisto_binning1D = {35, 0, 70};
   ROOTHisto_binning2D = {70, -1500, 1500, 70, -1500, 1500};                    
   ROOTHisto_binning3D = {70, -2000, 2000, 70, -1500, 1500, 70, -1500, 1500};
   ROOTHisto_time = {250, 0, 1000};
@@ -31,6 +33,7 @@ void HcalBarrel::Initialize(){
   NumberOfLayers_ = 40;
 
   ROOTEnergyHisto_binning = {40., 0., 0.00002};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
   ROOTHisto_binning1D = {6, 0, 6};                                           
   ROOTHisto_binning2D = {70, -2500, 2500, 70, -2500, 2500};                    
   ROOTHisto_binning3D = {100, -3100, 3100, 70, -2500, 2500, 70, -2500, 2500};
@@ -43,6 +46,7 @@ void HcalEndcap::Initialize(){
   NumberOfLayers_ = 45;
 
   ROOTEnergyHisto_binning = {250., 0., 0.00045};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
   ROOTHisto_binning1D = {50, 0, 50};                                           
   ROOTHisto_binning2D = {70, -1500, 1500, 70, -1500, 1500};                    
   ROOTHisto_binning3D = {100, -3100, 3100, 70, -1500, 1500, 70, -1500, 1500};
@@ -55,6 +59,7 @@ void MuonBarrel::Initialize(){
   NumberOfLayers_ = 11;
 
   ROOTEnergyHisto_binning = {25., 0., 0.00003};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
   ROOTHisto_binning1D = {10, 0, 10};                                           
   ROOTHisto_binning2D = {150, -6300, 6300, 150, -6300, 6300};                    
   ROOTHisto_binning3D = {100, -3100, 3100, 150, -6300, 6300, 150, -6300, 6300};
@@ -67,6 +72,7 @@ void MuonEndcap::Initialize(){
   NumberOfLayers_ = 11;
 
   ROOTEnergyHisto_binning = {35., 0., 0.0075};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
   ROOTHisto_binning1D = {50, 0, 15000};                                           
   ROOTHisto_binning2D = {150, -6300, 6300, 150, -6300, 6300};                    
   ROOTHisto_binning3D = {150, -5700, 5700, 150, -6300, 6300, 150, -6300, 6300};
@@ -79,6 +85,7 @@ void BeamCal::Initialize(){
   NumberOfLayers_ = 50;
 
   ROOTEnergyHisto_binning = {45., 0., 2.5};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
   ROOTHisto_binning1D = {150, 0, 2000000};                                           
   ROOTHisto_binning2D = {100, -140, 140, 100, -140, 140};                    
   ROOTHisto_binning3D = {150, -3200, 3200, 100, -140, 140, 100, -140, 140};
@@ -91,6 +98,7 @@ void LumiCal::Initialize(){
   NumberOfLayers_ = 30;
 
   ROOTEnergyHisto_binning = {40., 0., 0.045};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
   ROOTHisto_binning1D = {100, 0, 210};                                           
   ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
@@ -104,6 +112,7 @@ void SiVertexEndcap::Initialize(){
 
   //TO BE ADJUSTED:
   ROOTEnergyHisto_binning = {40., 0., 0.045};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
   ROOTHisto_binning1D = {100, 0, 210};                                           
   ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
@@ -117,6 +126,7 @@ void SiVertexBarrel::Initialize(){
 
   //TO BE ADJUSTED:
   ROOTEnergyHisto_binning = {40., 0., 0.045};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
   ROOTHisto_binning1D = {100, 0, 210};                                           
   ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
@@ -130,6 +140,7 @@ void SiTrackerEndcap::Initialize(){
 
   //TO BE ADJUSTED:
   ROOTEnergyHisto_binning = {40., 0., 0.045};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
   ROOTHisto_binning1D = {100, 0, 210};                                           
   ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
@@ -143,6 +154,7 @@ void SiTrackerBarrel::Initialize(){
 
   //TO BE ADJUSTED:
   ROOTEnergyHisto_binning = {40., 0., 0.045};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
   ROOTHisto_binning1D = {100, 0, 210};                                           
   ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
@@ -156,6 +168,7 @@ void SiTrackerForward::Initialize(){
 
   //TO BE ADJUSTED:
   ROOTEnergyHisto_binning = {40., 0., 0.045};
+  ROOTHisto_binning_occupancy = {12, 0, 12};
   ROOTHisto_binning1D = {100, 0, 210};                                           
   ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
@@ -184,7 +197,10 @@ int Subdetector::GetNumberOfLayers() const {
 }	
 std::vector<float> Subdetector::GetROOTEnergyHisto_binning() const{
   return ROOTEnergyHisto_binning;
-}				
+}
+std::vector<float> Subdetector::GetROOTHisto_binning_occupancy() const{
+  return ROOTHisto_binning_occupancy;
+}
 std::vector<float> Subdetector::GetROOTHisto_binning1D() const{
   return ROOTHisto_binning1D;
 }				

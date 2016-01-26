@@ -228,8 +228,8 @@ CellID * InitializeCellIDClass(std::string SubdetectorName, Data* data) {
 	}
 }
 
-void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<float> *axis_range_plot_1D,
-		std::vector<float> *axis_range_plot_2D, std::vector<float> *axis_range_plot_3D,
+void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<float> *axis_range_occupancy_plot_,
+		std::vector<float> *axis_range_plot_1D, std::vector<float> *axis_range_plot_2D, std::vector<float> *axis_range_plot_3D,
 		std::vector<float> *axis_range_plot_energy_1D, float time_interval, std::vector<float> *axis_range_plot_time,
 		std::vector<float> *axis_range_plot_rtime_2D, std::vector<float> *axis_range_plot_ztime_2D,
 		std::vector<float> *axis_range_plot_time_3D) {
@@ -238,6 +238,9 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 	float minEnergy1D = 0;
 	float binsEnergy1D = 0;
 
+	float max_occupancy = 0;
+	float min_occupancy = 0;
+	float bins_occupancy = 0;
 	float max1D = 0;
 	float min1D = 0;
 	float bins1D = 0;
@@ -268,6 +271,9 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 		minEnergy1D = FindMin(SubDetectors->at(s)->GetROOTEnergyHisto_binning().at(1), minEnergy1D);
 		maxEnergy1D = FindMax(SubDetectors->at(s)->GetROOTEnergyHisto_binning().at(2), maxEnergy1D);
 		binsEnergy1D = FindMax(SubDetectors->at(s)->GetROOTEnergyHisto_binning().at(0), binsEnergy1D);
+		min_occupancy = FindMin(SubDetectors->at(s)->GetROOTHisto_binning_occupancy().at(1), min_occupancy);
+		max_occupancy = FindMax(SubDetectors->at(s)->GetROOTHisto_binning_occupancy().at(2), max_occupancy);
+		bins_occupancy = FindMax(SubDetectors->at(s)->GetROOTHisto_binning_occupancy().at(0), bins_occupancy);
 		min1D = FindMin(SubDetectors->at(s)->GetROOTHisto_binning1D().at(1), min1D);
 		max1D = FindMax(SubDetectors->at(s)->GetROOTHisto_binning1D().at(2), max1D);
 		bins1D = FindMax(SubDetectors->at(s)->GetROOTHisto_binning1D().at(0), bins1D);
@@ -293,6 +299,8 @@ void Setup_BinningArrays(std::vector<Subdetector*> * SubDetectors, std::vector<f
 	}
 	std::vector<float> tempEnergy1D = { binsEnergy1D, minEnergy1D, maxEnergy1D };
 	*axis_range_plot_energy_1D = tempEnergy1D;
+	std::vector<float> temp_occupancy = { bins_occupancy, min_occupancy, max_occupancy };
+	*axis_range_occupancy_plot_ = temp_occupancy;
 	std::vector<float> temp1D = { bins1D, min1D, max1D };
 	*axis_range_plot_1D = temp1D;
 	std::vector<float> temp2D = { xbins2D, xmin2D, xmax2D, ybins2D, ymin2D, ymax2D };

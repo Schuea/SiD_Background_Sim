@@ -41,8 +41,8 @@ void Fill_HitsTime3D_Plots(float time, float timelow, float timehigh, TH3D* hist
 template< class T > void Fill_Histogram_from_Map(std::map< std::pair< int, int >, std::vector< float > > HitMap, std::vector< T > *Hits,	int weight);
 TTree* Get_TTree(TFile* inputfile, std::string subdetector_name);
 
-void Setup_BinningArrays(std::vector< Subdetector* > * SubDetectors, std::vector< float > *axis_range_plot_1D,
-		std::vector< float > *axis_range_plot_2D, std::vector< float > *axis_range_plot_3D,
+void Setup_BinningArrays(std::vector< Subdetector* > * SubDetectors, std::vector<float> *axis_range_occupancy_plot_,
+		std::vector< float > *axis_range_plot_1D, std::vector< float > *axis_range_plot_2D, std::vector< float > *axis_range_plot_3D,
 		std::vector< float > *axis_range_plot_energy_1D, float time_interval, std::vector< float > *axis_range_plot_time,
 		std::vector< float > *axis_range_plot_rtime_2D, std::vector< float > *axis_range_plot_ztime_2D,
 		std::vector< float > *axis_range_plot_time_3D);
