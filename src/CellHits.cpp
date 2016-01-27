@@ -25,7 +25,7 @@ std::vector<float> CellHits::Get_Position_Phi() const {
 std::map<int, std::pair<std::vector<int>, float> > CellHits::Get_AverageOccupancy_Rad() const {
 	return AverageOccupancy_Rad;
 }
-std::map<int, std::pair<std::vector<int>, float> > CellHits::Get_AverageOccupancy_Phi() const {
+std::map<float, std::pair<std::vector<int>, float> > CellHits::Get_AverageOccupancy_Phi() const {
 	return AverageOccupancy_Phi;
 }
 int CellHits::Get_BunchNumber() const {
@@ -55,6 +55,25 @@ void CellHits::CheckCellID(int const id, float const x, float const y) {
 void CellHits::Check_Rad_Position() {
 	for (int j = 0; j < Position_Radius.size(); ++j) {
     std::cout << "Position_Radius.at(" << j << ") = " << Position_Radius.at(j) << std::endl;
+		if (Position_Radius.at(j) < 10)
+			AverageOccupancy_Rad[10].first.push_back(HitCount.at(j));
+		if (Position_Radius.at(j) >= 10 &&  Position_Radius.at(j) < 20)
+			AverageOccupancy_Rad[20].first.push_back(HitCount.at(j));
+		if (Position_Radius.at(j) >= 20 && Position_Radius.at(j) < 30)
+			AverageOccupancy_Rad[30].first.push_back(HitCount.at(j));
+		if (Position_Radius.at(j) >= 30 && Position_Radius.at(j) < 40)
+			AverageOccupancy_Rad[40].first.push_back(HitCount.at(j));
+		if (Position_Radius.at(j) >= 40 && Position_Radius.at(j) < 50)
+			AverageOccupancy_Rad[50].first.push_back(HitCount.at(j));
+		if (Position_Radius.at(j) >= 50 && Position_Radius.at(j) < 60)
+			AverageOccupancy_Rad[60].first.push_back(HitCount.at(j));
+		if (Position_Radius.at(j) >= 60 && Position_Radius.at(j) < 70)
+			AverageOccupancy_Rad[70].first.push_back(HitCount.at(j));
+		if (Position_Radius.at(j) >= 70 && Position_Radius.at(j) < 80)
+			AverageOccupancy_Rad[80].first.push_back(HitCount.at(j));
+		if (Position_Radius.at(j) >= 80)
+			AverageOccupancy_Rad[90].first.push_back(HitCount.at(j));
+    /*
 		if (Position_Radius.at(j) < 250)
 			AverageOccupancy_Rad[250].first.push_back(HitCount.at(j));
 		if (Position_Radius.at(j) >= 250 && Position_Radius.at(j) < 500)
@@ -67,42 +86,33 @@ void CellHits::Check_Rad_Position() {
 			AverageOccupancy_Rad[1250].first.push_back(HitCount.at(j));
 		if (Position_Radius.at(j) >= 1250 && Position_Radius.at(j) < 1500)
 			AverageOccupancy_Rad[1500].first.push_back(HitCount.at(j));
+	*/
 	}
 	Calculate_Average(AverageOccupancy_Rad);
 }
 void CellHits::Check_Phi_Position() {
 	for (int j = 0; j < Position_Phi.size(); ++j) {
     std::cout << "Position_Phi.at(" << j << ") = " << Position_Phi.at(j) << std::endl;
-		if (Position_Phi.at(j) < 1)
+		if (Position_Phi.at(j) < 0.5)
+			AverageOccupancy_Phi[0.5].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) >= 0.5 && Position_Phi.at(j) < 1)
 			AverageOccupancy_Phi[1].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 1 && Position_Phi.at(j) < 2)
+		if (Position_Phi.at(j) >= 1 && Position_Phi.at(j) < 1.5)
+			AverageOccupancy_Phi[1.5].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) >= 1.5 && Position_Phi.at(j) < 2)
 			AverageOccupancy_Phi[2].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 2 && Position_Phi.at(j) < 3)
+		if (Position_Phi.at(j) >= 2 && Position_Phi.at(j) < 2.5)
+			AverageOccupancy_Phi[2.5].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) >= 2.5 && Position_Phi.at(j) < 3)
 			AverageOccupancy_Phi[3].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 3 && Position_Phi.at(j) < 4)
+		if (Position_Phi.at(j) >= 3 && Position_Phi.at(j) < 3.5)
+			AverageOccupancy_Phi[3.5].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) >= 3.5)
 			AverageOccupancy_Phi[4].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 4 && Position_Phi.at(j) < 5)
-			AverageOccupancy_Phi[5].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 5 && Position_Phi.at(j) < 6)
-			AverageOccupancy_Phi[6].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 6 && Position_Phi.at(j) < 7)
-			AverageOccupancy_Phi[7].first.push_back(HitCount.at(j));
 	}
 	Calculate_Average(AverageOccupancy_Phi);
 }
-void CellHits::Calculate_Average(std::map< int, std::pair< std::vector<int>, float> > & AverageMap) {
-    std::cout << "AverageMap.size = " << AverageMap.size() << std::endl;
-	for (auto iterator = AverageMap.begin(); iterator != AverageMap.end(); iterator++) {
-    std::cout << "AverageMap.iterator.first = " << iterator->first << std::endl;
-		float average = 0;
-		for (int i = 0; i < iterator->second.first.size(); ++i) {
-			average += iterator->second.first.at(i);
-		}
-		average /= float(iterator->second.first.size());
-    std::cout << "Average = " << average << std::endl;
-		iterator->second.second = average;
-	}
-}
+
 void CellHits::Set_BunchNumber(int const bunchnumber) {
 	BunchNumber = bunchnumber;
 }

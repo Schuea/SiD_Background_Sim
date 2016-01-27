@@ -35,6 +35,7 @@ int main(int argc, char * argv[]){
   int last_layer_to_be_compared;
 
   CheckArguments(argc, argv, inputfilenames, subdetectors, outputfilename, NUMBER_OF_FILES, first_layer_to_be_compared, last_layer_to_be_compared);
+	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
   if (!inputfile_set || !outputfile_set || !subdetector_set || !NUMBER_OF_FILES_set) {
     std::cerr
@@ -45,7 +46,9 @@ int main(int argc, char * argv[]){
 
   try {
     DrawingHistograms program(*outputfilename, *inputfilenames, *subdetectors, NUMBER_OF_FILES, first_layer_to_be_compared, last_layer_to_be_compared);
+	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
     program.DrawingMacro();
+	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
     //DrawingMacro(*outputfilename, *inputfilenames, *subdetectors);
   } catch (std::exception& e) {
     std::cerr << "Something went wrong with drawing or saving the histograms.\n" << e.what();

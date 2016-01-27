@@ -66,6 +66,8 @@ class DrawingHistograms{
     TF1 *gausfit_Particles;
     TH1D* Occupancy_r_Histo_;
     TH1D* Occupancy_phi_Histo_;
+    //TH2D* Occupancy_r_Histo_;
+    //TH2D* Occupancy_phi_Histo_;
     std::vector< TH2D* > ParticleOrigins_2D_;
     std::vector< TH1D* > Hits_PerLayer_;
     std::vector< TH1D* > Hits_Histo_;
