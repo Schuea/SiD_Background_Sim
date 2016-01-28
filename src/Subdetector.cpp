@@ -148,12 +148,12 @@ void SiVertexBarrel::Initialize(){
 
   //TO BE ADJUSTED:
   ROOTEnergyHisto_binning = {40., 0., 0.045};
-  ROOTHisto_binning_occupancy = {12, 0, 12};
+  ROOTHisto_binning_occupancy = {500, 0, 20000};
   ROOTHisto_binning_occupancy_r = {10, 0, 100, 12, 0, 12};
   ROOTHisto_binning_occupancy_phi = {8, 0, 4, 12, 0, 12};
   ROOTHisto_binning1D = {100, 0, 210};                                           
-  ROOTHisto_binning2D = {100, -230, 230, 100, -230, 230};                    
-  ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
+  ROOTHisto_binning2D = {50, -100, 100, 50, -100, 100};
+  ROOTHisto_binning3D = {150, -1900, 1900, 50, -100, 100, 50, -100, 100};
   ROOTHisto_time = {200, 0, 2000};
 }
 void SiTrackerEndcap::Initialize(){

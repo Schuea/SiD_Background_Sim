@@ -13,6 +13,7 @@
 #include <vector>
 #include <map>
 #include <cmath>
+#include <math.h>       /* atan2 */
 
 class CellHits {
 public:

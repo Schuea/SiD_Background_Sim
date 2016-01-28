@@ -49,7 +49,8 @@ void CellHits::CheckCellID(int const id, float const x, float const y) {
 		HitCount.push_back(1);
 		CellPosition.push_back(std::pair<float, float>(x, y));
 		Position_Radius.push_back(sqrt(pow(x, 2) + pow(y, 2)));
-		Position_Phi.push_back(acos(x / sqrt(pow(x, 2) + pow(y, 2))));
+		Position_Phi.push_back(atan2(y,x));
+		//Position_Phi.push_back(acos(x / sqrt(pow(x, 2) + pow(y, 2))));
 	}
 }
 void CellHits::Check_Rad_Position() {

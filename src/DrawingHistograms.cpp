@@ -601,11 +601,14 @@ void DrawingHistograms::DrawingMacro() {
 	//gStyle->SetOptStat(111111);
 	TCanvas* PDF_Canvas_Hits_Layers = new TCanvas();
 	PDF_Canvas_Hits_Layers->Print("PDFCanvas_Hits_Layers.pdf[");
+	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	TCanvas* PDF_Canvas_Hits_allLayers = new TCanvas(); //For all layers together
 	PDF_Canvas_Hits_allLayers->Print("PDFCanvas_Hits_allLayers.pdf[");
+	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	output_rootfile->cd();
+	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	for (signed int t = 0; t < 20; ++t) {
 		Hits_Time_3D_.at(t)->Write();
 	}
