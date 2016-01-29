@@ -18,8 +18,8 @@ int LayerCodeInCellID::FindLayer(std::string const CellID_, int const StartBin_l
   for (int i = CellID_.size()-(StartBin_layers+LengthBin_layers); i <= CellID_.size()-(StartBin_layers+1); ++i) {
     LayerID << CellID_.at(i);
   }
-    std::cout << "CellID = " << CellID_ << std::endl;
-    std::cout << "LayerID = " << LayerID.str() << std::endl;
+    //std::cout << "CellID = " << CellID_ << std::endl;
+    //std::cout << "LayerID = " << LayerID.str() << std::endl;
   std::bitset<64> LayerIDbit (LayerID.str());
   int tempLayer = -1;
   tempLayer = LayerIDbit.to_ulong();
