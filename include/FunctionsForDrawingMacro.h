@@ -172,9 +172,9 @@ void Fill_Histogram_from_Map(std::map<std::pair<int, int>, std::vector<float> > 
 
 		float stddev = 0;
 		for (size_t i = 0; i < iterator->second.size(); ++i) {
-			stddev += iterator->second.at(i) - average;
+			stddev += pow(iterator->second.at(i) - average,2);
 		}
-		stddev /= iterator->second.size();
+		stddev /= float(iterator->second.size());
 		stddev = sqrt(stddev);
 		Hits->at(temp_layer)->SetBinContent(iterator->first.second, average * weight);
 		Hits->at(temp_layer)->SetBinError(iterator->first.second, stddev * weight);
@@ -198,8 +198,8 @@ void Fill_Histogram_from_Map(std::map<std::pair<int, int>, std::vector<float> > 
 			 total_average += Hits->at(vector_iterator)->GetBinContent(bin_iterator);
 			 total_stddev += Hits->at(vector_iterator)->GetBinError(bin_iterator);
 		}
-		total_average /= Hits->size()-2;
-		total_stddev /= Hits->size()-2;
+		total_average /= float(Hits->size()-2);
+		total_stddev /= float(Hits->size()-2);
 		Hits->at(Hits->size()-1)->SetBinContent(bin_iterator, total_average);
 		Hits->at(Hits->size()-1)->SetBinError(bin_iterator, total_stddev);
 	}

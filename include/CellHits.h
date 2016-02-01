@@ -50,7 +50,7 @@ public:
 			else average = 0;
 
 			for (size_t i = 0; i < iterator->second.first.size(); ++i) {
-				stddev += (iterator->second.first.at(i) - average);
+				stddev += pow(iterator->second.first.at(i) - average,2);
 			}
 			if (iterator->second.first.size() != 0){
 				stddev /= float(iterator->second.first.size());
