@@ -313,6 +313,7 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 			average += iterator->second.at(v);
 		}
 		average /= float(iterator->second.size());
+		std::cout << "Occupancy_phi_Histo_->FindBin(iterator->first) = " << Occupancy_phi_Histo_->FindBin(iterator->first) << std::endl;
 		Occupancy_phi_Histo_->SetBinContent(Occupancy_phi_Histo_->FindBin(iterator->first), average); //first = phi bin
 	}
 	for (auto iterator = stddev_occupancy_phi.begin(); iterator != stddev_occupancy_phi.end(); ++iterator) {
@@ -333,6 +334,7 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 			average += iterator->second.at(v);
 		}
 		average /= float(iterator->second.size());
+		std::cout << "Occupancy_r_Histo_->FindBin(iterator->first) = " << Occupancy_r_Histo_->FindBin(iterator->first) << std::endl;
 		Occupancy_r_Histo_->SetBinContent(Occupancy_r_Histo_->FindBin(iterator->first), average); //first = radius bin
 	}
 	for (auto iterator = stddev_occupancy_r.begin(); iterator != stddev_occupancy_r.end(); ++iterator) {
