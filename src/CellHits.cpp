@@ -79,7 +79,7 @@ void CellHits::Check_Rad_Position(std::string subdetector_) {
 			if (Position_Radius.at(j) >= 80)
 				AverageOccupancy_Rad[90].first.push_back(HitCount.at(j));
 		} else {
-		//if (found == std::string::npos) {
+			//if (found == std::string::npos) {
 			if (Position_Radius.at(j) < 200)
 				AverageOccupancy_Rad[100].first.push_back(HitCount.at(j));
 			if (Position_Radius.at(j) >= 200 && Position_Radius.at(j) < 400)
@@ -107,7 +107,23 @@ void CellHits::Check_Rad_Position(std::string subdetector_) {
 void CellHits::Check_Phi_Position() {
 	for (int j = 0; j < Position_Phi.size(); ++j) {
 		std::cout << "Position_Phi.at(" << j << ") = " << Position_Phi.at(j) << std::endl;
-		if (Position_Phi.at(j) < 0.4)
+
+		if (Position_Phi.at(j) < 0 &&Position_Phi.at(j) > -0.4)
+			AverageOccupancy_Phi[-0.2].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) <= -0.4 && Position_Phi.at(j) > -0.8)
+			AverageOccupancy_Phi[-0.6].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) <= -0.8 && Position_Phi.at(j) > -1.2)
+			AverageOccupancy_Phi[-1.0].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) <= -1.2 && Position_Phi.at(j) > -1.6)
+			AverageOccupancy_Phi[-1.4].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) <= -1.6 && Position_Phi.at(j) > -2.0)
+			AverageOccupancy_Phi[-1.8].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) <= -2.0 && Position_Phi.at(j) > -2.4)
+			AverageOccupancy_Phi[-2.2].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) <= -2.8 && Position_Phi.at(j) > -3.2)
+			AverageOccupancy_Phi[-3.0].first.push_back(HitCount.at(j));
+
+		if (Position_Phi.at(j) >= 0 && Position_Phi.at(j) < 0.4)
 			AverageOccupancy_Phi[0.2].first.push_back(HitCount.at(j));
 		if (Position_Phi.at(j) >= 0.4 && Position_Phi.at(j) < 0.8)
 			AverageOccupancy_Phi[0.6].first.push_back(HitCount.at(j));

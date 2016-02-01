@@ -42,20 +42,26 @@ public:
 			std::cout << "AverageMap.iterator.first = " << iterator->first << std::endl;
 			float average = 0;
 			float stddev = 0;
+
 			for (int i = 0; i < iterator->second.first.size(); ++i) {
 				average += iterator->second.first.at(i);
 			}
-			average /= float(iterator->second.first.size());
-			for (size_t i = 0; i < iterator->second.first.size(); ++i) {
-				stddev += iterator->second.first.at(i) - average;
-			}
-			stddev /= iterator->second.first.size();
-			stddev = sqrt(stddev);
+			if (iterator->second.first.size() != 0) average /= float(iterator->second.first.size());
+			else average = 0;
 
-			std::cout << "Average = " << average << std::endl;
-			std::cout << "stddev = " << stddev << std::endl;
+			for (size_t i = 0; i < iterator->second.first.size(); ++i) {
+				stddev += (iterator->second.first.at(i) - average);
+			}
+			if (iterator->second.first.size() != 0){
+				stddev /= float(iterator->second.first.size());
+				stddev = float(sqrt(abs(stddev)));
+			}
+			else stddev = 0;
+
+			std::cout << __FILE__<< ": Average = " << average << std::endl;
+			std::cout << __FILE__<< ": stddev = " << stddev << std::endl;
 			iterator->second.second.first = average;
-			iterator->second.second.first = stddev;
+			iterator->second.second.second = stddev;
 		}
 	}
 	void Set_BunchNumber(int const bunchnumber);
