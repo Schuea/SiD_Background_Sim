@@ -30,40 +30,13 @@ public:
 	std::vector<float> Get_Position_Radius() const;
 	std::vector<float> Get_Position_Phi() const;
 	std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > Get_AverageOccupancy_Rad() const;
-	std::map<float, std::pair<std::vector<int>, std::pair<float, float> > > Get_AverageOccupancy_Phi() const;
+	std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > Get_AverageOccupancy_Phi() const;
 	int Get_BunchNumber() const;
 
 	void CheckCellID(int const id, float const x, float const y);
 	void Check_Rad_Position(std::string subdetector);
 	void Check_Phi_Position();
-	template<class T>
-	void Calculate_Average(std::map<T, std::pair<std::vector<int>, std::pair<float, float> > > & AverageMap) {
-		for (auto iterator = AverageMap.begin(); iterator != AverageMap.end(); iterator++) {
-			std::cout << "AverageMap.iterator.first = " << iterator->first << std::endl;
-			float average = 0;
-			float stddev = 0;
-
-			for (int i = 0; i < iterator->second.first.size(); ++i) {
-				average += iterator->second.first.at(i);
-			}
-			if (iterator->second.first.size() != 0) average /= float(iterator->second.first.size());
-			else average = 0;
-
-			for (size_t i = 0; i < iterator->second.first.size(); ++i) {
-				stddev += pow(iterator->second.first.at(i) - average,2);
-			}
-			if (iterator->second.first.size() != 0){
-				stddev /= float(iterator->second.first.size());
-				stddev = float(sqrt(abs(stddev)));
-			}
-			else stddev = 0;
-
-			std::cout << __FILE__<< ": Average = " << average << std::endl;
-			std::cout << __FILE__<< ": stddev = " << stddev << std::endl;
-			iterator->second.second.first = average;
-			iterator->second.second.second = stddev;
-		}
-	}
+	void Calculate_Average(std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > & AverageMap);
 	void Set_BunchNumber(int const bunchnumber);
 
 protected:
@@ -73,7 +46,7 @@ protected:
 	std::vector<float> Position_Radius;
 	std::vector<float> Position_Phi;
 	std::map<int, std::pair<std::vector<int>, std::pair< float, float > > > AverageOccupancy_Rad;
-	std::map<float, std::pair<std::vector<int>, std::pair< float, float > > > AverageOccupancy_Phi;
+	std::map<int, std::pair<std::vector<int>, std::pair< float, float > > > AverageOccupancy_Phi;
 	int BunchNumber;
 };
 

@@ -266,25 +266,20 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 		AllHitCounts.at(i)->Check_Rad_Position(SubDetectors->at(subdetector_iterator)->GetName());
 		AllHitCounts.at(i)->Check_Phi_Position();
 
-		//for (auto iterator = AllHitCounts.at(i)->Get_AverageOccupancy_Rad().begin();
-		//		iterator != AllHitCounts.at(i)->Get_AverageOccupancy_Rad().end(); ++iterator) {
-		for (int k = 250; k <= 1500; k += 250) {
+		for(auto const &iterator : AllHitCounts.at(i)->Get_AverageOccupancy_Rad()){
 			std::cout << "AverageOccupancy_Rad.size() = " << AllHitCounts.at(i)->Get_AverageOccupancy_Rad().size()
 					<< std::endl;
-			std::cout << k << "," << AllHitCounts.at(i)->Get_AverageOccupancy_Rad()[k].second.first << std::endl;
-			average_occupancy_r[k].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Rad()[k].second.first);
-			stddev_occupancy_r[k].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Rad()[k].second.second);
-			//average_occupancy_r[iterator->first].push_back(iterator->second.second);
+			std::cout << iterator.first << "," << AllHitCounts.at(i)->Get_AverageOccupancy_Rad()[iterator.first].second.first << std::endl;
+			average_occupancy_r[iterator.first].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Rad()[iterator.first].second.first);
+			stddev_occupancy_r[iterator.first].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Rad()[iterator.first].second.second);
 		}
 
-		for (int k = 1; k <= AllHitCounts.at(i)->Get_AverageOccupancy_Phi().size(); ++k) {
-			//for (auto iterator = AllHitCounts.at(i)->Get_AverageOccupancy_Phi().begin();
-			//	iterator != AllHitCounts.at(i)->Get_AverageOccupancy_Phi().end(); ++iterator) {
+		for(auto const &iterator : AllHitCounts.at(i)->Get_AverageOccupancy_Phi()){
 			std::cout << "AverageOccupancy_Phi.size() = " << AllHitCounts.at(i)->Get_AverageOccupancy_Phi().size()
 					<< std::endl;
-			//Occupancy_phi_Histo_->Fill(iterator->first, iterator->second.second); //first = phi, second.second = average occupancy
-			average_occupancy_phi[k].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Phi()[k].second.first);
-			stddev_occupancy_phi[k].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Phi()[k].second.second);
+			std::cout << iterator.first << "," << AllHitCounts.at(i)->Get_AverageOccupancy_Phi()[iterator.first].second.first << std::endl;
+			average_occupancy_phi[iterator.first].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Phi()[iterator.first].second.first);
+			stddev_occupancy_phi[iterator.first].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Phi()[iterator.first].second.second);
 		}
 		/*
 		 for (int j = 0; j < AllHitCounts.at(i)->Get_CellID().size(); ++j) {
@@ -306,45 +301,46 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 		}
 	}
 	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
-	for (auto iterator = average_occupancy_phi.begin(); iterator != average_occupancy_phi.end(); ++iterator) {
+	for (auto const &iterator : average_occupancy_phi) {
 		float average = 0;
-		for (int v = 0; v < iterator->second.size(); ++v) {
+		for (int v = 0; v < iterator.second.size(); ++v) {
 			std::cout << "Occupancy phi average = " << average << std::endl;
-			average += iterator->second.at(v);
+			average += iterator.second.at(v);
 		}
-		average /= float(iterator->second.size());
-		std::cout << "Occupancy_phi_Histo_->FindBin(iterator->first) = " << Occupancy_phi_Histo_->FindBin(iterator->first) << std::endl;
-		Occupancy_phi_Histo_->SetBinContent(Occupancy_phi_Histo_->FindBin(iterator->first), average); //first = phi bin
+		average /= float(iterator.second.size());
+		std::cout << "Occupancy_phi_Histo_->FindBin(iterator->first) = " << Occupancy_phi_Histo_->FindBin(float(iterator.first/10.0)) << std::endl;
+		Occupancy_phi_Histo_->SetBinContent(Occupancy_phi_Histo_->FindBin(float(iterator.first/10.0)), average); //first = (phi*10)
 	}
-	for (auto iterator = stddev_occupancy_phi.begin(); iterator != stddev_occupancy_phi.end(); ++iterator) {
+	for (auto const &iterator : stddev_occupancy_phi) {
 		float stddev = 0;
-		for (int v = 0; v < iterator->second.size(); ++v) {
+		for (int v = 0; v < iterator.second.size(); ++v) {
 			std::cout << "Occupancy phi stddev = " << stddev << std::endl;
-			stddev += iterator->second.at(v);
+			stddev += pow(iterator.second.at(v),2);
 		}
-		stddev /= float(iterator->second.size());
-		Occupancy_phi_Histo_->SetBinError(Occupancy_phi_Histo_->FindBin(iterator->first), stddev); //first = phi bin
+		stddev = sqrt(stddev);
+		stddev /= float(iterator.second.size());
+		Occupancy_phi_Histo_->SetBinError(Occupancy_phi_Histo_->FindBin(float(iterator.first/10.0)), stddev); //first = (phi*10)
 	}
 
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
-	for (auto iterator = average_occupancy_r.begin(); iterator != average_occupancy_r.end(); ++iterator) {
+	for (auto const &iterator : average_occupancy_r) {
 		float average = 0;
-		for (int v = 0; v < iterator->second.size(); ++v) {
+		for (int v = 0; v < iterator.second.size(); ++v) {
 			std::cout << "Occupancy r average = " << average << std::endl;
-			average += iterator->second.at(v);
+			average += iterator.second.at(v);
 		}
-		average /= float(iterator->second.size());
-		std::cout << "Occupancy_r_Histo_->FindBin(iterator->first) = " << Occupancy_r_Histo_->FindBin(iterator->first) << std::endl;
-		Occupancy_r_Histo_->SetBinContent(Occupancy_r_Histo_->FindBin(iterator->first), average); //first = radius bin
+		average /= float(iterator.second.size());
+		std::cout << "Occupancy_r_Histo_->FindBin(iterator->first) = " << Occupancy_r_Histo_->FindBin(iterator.first) << std::endl;
+		Occupancy_r_Histo_->SetBinContent(Occupancy_r_Histo_->FindBin(iterator.first), average); //first = radius bin
 	}
-	for (auto iterator = stddev_occupancy_r.begin(); iterator != stddev_occupancy_r.end(); ++iterator) {
+	for (auto const &iterator : stddev_occupancy_r) {
 		float stddev = 0;
-		for (int v = 0; v < iterator->second.size(); ++v) {
-			std::cout << "Occupancy phi stddev = " << stddev << std::endl;
-			stddev += iterator->second.at(v);
+		for (int v = 0; v < iterator.second.size(); ++v) {
+			std::cout << "Occupancy r stddev = " << stddev << std::endl;
+			stddev += pow(iterator.second.at(v),2);
 		}
-		stddev /= float(iterator->second.size());
-		Occupancy_r_Histo_->SetBinError(Occupancy_r_Histo_->FindBin(iterator->first), stddev); //first = phi bin
+		stddev = sqrt(stddev);
+		stddev /= float(iterator.second.size());
+		Occupancy_r_Histo_->SetBinError(Occupancy_r_Histo_->FindBin(iterator.first), stddev); //first = phi bin
 	}
 
 	std::cout << __FILE__ << ", " << __LINE__ << std::endl;

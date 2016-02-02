@@ -25,11 +25,14 @@ std::vector<float> CellHits::Get_Position_Phi() const {
 std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > CellHits::Get_AverageOccupancy_Rad() const {
 	return AverageOccupancy_Rad;
 }
-std::map<float, std::pair<std::vector<int>, std::pair<float, float> > > CellHits::Get_AverageOccupancy_Phi() const {
+std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > CellHits::Get_AverageOccupancy_Phi() const {
 	return AverageOccupancy_Phi;
 }
 int CellHits::Get_BunchNumber() const {
 	return BunchNumber;
+}
+void CellHits::Set_BunchNumber(int const bunchnumber) {
+	BunchNumber = bunchnumber;
 }
 
 void CellHits::CheckCellID(int const id, float const x, float const y) {
@@ -59,25 +62,25 @@ void CellHits::Check_Rad_Position(std::string subdetector_) {
 	for (int j = 0; j < Position_Radius.size(); ++j) {
 		std::cout << "Position_Radius.at(" << j << ") = " << Position_Radius.at(j) << std::endl;
 
-		if (subdetector_ == "SiVertexEndcap") {
+		if (subdetector_ == "SiVertexEndcap" || subdetector_ == "SiVertexBarrel") {
 			if (Position_Radius.at(j) < 10)
-				AverageOccupancy_Rad[10].first.push_back(HitCount.at(j));
+				AverageOccupancy_Rad[5].first.push_back(HitCount.at(j));
 			if (Position_Radius.at(j) >= 10 && Position_Radius.at(j) < 20)
-				AverageOccupancy_Rad[20].first.push_back(HitCount.at(j));
+				AverageOccupancy_Rad[15].first.push_back(HitCount.at(j));
 			if (Position_Radius.at(j) >= 20 && Position_Radius.at(j) < 30)
-				AverageOccupancy_Rad[30].first.push_back(HitCount.at(j));
+				AverageOccupancy_Rad[25].first.push_back(HitCount.at(j));
 			if (Position_Radius.at(j) >= 30 && Position_Radius.at(j) < 40)
-				AverageOccupancy_Rad[40].first.push_back(HitCount.at(j));
+				AverageOccupancy_Rad[35].first.push_back(HitCount.at(j));
 			if (Position_Radius.at(j) >= 40 && Position_Radius.at(j) < 50)
-				AverageOccupancy_Rad[50].first.push_back(HitCount.at(j));
+				AverageOccupancy_Rad[45].first.push_back(HitCount.at(j));
 			if (Position_Radius.at(j) >= 50 && Position_Radius.at(j) < 60)
-				AverageOccupancy_Rad[60].first.push_back(HitCount.at(j));
+				AverageOccupancy_Rad[55].first.push_back(HitCount.at(j));
 			if (Position_Radius.at(j) >= 60 && Position_Radius.at(j) < 70)
-				AverageOccupancy_Rad[70].first.push_back(HitCount.at(j));
+				AverageOccupancy_Rad[65].first.push_back(HitCount.at(j));
 			if (Position_Radius.at(j) >= 70 && Position_Radius.at(j) < 80)
-				AverageOccupancy_Rad[80].first.push_back(HitCount.at(j));
+				AverageOccupancy_Rad[75].first.push_back(HitCount.at(j));
 			if (Position_Radius.at(j) >= 80)
-				AverageOccupancy_Rad[90].first.push_back(HitCount.at(j));
+				AverageOccupancy_Rad[85].first.push_back(HitCount.at(j));
 		} else {
 			//if (found == std::string::npos) {
 			if (Position_Radius.at(j) < 200)
@@ -107,40 +110,88 @@ void CellHits::Check_Rad_Position(std::string subdetector_) {
 void CellHits::Check_Phi_Position() {
 	for (int j = 0; j < Position_Phi.size(); ++j) {
 		std::cout << "Position_Phi.at(" << j << ") = " << Position_Phi.at(j) << std::endl;
+		std::cout << "HitCount.at(" << j << ") = " << HitCount.at(j) << std::endl;
 
-		if (Position_Phi.at(j) < 0 &&Position_Phi.at(j) > -0.4)
-			AverageOccupancy_Phi[-0.2].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) <= -0.4 && Position_Phi.at(j) > -0.8)
-			AverageOccupancy_Phi[-0.6].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) <= -0.8 && Position_Phi.at(j) > -1.2)
-			AverageOccupancy_Phi[-1.0].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) <= -1.2 && Position_Phi.at(j) > -1.6)
-			AverageOccupancy_Phi[-1.4].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) <= -1.6 && Position_Phi.at(j) > -2.0)
-			AverageOccupancy_Phi[-1.8].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) <= -2.0 && Position_Phi.at(j) > -2.4)
-			AverageOccupancy_Phi[-2.2].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) <= -2.8 && Position_Phi.at(j) > -3.2)
-			AverageOccupancy_Phi[-3.0].first.push_back(HitCount.at(j));
+		/*
+		if (Position_Phi.at(j) < 0 && Position_Phi.at(j) > -0.8)
+			AverageOccupancy_Phi[-4].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) <= -0.8 && Position_Phi.at(j) > -1.6)
+			AverageOccupancy_Phi[-12].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) <= -1.6 && Position_Phi.at(j) > -2.4)
+			AverageOccupancy_Phi[-20].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) <= -2.4 && Position_Phi.at(j) > -3.2)
+			AverageOccupancy_Phi[-28].first.push_back(HitCount.at(j));
 
-		if (Position_Phi.at(j) >= 0 && Position_Phi.at(j) < 0.4)
-			AverageOccupancy_Phi[0.2].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 0.4 && Position_Phi.at(j) < 0.8)
-			AverageOccupancy_Phi[0.6].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 0.8 && Position_Phi.at(j) < 1.2)
-			AverageOccupancy_Phi[1.0].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 1.2 && Position_Phi.at(j) < 1.6)
-			AverageOccupancy_Phi[1.4].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 1.6 && Position_Phi.at(j) < 2.0)
-			AverageOccupancy_Phi[1.8].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 2.0 && Position_Phi.at(j) < 2.4)
-			AverageOccupancy_Phi[2.2].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 2.8 && Position_Phi.at(j) < 3.2)
-			AverageOccupancy_Phi[3.0].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) >= 0 && Position_Phi.at(j) < 0.8)
+			AverageOccupancy_Phi[4].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) >= 0.8 && Position_Phi.at(j) < 1.6)
+			AverageOccupancy_Phi[12].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) >= 1.6 && Position_Phi.at(j) < 2.4)
+			AverageOccupancy_Phi[20].first.push_back(HitCount.at(j));
+		if (Position_Phi.at(j) >= 2.4 && Position_Phi.at(j) < 3.2)
+			AverageOccupancy_Phi[28].first.push_back(HitCount.at(j));
+		 */
+		 if (Position_Phi.at(j) < 0 && Position_Phi.at(j) > -0.4)
+		 AverageOccupancy_Phi[-2].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) <= -0.4 && Position_Phi.at(j) > -0.8)
+		 AverageOccupancy_Phi[-6].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) <= -0.8 && Position_Phi.at(j) > -1.2)
+		 AverageOccupancy_Phi[-10].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) <= -1.2 && Position_Phi.at(j) > -1.6)
+		 AverageOccupancy_Phi[-14].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) <= -1.6 && Position_Phi.at(j) > -2.0)
+		 AverageOccupancy_Phi[-18].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) <= -2.0 && Position_Phi.at(j) > -2.4)
+		 AverageOccupancy_Phi[-22].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) <= -2.4 && Position_Phi.at(j) > -2.8)
+		 AverageOccupancy_Phi[-26].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) <= -2.8 && Position_Phi.at(j) > -3.2)
+		 AverageOccupancy_Phi[-30].first.push_back(HitCount.at(j));
+
+		 if (Position_Phi.at(j) >= 0 && Position_Phi.at(j) < 0.4)
+		 AverageOccupancy_Phi[2].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) >= 0.4 && Position_Phi.at(j) < 0.8)
+		 AverageOccupancy_Phi[6].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) >= 0.8 && Position_Phi.at(j) < 1.2)
+		 AverageOccupancy_Phi[10].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) >= 1.2 && Position_Phi.at(j) < 1.6)
+		 AverageOccupancy_Phi[14].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) >= 1.6 && Position_Phi.at(j) < 2.0)
+		 AverageOccupancy_Phi[18].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) >= 2.0 && Position_Phi.at(j) < 2.4)
+		 AverageOccupancy_Phi[22].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) >= 2.4 && Position_Phi.at(j) < 2.8)
+		 AverageOccupancy_Phi[26].first.push_back(HitCount.at(j));
+		 if (Position_Phi.at(j) >= 2.8 && Position_Phi.at(j) < 3.2)
+		 AverageOccupancy_Phi[30].first.push_back(HitCount.at(j));
 	}
 	Calculate_Average(AverageOccupancy_Phi);
 }
+void CellHits::Calculate_Average(std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > & AverageMap) {
+	for (auto &iterator : AverageMap) {
+		std::cout << "AverageMap.iterator.first = " << iterator.first << std::endl;
+		float average = 0;
+		float stddev = 0;
 
-void CellHits::Set_BunchNumber(int const bunchnumber) {
-	BunchNumber = bunchnumber;
+		for (int i = 0; i < iterator.second.first.size(); ++i) {
+			average += iterator.second.first.at(i);
+		}
+		if (iterator.second.first.size() != 0) average /= float(iterator.second.first.size());
+		else average = 0;
+
+		for (size_t i = 0; i < iterator.second.first.size(); ++i) {
+			stddev += pow(iterator.second.first.at(i) - average,2);
+		}
+		if (iterator.second.first.size() != 0){
+			stddev /= float(iterator.second.first.size());
+			stddev = sqrt(stddev);
+		}
+		else stddev = 0;
+
+		std::cout << __FILE__<< ": Average = " << average << std::endl;
+		std::cout << __FILE__<< ": stddev = " << stddev << std::endl;
+		iterator.second.second.first = average;
+		iterator.second.second.second = stddev;
+	}
 }
+
