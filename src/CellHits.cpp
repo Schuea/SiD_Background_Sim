@@ -60,7 +60,6 @@ void CellHits::Check_Rad_Position(std::string subdetector_) {
 	//std::size_t found = subdetector_.find_last_of("Endcap");
 
 	for (int j = 0; j < Position_Radius.size(); ++j) {
-		std::cout << "Position_Radius.at(" << j << ") = " << Position_Radius.at(j) << std::endl;
 
 		if (subdetector_ == "SiVertexEndcap" || subdetector_ == "SiVertexBarrel") {
 			if (Position_Radius.at(j) < 10)
@@ -109,8 +108,6 @@ void CellHits::Check_Rad_Position(std::string subdetector_) {
 }
 void CellHits::Check_Phi_Position() {
 	for (int j = 0; j < Position_Phi.size(); ++j) {
-		std::cout << "Position_Phi.at(" << j << ") = " << Position_Phi.at(j) << std::endl;
-		std::cout << "HitCount.at(" << j << ") = " << HitCount.at(j) << std::endl;
 
 		/*
 		if (Position_Phi.at(j) < 0 && Position_Phi.at(j) > -0.8)
@@ -169,7 +166,6 @@ void CellHits::Check_Phi_Position() {
 }
 void CellHits::Calculate_Average(std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > & AverageMap) {
 	for (auto &iterator : AverageMap) {
-		std::cout << "AverageMap.iterator.first = " << iterator.first << std::endl;
 		float average = 0;
 		float stddev = 0;
 
@@ -188,8 +184,6 @@ void CellHits::Calculate_Average(std::map<int, std::pair<std::vector<int>, std::
 		}
 		else stddev = 0;
 
-		std::cout << __FILE__<< ": Average = " << average << std::endl;
-		std::cout << __FILE__<< ": stddev = " << stddev << std::endl;
 		iterator.second.second.first = average;
 		iterator.second.second.second = stddev;
 	}

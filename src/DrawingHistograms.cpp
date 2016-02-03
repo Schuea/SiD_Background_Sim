@@ -28,7 +28,6 @@ void DrawingHistograms::Initialize() {
 	Files_Canvas_ = new TCanvas((Canvas_name + "_HitsPerFile").c_str());
 	Hits_Canvas_ = new TCanvas((Canvas_name + "_Hits_" + subdetector_name).c_str());
 
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	YesNo_TrackerHistograms = DecideIfTrackerHistograms(argument_subdetectors);
 	time_interval_bunchspacing = number_of_files * 554.0; //ns (one bunch spacing is 554 ns)
@@ -211,7 +210,6 @@ void DrawingHistograms::Open_inputfile(int number_of_file) {
 	if (!inputfile) {
 		throw std::exception();
 	}
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 }
 
 std::pair<int, int> DrawingHistograms::Set_train_bunch_number(int number_of_file) {
@@ -235,7 +233,6 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 	for (int fileIterator = 0; fileIterator < number_of_files; ++fileIterator) {
 		Setup_for_inputfiles(fileIterator, subdetector_iterator, PassedTime, AllHitCounts);
 	} //End of loop through inputfiles
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	for (auto iterator = HitsPerLayerMap.begin(); iterator != HitsPerLayerMap.end(); ++iterator) {
 		for (auto e = iterator->second.begin(); e != iterator->second.end(); ++e) {
 			if (*e > 0) {
@@ -244,7 +241,6 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 			}
 		}
 	}
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	for (auto iterator = HitMap.begin(); iterator != HitMap.end(); ++iterator) {
 		if (iterator->second > 0) {
 			Hits_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first))->Fill(iterator->second);
@@ -253,7 +249,6 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 				DeadCells->Fill(iterator->first);
 		}
 	}
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	int totdead = 0;
 	std::map<int, std::vector<float> > average_occupancy_r;
@@ -267,17 +262,11 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 		AllHitCounts.at(i)->Check_Phi_Position();
 
 		for(auto const &iterator : AllHitCounts.at(i)->Get_AverageOccupancy_Rad()){
-			std::cout << "AverageOccupancy_Rad.size() = " << AllHitCounts.at(i)->Get_AverageOccupancy_Rad().size()
-					<< std::endl;
-			std::cout << iterator.first << "," << AllHitCounts.at(i)->Get_AverageOccupancy_Rad()[iterator.first].second.first << std::endl;
 			average_occupancy_r[iterator.first].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Rad()[iterator.first].second.first);
 			stddev_occupancy_r[iterator.first].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Rad()[iterator.first].second.second);
 		}
 
 		for(auto const &iterator : AllHitCounts.at(i)->Get_AverageOccupancy_Phi()){
-			std::cout << "AverageOccupancy_Phi.size() = " << AllHitCounts.at(i)->Get_AverageOccupancy_Phi().size()
-					<< std::endl;
-			std::cout << iterator.first << "," << AllHitCounts.at(i)->Get_AverageOccupancy_Phi()[iterator.first].second.first << std::endl;
 			average_occupancy_phi[iterator.first].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Phi()[iterator.first].second.first);
 			stddev_occupancy_phi[iterator.first].push_back(AllHitCounts.at(i)->Get_AverageOccupancy_Phi()[iterator.first].second.second);
 		}
@@ -300,21 +289,17 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 			}
 		}
 	}
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	for (auto const &iterator : average_occupancy_phi) {
 		float average = 0;
 		for (int v = 0; v < iterator.second.size(); ++v) {
-			std::cout << "Occupancy phi average = " << average << std::endl;
 			average += iterator.second.at(v);
 		}
 		average /= float(iterator.second.size());
-		std::cout << "Occupancy_phi_Histo_->FindBin(iterator->first) = " << Occupancy_phi_Histo_->FindBin(float(iterator.first/10.0)) << std::endl;
 		Occupancy_phi_Histo_->SetBinContent(Occupancy_phi_Histo_->FindBin(float(iterator.first/10.0)), average); //first = (phi*10)
 	}
 	for (auto const &iterator : stddev_occupancy_phi) {
 		float stddev = 0;
 		for (int v = 0; v < iterator.second.size(); ++v) {
-			std::cout << "Occupancy phi stddev = " << stddev << std::endl;
 			stddev += pow(iterator.second.at(v),2);
 		}
 		stddev = sqrt(stddev);
@@ -325,17 +310,14 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 	for (auto const &iterator : average_occupancy_r) {
 		float average = 0;
 		for (int v = 0; v < iterator.second.size(); ++v) {
-			std::cout << "Occupancy r average = " << average << std::endl;
 			average += iterator.second.at(v);
 		}
 		average /= float(iterator.second.size());
-		std::cout << "Occupancy_r_Histo_->FindBin(iterator->first) = " << Occupancy_r_Histo_->FindBin(iterator.first) << std::endl;
 		Occupancy_r_Histo_->SetBinContent(Occupancy_r_Histo_->FindBin(iterator.first), average); //first = radius bin
 	}
 	for (auto const &iterator : stddev_occupancy_r) {
 		float stddev = 0;
 		for (int v = 0; v < iterator.second.size(); ++v) {
-			std::cout << "Occupancy r stddev = " << stddev << std::endl;
 			stddev += pow(iterator.second.at(v),2);
 		}
 		stddev = sqrt(stddev);
@@ -360,7 +342,6 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 		TotDeadCells_y[i] = iterator->second;
 		i++;
 	}
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 }
 
 void DrawingHistograms::Setup_for_inputfiles(int file_iterator, int subdetector_iterator, Time & PassedTime,
@@ -369,14 +350,11 @@ void DrawingHistograms::Setup_for_inputfiles(int file_iterator, int subdetector_
 	TTree* Tree_MCP;
 	inputfile->GetObject("Tree_MCP", Tree_MCP);
 	TTree *SubdetectorTree = Get_TTree(inputfile, SubDetectors->at(subdetector_iterator)->GetName());
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	int number_of_hits = SubdetectorTree->GetEntries();
-	std::cout << "The TTree " << SubdetectorTree->GetName() << " has " << number_of_hits << " entries." << std::endl;
 
 	Number_train_bunch = Set_train_bunch_number(file_iterator);
 	PassedTime.Calculate_passedbytime(Number_train_bunch.first, Number_train_bunch.second);
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	Data* data = SetBranches(SubdetectorTree);
 	CellHits *HitCount = new CellHits();
@@ -389,7 +367,6 @@ void DrawingHistograms::Setup_for_inputfiles(int file_iterator, int subdetector_
 		Filling_Data_of_hits(file_iterator, subdetector_iterator, data, HitCount, PassedTime, HitMapEnergy2D,
 				HitMapEnergy3D);
 	}
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	AllHitCounts.push_back(HitCount);
 
 	int const colorrangeweight = 1000000000;
@@ -401,10 +378,8 @@ void DrawingHistograms::Setup_for_inputfiles(int file_iterator, int subdetector_
 	ParticlesVSEvent->Fill(file_iterator, number_of_particles);
 	Particles->Fill(number_of_particles);
 	Hits->Fill(number_of_hits);
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	inputfile->Close();
 	delete inputfile;
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 }
 
 void DrawingHistograms::Define_Data_Variables(Data* data, Time & time, float & energy, float & absolutetime, float & x,
@@ -427,7 +402,6 @@ void DrawingHistograms::Define_Data_Variables(Data* data, Time & time, float & e
 		//absolute time = time in respect to the current bunch interaction + time passed by since first bunch interaction
 		absolutetime = data->Get_time_contribution() + time.Get_passedbytime();
 	}
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 }
 void DrawingHistograms::Fill_Histo(std::vector<TH1D*> Histo, int Layerno, float variable1) {
 	Histo.at(Layerno)->Fill(variable1);
@@ -450,7 +424,6 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
 	CellID *SubdetectorCells = InitializeCellIDClass(SubDetectors->at(subdetector_iterator)->GetName(), data);
 	SubdetectorCells->CreateCellID();
 	unsigned long const CellIDkey = SubdetectorCells->CellID_ToINTconversion(SubdetectorCells->GetCellID());
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	LayerCodeInCellID LayerInfo;
 	int const Layer_no = LayerInfo.GetLayer(SubdetectorCells->GetCellID(),
@@ -459,7 +432,6 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
 	if (std::find(hitLayers.begin(), hitLayers.end(), Layer_no) == hitLayers.end()) {
 		hitLayers.push_back(Layer_no);
 	}
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	float energy = 0.;
 	float absolutetime = 0.;
@@ -469,25 +441,20 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
 	std::array<double, 3> vertex = { 0 };
 
 	Define_Data_Variables(data, PassedTime, energy, absolutetime, x, y, z, vertex);
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	//This adds a hit to the Cell ID for a given bunch
 	HitCount->CheckCellID(CellIDkey, x, y);
 	HitCount->Set_BunchNumber(file_iterator + 1);
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	//Fill Maps:
 	HitsPerLayerMap[Layer_no].at(file_iterator) += 1;
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(energy);
 	HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(energy);
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	if (HitMap.find(CellIDkey) == HitMap.end()) {
 		HitMap[CellIDkey] = 1;
 	} else {
 		HitMap[CellIDkey] += 1;
 	}
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	//Fill histograms:
 	Fill_Histo(Hits_2D_, Layer_no, x, y);
 	Fill_Histo(Hits_3D_, Layer_no, z, x, y);
@@ -497,7 +464,6 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
 	Fill_Histo(Hits_Time_rtime_2D_, Layer_no, absolutetime, sqrt(pow(x, 2) + pow(y, 2)));
 	Fill_Histo(Hits_Time_ztime_2D_, Layer_no, absolutetime, z);
 	Fill_Histo(Hits_Time_, Layer_no, absolutetime);
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	if (file_iterator == 0) {
 		std::cout << "Filling hits into 3D plot for the time " << std::to_string(absolutetime) << std::endl;
@@ -529,19 +495,16 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
 		Fill_HitsTime3D_Plots(absolutetime, 4000, 6000, Hits_Time_3D_.at(24), x, y, z);
 		Fill_HitsTime3D_Plots(absolutetime, 6000, 10000, Hits_Time_3D_.at(25), x, y, z);
 	}
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 }
 
 void DrawingHistograms::DrawingMacro() {
 	Setup_SubDetector_vector();
 	Initialize();
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	Setup_BinningArrays(SubDetectors, &axis_range_occupancy_plot, &axis_range_occupancy_r_plot,
 			&axis_range_occupancy_phi_plot, &axis_range_plot_1D, &axis_range_plot_2D, &axis_range_plot_3D,
 			&axis_range_plot_energy_1D, time_interval_bunchspacing, &axis_range_plot_time, &axis_range_plot_rtime_2D,
 			&axis_range_plot_ztime_2D, &axis_range_plot_time_3D);
 	SetupGeneralHistograms();
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	MaxNumberLayers = Find_MaxNumberLayers();
 	for (int l = 0; l <= MaxNumberLayers + 1; ++l) { //In the end, push back an additional histogram for all the layers together
@@ -556,12 +519,10 @@ void DrawingHistograms::DrawingMacro() {
 
 		SetupLayerHistograms(layerstring);
 	}
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	for (int s = 0; s < SubDetectors->size(); ++s) {
 		Filling_Data_for_SubDetectors(s);
 	} //End of SubDetectors loop
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	TGraph* TotDeadCells = new TGraph(BunchNumbers_for_TotDeadCells.size(), TotDeadCells_x, TotDeadCells_y);
 	TotDeadCells->SetTitle("Dead cells (> 4 hits per cell) for given number of bunch crossings");
@@ -574,18 +535,14 @@ void DrawingHistograms::DrawingMacro() {
 	//gStyle->SetOptStat(111111);
 	TCanvas* PDF_Canvas_Hits_Layers = new TCanvas();
 	PDF_Canvas_Hits_Layers->Print("PDFCanvas_Hits_Layers.pdf[");
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	TCanvas* PDF_Canvas_Hits_allLayers = new TCanvas(); //For all layers together
 	PDF_Canvas_Hits_allLayers->Print("PDFCanvas_Hits_allLayers.pdf[");
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	output_rootfile->cd();
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	for (signed int t = 0; t < 20; ++t) {
 		Hits_Time_3D_.at(t)->Write();
 	}
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	for (signed int l = 0; l < hitLayers.size(); ++l) {
 
 		std::cout << "Printing plots for layer number " << hitLayers.at(l) << std::endl;
@@ -594,7 +551,6 @@ void DrawingHistograms::DrawingMacro() {
 		Hits_Energy_3D_.at(hitLayers.at(l))->Write();
 		Hits_3D_.at(MaxNumberLayers + 1)->Write();
 		Hits_Energy_3D_.at(MaxNumberLayers + 1)->Write();
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 		Hits_Canvas_->cd();
 
@@ -612,7 +568,6 @@ void DrawingHistograms::DrawingMacro() {
 			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_2D_.at(MaxNumberLayers + 1), "colz",
 					"PDFCanvas_Hits_allLayers.pdf"); //Print the plot fro all layers only once!
 		}
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
@@ -627,7 +582,6 @@ void DrawingHistograms::DrawingMacro() {
 			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Energy_2D_.at(MaxNumberLayers + 1), "colz",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(0);
@@ -643,7 +597,6 @@ void DrawingHistograms::DrawingMacro() {
 			WritePrintHistogram<TH2D*>(Hits_Canvas_, ParticleOrigins_2D_.at(MaxNumberLayers + 1), "colz",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 		Hits_Canvas_->Clear();
 		gStyle->SetStatX(0.87);
@@ -660,7 +613,6 @@ void DrawingHistograms::DrawingMacro() {
 			WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_PerLayer_.at(MaxNumberLayers + 1), "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(1);
@@ -675,7 +627,6 @@ void DrawingHistograms::DrawingMacro() {
 			WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Histo_.at(MaxNumberLayers + 1), "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(1);
@@ -691,7 +642,6 @@ void DrawingHistograms::DrawingMacro() {
 			WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_.at(MaxNumberLayers + 1), "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(1);
@@ -706,7 +656,6 @@ void DrawingHistograms::DrawingMacro() {
 			WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Time_.at(MaxNumberLayers + 1), "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(0);
@@ -722,7 +671,6 @@ void DrawingHistograms::DrawingMacro() {
 			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_rtime_2D_.at(MaxNumberLayers + 1), "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 		Hits_Canvas_->Update();
 		Hits_Canvas_->SetLogy(0);
@@ -738,14 +686,12 @@ void DrawingHistograms::DrawingMacro() {
 			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_ztime_2D_.at(MaxNumberLayers + 1), "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	}
 	PDF_Canvas_Hits_Layers->Print("PDFCanvas_Hits_Layers.pdf]");
 	delete PDF_Canvas_Hits_Layers;
 	PDF_Canvas_Hits_allLayers->Print("PDFCanvas_Hits_allLayers.pdf]");
 	delete PDF_Canvas_Hits_allLayers;
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 	if (first_layer_to_be_compared >= 0) {
 
@@ -775,7 +721,6 @@ void DrawingHistograms::DrawingMacro() {
 		MeanHits_PerLayer->SetMarkerStyle(21);
 		MeanHits_PerLayer->GetXaxis()->SetRangeUser(first_layer_to_be_compared - 0.5, end_of_range + 0.5);
 		MeanHits_PerLayer->GetXaxis()->CenterTitle();
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 		TCanvas* PDF_Canvas_Hits_CompareLayers = new TCanvas();
 		PDF_Canvas_Hits_CompareLayers->Print("PDFCanvas_Hits_CompareLayers.pdf[");
@@ -788,7 +733,6 @@ void DrawingHistograms::DrawingMacro() {
 			Hits_Canvas_->SetLogy(0);
 			WritePrintComparedHistogram<TGraphErrors*>(Hits_Canvas_, MeanHits_PerLayer, first_layer_to_be_compared,
 					end_of_range, "AP", "PDFCanvas_Hits_CompareLayers.pdf");
-			std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 			Hits_Canvas_->Clear();
 			gStyle->SetStatX(0.87);
@@ -799,7 +743,6 @@ void DrawingHistograms::DrawingMacro() {
 					<< ";Number of hits per bunch crossing;Count";
 			WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_PerLayer_, new_histo_perlayer_title.str(), hitLayers,
 					first_layer_to_be_compared, end_of_range, false, "", "PDFCanvas_Hits_CompareLayers.pdf");
-			std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 			Hits_Canvas_->Clear();
 			gStyle->SetStatX(0.87);
@@ -809,7 +752,6 @@ void DrawingHistograms::DrawingMacro() {
 					<< first_layer_to_be_compared << " - " << end_of_range << ";Number of hits per cell;Count";
 			WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_Histo_, new_histo_title.str(), hitLayers,
 					first_layer_to_be_compared, end_of_range, true, "", "PDFCanvas_Hits_CompareLayers.pdf");
-			std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 			Hits_Canvas_->Clear();
 			gStyle->SetStatX(0.87);
@@ -819,7 +761,6 @@ void DrawingHistograms::DrawingMacro() {
 					<< first_layer_to_be_compared << " - " << end_of_range << ";Deposited hit energy;Count";
 			WritePrintComparedHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_, new_Energy_histo_title.str(),
 					hitLayers, first_layer_to_be_compared, end_of_range, true, "", "PDFCanvas_Hits_CompareLayers.pdf");
-			std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 		} //End of if-to-be-compared loop
 		else {
 			std::cerr << "The first or the last (or both) layer of your given range has no hits!\n"
@@ -827,16 +768,13 @@ void DrawingHistograms::DrawingMacro() {
 		}
 		PDF_Canvas_Hits_CompareLayers->Print("PDFCanvas_Hits_CompareLayers.pdf]");
 		delete PDF_Canvas_Hits_CompareLayers;
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	}
 	for (signed int l = 0; l < MaxNumberLayers + 1; ++l) {
 		delete Hits_PerLayer_.at(l), Hits_Histo_.at(l), Hits_2D_.at(l), Hits_3D_.at(l);
 		delete Hits_Energy_Histo_.at(l), Hits_Energy_2D_.at(l), Hits_Energy_3D_.at(l), Hits_Time_ztime_2D_.at(l);
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	}
 	for (signed int t = 0; t < 20; ++t) {
 		delete Hits_Time_3D_.at(t);
-		std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	}
 	delete Hits_Canvas_;
 	output_rootfile->Write();
@@ -852,27 +790,21 @@ void DrawingHistograms::DrawingMacro() {
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(0);
 	WritePrintHistogram(Files_Canvas_, ParticlesVSEvent, "", "PDFCanvas_ParticlesHits_perFile.pdf");
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(0);
 	WritePrintHistogram(Files_Canvas_, Particles, "", "PDFCanvas_ParticlesHits_perFile.pdf");
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(1);
 	WritePrintHistogram(Files_Canvas_, Hits, "", "PDFCanvas_ParticlesHits_perFile.pdf");
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(1);
 	WritePrintHistogram(Files_Canvas_, Occupancy_r_Histo_, "", "PDFCanvas_ParticlesHits_perFile.pdf");
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(0);
 	WritePrintHistogram(Files_Canvas_, Occupancy_phi_Histo_, "", "PDFCanvas_ParticlesHits_perFile.pdf");
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(0);
 	WritePrintHistogram(Files_Canvas_, DeadCells, "", "PDFCanvas_ParticlesHits_perFile.pdf");
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(0);
 	WritePrintHistogram(Files_Canvas_, TotDeadCells, "AP", "PDFCanvas_ParticlesHits_perFile.pdf");
@@ -880,6 +812,5 @@ void DrawingHistograms::DrawingMacro() {
 
 	delete PDF_Canvas_ParticlesHits_per_File;
 	delete Files_Canvas_;
-	std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 
 } //End of function DrawingMacro 
