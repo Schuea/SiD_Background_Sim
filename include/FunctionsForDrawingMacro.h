@@ -1,6 +1,7 @@
 #ifndef FUNCTIONSFORDRAWINGMACRO
 #define FUNCTIONSFORDRAWINGMACRO
 
+#include "TGraph.h"
 #include "TH2.h"
 #include "TH3.h"
 #include "TTree.h"
@@ -34,7 +35,7 @@ void InitializeAllSubdetectors(std::vector< Subdetector* > * SubDetectors);
 
 template< class T > void WritePrintComparedHistogram(TCanvas* Canvas_, std::vector< T > Histos_, std::string new_histo_title,		std::vector< int > hitLayers, int firstlayer, int lastlayer, bool Normalizing, std::string drawingoption,		std::string PDFName);
 template< class T > void WritePrintComparedHistogram(TCanvas* Canvas_, T Histo, int firstlayer, int lastlayer, std::string drawingoption,		std::string PDFName);
-template< class T > void WritePrintHistogram(TCanvas* Canvas_, T Histos_, std::string drawingoption, std::string PDFName);
+template< class T > void WritePrintHistogram(TCanvas* Canvas_, T Histos_, bool Normalizing, std::string drawingoption, std::string PDFName);
 std::string Setup_HitsTime3D_PlotsTitle(float timelow, float timehigh, std::string subdetector_name);
 void Fill_HitsTime3D_Plots(float time, float timelow, float timehigh, TH3D* histo, float x, float y, float z);
 
@@ -146,6 +147,25 @@ template<class T>
 void WritePrintHistogram(TCanvas* Canvas_, T Histos_, std::string drawingoption, std::string PDFName) {
 	Canvas_->Update();
 	Canvas_->SetRightMargin(0.15);
+	Histos_->Draw(drawingoption.c_str());
+	Canvas_->Write();
+	std::stringstream CanvasName_eps, CanvasName_C;
+	CanvasName_eps << Canvas_->GetName() << "_" << Histos_->GetName() << ".eps";
+	CanvasName_C << Canvas_->GetName() << "_" << Histos_->GetName() << ".C";
+
+	Canvas_->Print(CanvasName_eps.str().c_str());
+	Canvas_->Print(CanvasName_C.str().c_str());
+	Canvas_->Print(PDFName.c_str());
+}
+
+template<class T>
+void WritePrintHistogram(TCanvas* Canvas_, T Histos_, bool Normalizing, std::string drawingoption, std::string PDFName) {
+	Canvas_->Update();
+	Canvas_->SetRightMargin(0.15);
+	if (Normalizing){
+			Histos_->GetYaxis()->SetTitle("Normalized entries");
+			Histos_->Scale(1.0 / Histos_->Integral());
+	}
 	Histos_->Draw(drawingoption.c_str());
 	Canvas_->Write();
 	std::stringstream CanvasName_eps, CanvasName_C;

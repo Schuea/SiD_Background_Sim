@@ -70,7 +70,7 @@ class DrawingHistograms{
     //TH2D* Occupancy_phi_Histo_;
     std::vector< TH2D* > ParticleOrigins_2D_;
     std::vector< TH1D* > Hits_PerLayer_;
-    std::vector< TH1D* > Hits_Histo_;
+    std::vector< TH1D* > Bufferdepth_Histo_;
     std::vector< TH2D* > Hits_2D_;
     std::vector< TH3D* > Hits_3D_;
     std::vector< TH1D* > Hits_Energy_Histo_;

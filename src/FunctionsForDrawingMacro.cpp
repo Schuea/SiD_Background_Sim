@@ -362,7 +362,7 @@ void SetupHistoTitles(std::string subdetector_name, std::string layer,
 
 	histo_name1D = "Hits_" + subdetector_name + "_Layer_" + layer;
 	histo_title1D = "Hit occupancy per cell for " + subdetector_name + layercount.str()
-			+ ";Number of hits per cell;Count";
+			+ ";Occupancy;Count";
 	histo_name2D = "Hits_2D_" + subdetector_name + "_Layer_" + layer;
 	histo_title2D = "HitMap for " + subdetector_name + layercount.str() + ";x [mm];y [mm]";
 	histo_name3D = "Hits_3D_" + subdetector_name + "_Layer_" + layer;

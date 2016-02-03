@@ -5,6 +5,7 @@ void EcalBarrel::Initialize(){
   LengthLayerBin_ = 6;
   StartLayerBin_ = 13;
   NumberOfLayers_ = 31;
+  TotCellNumber_ = 1024;
 
   ROOTEnergyHisto_binning = {40., 0., 0.01};
   ROOTHisto_binning_occupancy = {12, 0, 12};
@@ -20,6 +21,7 @@ void EcalEndcap::Initialize(){
   LengthLayerBin_ = 6;
   StartLayerBin_ = 13;
   NumberOfLayers_ = 31;
+  TotCellNumber_ = 1024;
 
   ROOTEnergyHisto_binning = {40., 0., 0.01};
   ROOTHisto_binning_occupancy = {12, 0, 12};
@@ -35,6 +37,7 @@ void HcalBarrel::Initialize(){
   LengthLayerBin_ = 6;
   StartLayerBin_ = 13;
   NumberOfLayers_ = 40;
+  TotCellNumber_ = 1024;
 
   ROOTEnergyHisto_binning = {40., 0., 0.00002};
   ROOTHisto_binning_occupancy = {12, 0, 12};
@@ -50,6 +53,7 @@ void HcalEndcap::Initialize(){
   LengthLayerBin_ = 8;
   StartLayerBin_ = 13;
   NumberOfLayers_ = 45;
+  TotCellNumber_ = 1024;
 
   ROOTEnergyHisto_binning = {250., 0., 0.00045};
   ROOTHisto_binning_occupancy = {12, 0, 12};
@@ -65,6 +69,7 @@ void MuonBarrel::Initialize(){
   LengthLayerBin_ = 6;
   StartLayerBin_ = 15;
   NumberOfLayers_ = 11;
+  TotCellNumber_ = 1024;
 
   ROOTEnergyHisto_binning = {25., 0., 0.00003};
   ROOTHisto_binning_occupancy = {12, 0, 12};
@@ -80,6 +85,7 @@ void MuonEndcap::Initialize(){
   LengthLayerBin_ = 6;
   StartLayerBin_ = 15;
   NumberOfLayers_ = 11;
+  TotCellNumber_ = 1024;
 
   ROOTEnergyHisto_binning = {35., 0., 0.0075};
   ROOTHisto_binning_occupancy = {12, 0, 12};
@@ -95,6 +101,7 @@ void BeamCal::Initialize(){
   LengthLayerBin_ = 8;
   StartLayerBin_ = 8;
   NumberOfLayers_ = 50;
+  TotCellNumber_ = 1024;
 
   ROOTEnergyHisto_binning = {45., 0., 2.5};
   ROOTHisto_binning_occupancy = {12, 0, 12};
@@ -110,6 +117,7 @@ void LumiCal::Initialize(){
   LengthLayerBin_ = 8;
   StartLayerBin_ = 8;
   NumberOfLayers_ = 30;
+  TotCellNumber_ = 1024;
 
   ROOTEnergyHisto_binning = {40., 0., 0.045};
   ROOTHisto_binning_occupancy = {12, 0, 12};
@@ -125,6 +133,7 @@ void SiVertexEndcap::Initialize(){
   LengthLayerBin_ = 4;
   StartLayerBin_ = 9;
   NumberOfLayers_ = 4;
+  TotCellNumber_ = 1024;
 
   //TO BE ADJUSTED:
   ROOTEnergyHisto_binning = {15., 0., 0.005};
@@ -141,6 +150,7 @@ void SiVertexBarrel::Initialize(){
   LengthLayerBin_ = 4;
   StartLayerBin_ = 9;
   NumberOfLayers_ = 5;
+  TotCellNumber_ = 1024;
 
   //TO BE ADJUSTED:
   ROOTEnergyHisto_binning = {40., 0., 0.045};
@@ -157,6 +167,7 @@ void SiTrackerEndcap::Initialize(){
   LengthLayerBin_ = 4;
   StartLayerBin_ = 9;
   NumberOfLayers_ = 4;
+  TotCellNumber_ = 1024;
 
   //TO BE ADJUSTED:
   ROOTEnergyHisto_binning = {40., 0., 0.045};
@@ -173,6 +184,7 @@ void SiTrackerBarrel::Initialize(){
   LengthLayerBin_ = 4;
   StartLayerBin_ = 9;
   NumberOfLayers_ = 5;
+  TotCellNumber_ = 1024;
 
   //TO BE ADJUSTED:
   ROOTEnergyHisto_binning = {40., 0., 0.045};
@@ -189,6 +201,7 @@ void SiTrackerForward::Initialize(){
   LengthLayerBin_ = 4;
   StartLayerBin_ = 9;
   NumberOfLayers_ = 3;
+  TotCellNumber_ = 1024;
 
   //TO BE ADJUSTED:
   ROOTEnergyHisto_binning = {40., 0., 0.045};

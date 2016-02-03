@@ -16,6 +16,9 @@ std::vector<int> CellHits::Get_HitCount() const {
 std::vector<std::pair<float, float> > CellHits::Get_CellPosition() const {
 	return CellPosition;
 }
+std::vector< float > CellHits::Get_Layer() const {
+	return Layer;
+}
 std::vector<float> CellHits::Get_Position_Radius() const {
 	return Position_Radius;
 }
@@ -35,7 +38,7 @@ void CellHits::Set_BunchNumber(int const bunchnumber) {
 	BunchNumber = bunchnumber;
 }
 
-void CellHits::CheckCellID(int const id, float const x, float const y) {
+void CellHits::Check_CellID(unsigned long const id, float const x, float const y) {
 	bool cell_exists(false);
 	int vector_element(-1);
 	for (int i = 0; i < CellID.size(); ++i) {
@@ -51,17 +54,18 @@ void CellHits::CheckCellID(int const id, float const x, float const y) {
 		CellID.push_back(id);
 		HitCount.push_back(1);
 		CellPosition.push_back(std::pair<float, float>(x, y));
+		Layer.push_back(SubDetector->GetLayer(id));
 		Position_Radius.push_back(sqrt(pow(x, 2) + pow(y, 2)));
 		Position_Phi.push_back(atan2(y, x));
 		//Position_Phi.push_back(acos(x / sqrt(pow(x, 2) + pow(y, 2))));
 	}
 }
-void CellHits::Check_Rad_Position(std::string subdetector_) {
+void CellHits::Check_Rad_Position() {
 	//std::size_t found = subdetector_.find_last_of("Endcap");
 
 	for (int j = 0; j < Position_Radius.size(); ++j) {
 
-		if (subdetector_ == "SiVertexEndcap" || subdetector_ == "SiVertexBarrel") {
+		if (SubDetector->GetName() == "SiVertexEndcap" || SubDetector->GetName() == "SiVertexBarrel") {
 			if (Position_Radius.at(j) < 10)
 				AverageOccupancy_Rad[5].first.push_back(HitCount.at(j));
 			if (Position_Radius.at(j) >= 10 && Position_Radius.at(j) < 20)
