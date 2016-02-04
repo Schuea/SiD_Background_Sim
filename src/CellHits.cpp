@@ -7,7 +7,7 @@
 
 #include "CellHits.h"
 
-std::vector<int> CellHits::Get_CellID() const {
+std::vector<unsigned long long> CellHits::Get_CellID() const {
 	return CellID;
 }
 std::vector<int> CellHits::Get_HitCount() const {
@@ -41,7 +41,7 @@ void CellHits::Set_BunchNumber(int const bunchnumber) {
 	BunchNumber = bunchnumber;
 }
 
-void CellHits::Check_CellID(unsigned long const id, float const x, float const y) {
+void CellHits::Check_CellID(unsigned long long const id, float const x, float const y) {
 	bool cell_exists(false);
 	int vector_element(-1);
 	for (int i = 0; i < CellID.size(); ++i) {

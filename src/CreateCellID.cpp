@@ -44,9 +44,9 @@ void CellID54bits::CreateCellID() {
   }
 }
 
-unsigned long CellID::CellID_ToINTconversion(std::string const CellIDstring) const{
+unsigned long long CellID::CellID_ToLONGconversion(std::string const CellIDstring) const{
   std::bitset<64> temp (CellIDstring);
-  return temp.to_ulong();
+  return temp.to_ullong();
 }
 
 CellID::CellID(int const ID) : ID_(ID), ID0_(-1), ID1_(-1){}

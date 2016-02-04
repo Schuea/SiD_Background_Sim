@@ -26,7 +26,7 @@ public:
 	~CellHits() {
 	}
 
-	std::vector<int> Get_CellID() const;
+	std::vector<unsigned long long> Get_CellID() const;
 	std::vector<int> Get_HitCount() const;
 	std::vector<std::pair<float, float> > Get_CellPosition() const;
 	std::vector<float> Get_Layer() const;
@@ -38,7 +38,7 @@ public:
 	int Get_BunchNumber() const;
 
 	int Calculate_NumberHitsPerLayer(int LayerNumber);
-	void Check_CellID(unsigned long const id, float const x, float const y);
+	void Check_CellID(unsigned long long const id, float const x, float const y);
 	void Check_Rad_Position();
 	void Check_Phi_Position();
 	void Calculate_Average(std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > & AverageMap);
@@ -46,7 +46,7 @@ public:
 
 protected:
 	Subdetector* SubDetector;
-	std::vector<int> CellID;
+	std::vector<unsigned long long> CellID;
 	std::vector<int> HitCount;
 	std::vector<std::pair<float, float> > CellPosition;
 	std::vector<float> Layer;

@@ -155,9 +155,7 @@ void DrawingHistograms::Setup_SubDetector_vector() {
 }
 
 void DrawingHistograms::Setup_HitsPerLayerMap(int layer) {
-	for (int files = 1; files <= number_of_files; ++files) {
-		HitsPerLayerMap[layer].push_back(0);
-	}
+		HitsPerLayerMap[layer].assign(number_of_files, 0);
 }
 
 int DrawingHistograms::Find_MaxNumberLayers() {
@@ -384,6 +382,7 @@ void DrawingHistograms::Setup_for_inputfiles(int file_iterator, int subdetector_
 		SubdetectorTree->GetEntry(i);
 		Filling_Data_of_hits(file_iterator, subdetector_iterator, data, HitCount, PassedTime, HitMapEnergy2D,
 				HitMapEnergy3D);
+		if(i == 1000) break;
 	}
 	AllHitCounts.push_back(HitCount);
 
@@ -441,12 +440,14 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
 
 	CellID *SubdetectorCells = InitializeCellIDClass(SubDetectors->at(subdetector_iterator)->GetName(), data);
 	SubdetectorCells->CreateCellID();
-	unsigned long const CellIDkey = SubdetectorCells->CellID_ToINTconversion(SubdetectorCells->GetCellID());
+	unsigned long long const CellIDkey = SubdetectorCells->CellID_ToLONGconversion(SubdetectorCells->GetCellID());
 
 	LayerCodeInCellID LayerInfo;
+    std::cout << __FILE__ << ", " <<__LINE__ << ": CellID = " << SubdetectorCells->GetCellID() << std::endl;
 	int const Layer_no = LayerInfo.GetLayer(SubdetectorCells->GetCellID(),
 			SubDetectors->at(subdetector_iterator)->GetStartLayerBin(),
 			SubDetectors->at(subdetector_iterator)->GetLengthLayerBin());
+    std::cout << __FILE__ << ", " <<__LINE__ << ": Layer = " << Layer_no << std::endl;
 	if (std::find(hitLayers.begin(), hitLayers.end(), Layer_no) == hitLayers.end()) {
 		hitLayers.push_back(Layer_no);
 	}
