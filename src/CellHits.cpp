@@ -19,6 +19,9 @@ std::vector<std::pair<float, float> > CellHits::Get_CellPosition() const {
 std::vector< float > CellHits::Get_Layer() const {
 	return Layer;
 }
+int CellHits::Get_NumberHitsPerLayer(int LayerNumber) {
+	return Calculate_NumberHitsPerLayer(LayerNumber);
+}
 std::vector<float> CellHits::Get_Position_Radius() const {
 	return Position_Radius;
 }
@@ -60,6 +63,15 @@ void CellHits::Check_CellID(unsigned long const id, float const x, float const y
 		//Position_Phi.push_back(acos(x / sqrt(pow(x, 2) + pow(y, 2))));
 	}
 }
+
+int CellHits::Calculate_NumberHitsPerLayer(int LayerNumber) {
+	int NumberHitsPerLayer(0);
+	for (int i = 0; i < Layer.size(); ++i){
+		if (Layer.at(i) == LayerNumber) NumberHitsPerLayer += 1;
+	}
+	return NumberHitsPerLayer;
+}
+
 void CellHits::Check_Rad_Position() {
 	//std::size_t found = subdetector_.find_last_of("Endcap");
 

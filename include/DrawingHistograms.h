@@ -105,9 +105,9 @@ class DrawingHistograms{
   
     std::vector< int > hitLayers;
     int MaxNumberLayers;
- 
-    std::map< unsigned long, int > HitMap;  //cellid, count of all hits per cell
-    std::map< int, std::vector<int> > HitsPerLayerMap;
+	std::vector<float> Fraction_CellsNotHit;
+
+	std::map< int, std::vector<int> > HitsPerLayerMap;
   
     void Initialize();
     void SetupGeneralHistograms();

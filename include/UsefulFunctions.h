@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <utility>
 #include <vector>
+#include <sstream>
 
 template <class T, class Q>
 std::vector <T> operator* (const Q c, std::vector <T> A)
@@ -13,6 +14,7 @@ std::vector <T> operator* (const Q c, std::vector <T> A)
     return A ;
 }
 
+std::string Convert_FloatToString (float number);
 float FindMax(float const value, float max);
 float FindMax(int const value, float max);
 float FindMax(float const value, int max);

@@ -1,6 +1,10 @@
 #include "UsefulFunctions.h"
 
-
+std::string Convert_FloatToString (float number){
+    std::ostringstream buff;
+    buff<<number;
+    return buff.str();
+}
 float FindMax(float const value, float max){
   if (value > max)  max = value;
   return max;

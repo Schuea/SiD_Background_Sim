@@ -30,12 +30,14 @@ public:
 	std::vector<int> Get_HitCount() const;
 	std::vector<std::pair<float, float> > Get_CellPosition() const;
 	std::vector<float> Get_Layer() const;
+	int Get_NumberHitsPerLayer(int LayerNumber);
 	std::vector<float> Get_Position_Radius() const;
 	std::vector<float> Get_Position_Phi() const;
 	std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > Get_AverageOccupancy_Rad() const;
 	std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > Get_AverageOccupancy_Phi() const;
 	int Get_BunchNumber() const;
 
+	int Calculate_NumberHitsPerLayer(int LayerNumber);
 	void Check_CellID(unsigned long const id, float const x, float const y);
 	void Check_Rad_Position();
 	void Check_Phi_Position();

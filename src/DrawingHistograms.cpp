@@ -11,7 +11,7 @@ DrawingHistograms::DrawingHistograms(std::string _outputname, std::vector<std::s
 				nullptr), Occupancy_r_Histo_(nullptr), Occupancy_phi_Histo_(nullptr), ParticleOrigins_2D_(), Hits_PerLayer_(), Bufferdepth_Histo_(), Hits_2D_(), Hits_3D_(), Hits_Energy_Histo_(), Hits_Energy_2D_(), Hits_Energy_3D_(), Hits_Time_(), Hits_Time_rtime_2D_(), Hits_Time_ztime_2D_(), Hits_Time_3D_(), time_interval_bunchspacing(
 				0), Number_train_bunch(), BunchNumbers_for_TotDeadCells(), TotDeadCells_x(nullptr), TotDeadCells_y(
 				nullptr), YesNo_TrackerHistograms(false), axis_range_occupancy_plot(), axis_range_occupancy_r_plot(), axis_range_occupancy_phi_plot(), axis_range_plot_1D(), axis_range_plot_2D(), axis_range_plot_3D(), axis_range_plot_energy_1D(), axis_range_plot_time(), axis_range_plot_rtime_2D(), axis_range_plot_ztime_2D(), axis_range_plot_time_3D(), SubDetectors(
-				nullptr), subdetector_name(""), hitLayers(), MaxNumberLayers(0), HitMap(), HitsPerLayerMap() {
+				nullptr), subdetector_name(""), hitLayers(), MaxNumberLayers(0), HitsPerLayerMap() {
 }
 
 DrawingHistograms::~DrawingHistograms() {
@@ -240,21 +240,14 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 			}
 		}
 	}
-	for (auto iterator = HitMap.begin(); iterator != HitMap.end(); ++iterator) {
-		Bufferdepth_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first))->Fill(iterator->second);
-		Bufferdepth_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(iterator->first))->SetBinContent(1,SubDetectors->at(subdetector_iterator)->GetTotCellNumber());//First bin with 0 hits (total number of cells - total number of hit cells)
-		Bufferdepth_Histo_.at(MaxNumberLayers + 1)->Fill(iterator->second);
-		Bufferdepth_Histo_.at(MaxNumberLayers + 1)->SetBinContent(1,SubDetectors->at(subdetector_iterator)->GetTotCellNumber()-HitMap.size());//First bin with 0 hits (total number of cells - total number of hit cells)
 
-		if (iterator->second > 4) DeadCells->Fill(iterator->first);
-	}
-
+	std::map<int, int> bunch_totdead;
 	int totdead = 0;
 	std::map<int, std::vector<float> > average_occupancy_r;
 	std::map<int, std::vector<float> > stddev_occupancy_r;
 	std::map<int, std::vector<float> > average_occupancy_phi;
 	std::map<int, std::vector<float> > stddev_occupancy_phi;
-	std::map<int, int> bunch_totdead;
+	Fraction_CellsNotHit.assign(MaxNumberLayers + 2, 0.0);
 
 	for (int i = 0; i < AllHitCounts.size(); ++i) {
 		AllHitCounts.at(i)->Check_Rad_Position();
@@ -280,12 +273,29 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 		 }
 		 */
 
-
 		for (int j = 0; j < AllHitCounts.at(i)->Get_CellID().size(); ++j) {
-			Bufferdepth_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)))->Fill(AllHitCounts.at(i)->Get_HitCount().at(j));
-			Bufferdepth_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)))->SetBinContent(1,SubDetectors->at(subdetector_iterator)->GetTotCellNumber()-AllHitCounts.at(i)->Get_Layer().size());//First bin with 0 hits (total number of cells - total number of hit cells)
+			Bufferdepth_Histo_.at(
+					SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)))->Fill(
+					AllHitCounts.at(i)->Get_HitCount().at(j));
+			Bufferdepth_Histo_.at(
+					SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)))->SetBinContent(
+					1, SubDetectors->at(subdetector_iterator)->GetTotCellNumber()); //First bin: total number of cells
+
 			Bufferdepth_Histo_.at(MaxNumberLayers + 1)->Fill(AllHitCounts.at(i)->Get_HitCount().at(j));
-			Bufferdepth_Histo_.at(MaxNumberLayers + 1)->SetBinContent(1,SubDetectors->at(subdetector_iterator)->GetTotCellNumber()-AllHitCounts.at(i)->Get_CellID().size());//First bin with 0 hits (total number of cells - total number of hit cells)
+			Bufferdepth_Histo_.at(MaxNumberLayers + 1)->SetBinContent(1,SubDetectors->at(subdetector_iterator)->GetNumberOfLayers()
+					* SubDetectors->at(subdetector_iterator)->GetTotCellNumber()); //First bin: total number of cells
+
+			Fraction_CellsNotHit.at(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)))
+					= float(SubDetectors->at(subdetector_iterator)->GetTotCellNumber()
+					- AllHitCounts.at(i)->Get_NumberHitsPerLayer(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j))))
+					/ float(SubDetectors->at(subdetector_iterator)->GetTotCellNumber());
+			Fraction_CellsNotHit.at(MaxNumberLayers + 1)
+					= float(SubDetectors->at(subdetector_iterator)->GetNumberOfLayers()
+					* SubDetectors->at(subdetector_iterator)->GetTotCellNumber()
+					- AllHitCounts.at(i)->Get_CellID().size())
+					/ float(SubDetectors->at(subdetector_iterator)->GetNumberOfLayers()
+					* SubDetectors->at(subdetector_iterator)->GetTotCellNumber());
+
 			if (AllHitCounts.at(i)->Get_HitCount().at(j) > 4) {
 				DeadCells->Fill(AllHitCounts.at(i)->Get_BunchNumber());
 				totdead++;
@@ -458,11 +468,7 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
 	HitsPerLayerMap[Layer_no].at(file_iterator) += 1;
 	HitMapEnergy2D[std::pair<int, int>(Layer_no, Hits_Energy_2D_.at(Layer_no)->FindBin(x, y))].push_back(energy);
 	HitMapEnergy3D[std::pair<int, int>(Layer_no, Hits_Energy_3D_.at(Layer_no)->FindBin(z, x, y))].push_back(energy);
-	if (HitMap.find(CellIDkey) == HitMap.end()) {
-		HitMap[CellIDkey] = 1;
-	} else {
-		HitMap[CellIDkey] += 1;
-	}
+
 	//Fill histograms:
 	Fill_Histo(Hits_2D_, Layer_no, x, y);
 	Fill_Histo(Hits_3D_, Layer_no, z, x, y);
@@ -541,6 +547,7 @@ void DrawingHistograms::DrawingMacro() {
 
 	gStyle->SetOptStat(1);
 	//gStyle->SetOptStat(111111);
+
 	TCanvas* PDF_Canvas_Hits_Layers = new TCanvas();
 	PDF_Canvas_Hits_Layers->Print("PDFCanvas_Hits_Layers.pdf[");
 
@@ -567,28 +574,28 @@ void DrawingHistograms::DrawingMacro() {
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
-		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_2D_.at(hitLayers.at(l)), false, "colz",
+		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_2D_.at(hitLayers.at(l)), false, "colz", "",
 				"PDFCanvas_Hits_Layers.pdf");
 		if (l == 0) {
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(0);
 			Hits_Canvas_->SetLogx(0);
 			Hits_Canvas_->SetLogz(0);
-			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_2D_.at(MaxNumberLayers + 1), false, "colz",
+			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_2D_.at(MaxNumberLayers + 1), false, "colz", "",
 					"PDFCanvas_Hits_allLayers.pdf"); //Print the plot fro all layers only once!
 		}
 
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
-		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Energy_2D_.at(hitLayers.at(l)), false, "colz",
+		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Energy_2D_.at(hitLayers.at(l)), false, "colz", "",
 				"PDFCanvas_Hits_Layers.pdf");
 		if (l == 0) {
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(0);
 			Hits_Canvas_->SetLogx(0);
 			Hits_Canvas_->SetLogz(0);
-			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Energy_2D_.at(MaxNumberLayers + 1), false, "colz",
+			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Energy_2D_.at(MaxNumberLayers + 1), false, "colz", "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
 
@@ -596,14 +603,14 @@ void DrawingHistograms::DrawingMacro() {
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(1);
-		WritePrintHistogram<TH2D*>(Hits_Canvas_, ParticleOrigins_2D_.at(hitLayers.at(l)), false, "colz",
+		WritePrintHistogram<TH2D*>(Hits_Canvas_, ParticleOrigins_2D_.at(hitLayers.at(l)), false, "colz", "",
 				"PDFCanvas_Hits_Layers.pdf");
 		if (l == 0) {
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(0);
 			Hits_Canvas_->SetLogx(0);
 			Hits_Canvas_->SetLogz(1);
-			WritePrintHistogram<TH2D*>(Hits_Canvas_, ParticleOrigins_2D_.at(MaxNumberLayers + 1), false, "colz",
+			WritePrintHistogram<TH2D*>(Hits_Canvas_, ParticleOrigins_2D_.at(MaxNumberLayers + 1), false, "colz", "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
 
@@ -613,14 +620,14 @@ void DrawingHistograms::DrawingMacro() {
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
-		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_PerLayer_.at(hitLayers.at(l)), false, "",
+		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_PerLayer_.at(hitLayers.at(l)), false, "", "",
 				"PDFCanvas_Hits_Layers.pdf");
 		if (l == 0) {
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(0);
 			Hits_Canvas_->SetLogx(0);
 			Hits_Canvas_->SetLogz(0);
-			WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_PerLayer_.at(MaxNumberLayers + 1), false, "",
+			WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_PerLayer_.at(MaxNumberLayers + 1), false, "", "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
 
@@ -628,14 +635,17 @@ void DrawingHistograms::DrawingMacro() {
 		Hits_Canvas_->SetLogy(1);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
-		WritePrintHistogram<TH1D*>(Hits_Canvas_, Bufferdepth_Histo_.at(hitLayers.at(l)), true, "",
+		std::string AdditionalText;
+		AdditionalText = "Fraction of cells that are not hit: " + Convert_FloatToString(Fraction_CellsNotHit.at(hitLayers.at(l)));
+		WritePrintHistogram<TH1D*>(Hits_Canvas_, Bufferdepth_Histo_.at(hitLayers.at(l)), true, "", AdditionalText,
 				"PDFCanvas_Hits_Layers.pdf");
 		if (l == 0) {
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(1);
 			Hits_Canvas_->SetLogx(0);
 			Hits_Canvas_->SetLogz(0);
-			WritePrintHistogram<TH1D*>(Hits_Canvas_, Bufferdepth_Histo_.at(MaxNumberLayers + 1), true, "",
+			AdditionalText = "Fraction of cells that are not hit: " + Convert_FloatToString(Fraction_CellsNotHit.at(MaxNumberLayers + 1));
+			WritePrintHistogram<TH1D*>(Hits_Canvas_, Bufferdepth_Histo_.at(MaxNumberLayers + 1), true, "", AdditionalText,
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
 
@@ -643,14 +653,14 @@ void DrawingHistograms::DrawingMacro() {
 		Hits_Canvas_->SetLogy(1);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
-		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_.at(hitLayers.at(l)), false, "",
+		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_.at(hitLayers.at(l)), false, "", "",
 				"PDFCanvas_Hits_Layers.pdf");
 		if (l == 0) {
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(1);
 			Hits_Canvas_->SetLogx(0);
 			Hits_Canvas_->SetLogz(0);
-			WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_.at(MaxNumberLayers + 1), false, "",
+			WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Energy_Histo_.at(MaxNumberLayers + 1), false, "", "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
 
@@ -658,14 +668,14 @@ void DrawingHistograms::DrawingMacro() {
 		Hits_Canvas_->SetLogy(1);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
-		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Time_.at(hitLayers.at(l)), false, "",
+		WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Time_.at(hitLayers.at(l)), false, "", "",
 				"PDFCanvas_Hits_Layers.pdf");
 		if (l == 0) {
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(1);
 			Hits_Canvas_->SetLogx(0);
 			Hits_Canvas_->SetLogz(0);
-			WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Time_.at(MaxNumberLayers + 1), false, "",
+			WritePrintHistogram<TH1D*>(Hits_Canvas_, Hits_Time_.at(MaxNumberLayers + 1), false, "", "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
 
@@ -673,14 +683,14 @@ void DrawingHistograms::DrawingMacro() {
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
-		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_rtime_2D_.at(hitLayers.at(l)), false, "",
+		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_rtime_2D_.at(hitLayers.at(l)), false, "", "",
 				"PDFCanvas_Hits_Layers.pdf");
 		if (l == 0) {
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(0);
 			Hits_Canvas_->SetLogx(0);
 			Hits_Canvas_->SetLogz(0);
-			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_rtime_2D_.at(MaxNumberLayers + 1), false, "",
+			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_rtime_2D_.at(MaxNumberLayers + 1), false, "", "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
 
@@ -688,14 +698,14 @@ void DrawingHistograms::DrawingMacro() {
 		Hits_Canvas_->SetLogy(0);
 		Hits_Canvas_->SetLogx(0);
 		Hits_Canvas_->SetLogz(0);
-		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_ztime_2D_.at(hitLayers.at(l)), false, "",
+		WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_ztime_2D_.at(hitLayers.at(l)), false, "", "",
 				"PDFCanvas_Hits_Layers.pdf");
 		if (l == 0) {
 			Hits_Canvas_->Update();
 			Hits_Canvas_->SetLogy(0);
 			Hits_Canvas_->SetLogx(0);
 			Hits_Canvas_->SetLogz(0);
-			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_ztime_2D_.at(MaxNumberLayers + 1), false, "",
+			WritePrintHistogram<TH2D*>(Hits_Canvas_, Hits_Time_ztime_2D_.at(MaxNumberLayers + 1), false, "", "",
 					"PDFCanvas_Hits_allLayers.pdf");
 		}
 
@@ -801,25 +811,25 @@ void DrawingHistograms::DrawingMacro() {
 
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(0);
-	WritePrintHistogram(Files_Canvas_, ParticlesVSEvent, false, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+	WritePrintHistogram(Files_Canvas_, ParticlesVSEvent, false, "", "", "PDFCanvas_ParticlesHits_perFile.pdf");
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(0);
-	WritePrintHistogram(Files_Canvas_, Particles, false, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+	WritePrintHistogram(Files_Canvas_, Particles, false, "", "", "PDFCanvas_ParticlesHits_perFile.pdf");
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(1);
-	WritePrintHistogram(Files_Canvas_, Hits, false, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+	WritePrintHistogram(Files_Canvas_, Hits, false, "", "", "PDFCanvas_ParticlesHits_perFile.pdf");
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(1);
-	WritePrintHistogram(Files_Canvas_, Occupancy_r_Histo_, false, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+	WritePrintHistogram(Files_Canvas_, Occupancy_r_Histo_, false, "", "", "PDFCanvas_ParticlesHits_perFile.pdf");
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(0);
-	WritePrintHistogram(Files_Canvas_, Occupancy_phi_Histo_, false, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+	WritePrintHistogram(Files_Canvas_, Occupancy_phi_Histo_, false, "", "", "PDFCanvas_ParticlesHits_perFile.pdf");
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(0);
-	WritePrintHistogram(Files_Canvas_, DeadCells, false, "", "PDFCanvas_ParticlesHits_perFile.pdf");
+	WritePrintHistogram(Files_Canvas_, DeadCells, false, "", "", "PDFCanvas_ParticlesHits_perFile.pdf");
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(0);
-	WritePrintHistogram(Files_Canvas_, TotDeadCells, "AP", "PDFCanvas_ParticlesHits_perFile.pdf");
+	WritePrintHistogram(Files_Canvas_, TotDeadCells, "AP", "", "PDFCanvas_ParticlesHits_perFile.pdf");
 	PDF_Canvas_ParticlesHits_per_File->Print("PDFCanvas_ParticlesHits_perFile.pdf]");
 
 	delete PDF_Canvas_ParticlesHits_per_File;

@@ -21,7 +21,7 @@ void EcalEndcap::Initialize(){
   LengthLayerBin_ = 6;
   StartLayerBin_ = 13;
   NumberOfLayers_ = 31;
-  TotCellNumber_ = 1024;
+  TotCellNumber_ = 102400;
 
   ROOTEnergyHisto_binning = {40., 0., 0.01};
   ROOTHisto_binning_occupancy = {12, 0, 12};
@@ -224,6 +224,9 @@ void Subdetector::Initialize(){
 }
 std::string Subdetector::GetName() const{
   return Name_;
+}
+int Subdetector::GetTotCellNumber() const {
+  return TotCellNumber_;
 }
 int Subdetector::GetStartLayerBin() const {
   return StartLayerBin_;
