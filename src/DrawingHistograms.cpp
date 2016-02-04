@@ -274,12 +274,12 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 		 */
 
 		for (int j = 0; j < AllHitCounts.at(i)->Get_CellID().size(); ++j) {
-			Bufferdepth_Histo_.at(
-					SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)))->Fill(
-					AllHitCounts.at(i)->Get_HitCount().at(j));
-			Bufferdepth_Histo_.at(
-					SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)))->SetBinContent(
-					1, SubDetectors->at(subdetector_iterator)->GetTotCellNumber()); //First bin: total number of cells
+      std::cout << "Layer, HitCount: " << SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)) << ", " <<
+          AllHitCounts.at(i)->Get_HitCount().at(j) << std::endl;
+			Bufferdepth_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)))->
+          Fill(AllHitCounts.at(i)->Get_HitCount().at(j));
+			Bufferdepth_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)))->
+          SetBinContent(1, SubDetectors->at(subdetector_iterator)->GetTotCellNumber()); //First bin: total number of cells
 
 			Bufferdepth_Histo_.at(MaxNumberLayers + 1)->Fill(AllHitCounts.at(i)->Get_HitCount().at(j));
 			Bufferdepth_Histo_.at(MaxNumberLayers + 1)->SetBinContent(1,SubDetectors->at(subdetector_iterator)->GetNumberOfLayers()
