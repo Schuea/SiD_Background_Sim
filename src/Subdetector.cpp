@@ -171,7 +171,7 @@ void SiTrackerEndcap::Initialize(){
 
   //TO BE ADJUSTED:
   ROOTEnergyHisto_binning = {40., 0., 0.045};
-  ROOTHisto_binning_occupancy = {12, 0, 12};
+  ROOTHisto_binning_occupancy = {45, 0, 90};
   ROOTHisto_binning_occupancy_r = {10, 0, 2000, 12, 0, 12};
   ROOTHisto_binning_occupancy_phi = {16, -3.2, 3.2, 12, 0, 12};
   ROOTHisto_binning1D = {100, 0, 210};                                           

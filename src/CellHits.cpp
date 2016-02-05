@@ -7,7 +7,8 @@
 
 #include "CellHits.h"
 
-std::vector<unsigned long long> CellHits::Get_CellID() const {
+std::vector<std::bitset<64>> CellHits::Get_CellID() const {
+//std::vector<unsigned long long> CellHits::Get_CellID() const {
 	return CellID;
 }
 std::vector<int> CellHits::Get_HitCount() const {
@@ -41,23 +42,28 @@ void CellHits::Set_BunchNumber(int const bunchnumber) {
 	BunchNumber = bunchnumber;
 }
 
-void CellHits::Check_CellID(unsigned long long const id, float const x, float const y) {
+void CellHits::Check_CellID(std::bitset<64> const id_bit, float const x, float const y) {
+//void CellHits::Check_CellID(unsigned long long const id, float const x, float const y) {
 	bool cell_exists(false);
 	int vector_element(-1);
+	std::string id = id_bit.to_string();
+	std::cout << "id = " << id << std::endl;
 	for (int i = 0; i < CellID.size(); ++i) {
-		if (CellID.at(i) == id) {
+		std::cout << "CellID.at(i).to_string() = " << CellID.at(i).to_string() << std::endl;
+		if (CellID.at(i).to_string() == id) {
 			cell_exists = true;
 			vector_element = i; //Check at which position in vector the ID is stored
 			break;
 		}
 	}
 	if (cell_exists) {
+		std::cout << "Counting up HitCount for cellid: " << id << std::endl;
 		HitCount.at(vector_element) += 1;
 	} else {
-		CellID.push_back(id);
+		CellID.push_back(std::bitset<64>(id));
 		HitCount.push_back(1);
 		CellPosition.push_back(std::pair<float, float>(x, y));
-		Layer.push_back(SubDetector->GetLayer(id));
+		Layer.push_back(SubDetector->GetLayer(std::bitset<64>(id).to_ullong()));
 		Position_Radius.push_back(sqrt(pow(x, 2) + pow(y, 2)));
 		Position_Phi.push_back(atan2(y, x));
 		//Position_Phi.push_back(acos(x / sqrt(pow(x, 2) + pow(y, 2))));

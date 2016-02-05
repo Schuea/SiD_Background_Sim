@@ -14,13 +14,18 @@ std::bitset<sRes> concatString(std::bitset<s1> const & bs1, std::bitset<s2> cons
 }
 
 void CellID64bits::CreateCellID() {
-  if (ID0_ == 0 || ID1_ == 0){
+  if (ID0_ <= 0 || ID1_ == 0){
     throw std::runtime_error("The CellID was not set. Invalid IDs!");
   }				
   else{
+	std::cout << "ID0 = " << ID0_ << std::endl;
+	std::cout << "ID1 = " << ID1_ << std::endl;
     std::bitset<32> const ID0_bit = std::bitset<32>(ID0_);
     std::bitset<32> const ID1_bit = std::bitset<32>(ID1_);
     CellID_bit_ = concatString<64, 32, 32>(ID1_bit, ID0_bit);
+	std::cout << "ID0_bit = " << ID0_bit << std::endl;
+	std::cout << "ID1_bit = " << ID1_bit << std::endl;
+	std::cout << "concatString = " << CellID_bit_ << std::endl;
   }
 }
 

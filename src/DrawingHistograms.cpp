@@ -272,20 +272,20 @@ void DrawingHistograms::Filling_Data_for_SubDetectors(int subdetector_iterator) 
 		 */
 
 		for (int j = 0; j < AllHitCounts.at(i)->Get_CellID().size(); ++j) {
-      std::cout << "Layer, HitCount: " << SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)) << ", " <<
+      std::cout << "Layer, HitCount: " << SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j).to_ullong()) << ", " <<
           AllHitCounts.at(i)->Get_HitCount().at(j) << std::endl;
-			Bufferdepth_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)))->
+			Bufferdepth_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j).to_ullong()))->
           Fill(AllHitCounts.at(i)->Get_HitCount().at(j));
-			Bufferdepth_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)))->
+			Bufferdepth_Histo_.at(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j).to_ullong()))->
           SetBinContent(1, SubDetectors->at(subdetector_iterator)->GetTotCellNumber()); //First bin: total number of cells
 
 			Bufferdepth_Histo_.at(MaxNumberLayers + 1)->Fill(AllHitCounts.at(i)->Get_HitCount().at(j));
 			Bufferdepth_Histo_.at(MaxNumberLayers + 1)->SetBinContent(1,SubDetectors->at(subdetector_iterator)->GetNumberOfLayers()
 					* SubDetectors->at(subdetector_iterator)->GetTotCellNumber()); //First bin: total number of cells
 
-			Fraction_CellsNotHit.at(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j)))
+			Fraction_CellsNotHit.at(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j).to_ullong()))
 					= float(SubDetectors->at(subdetector_iterator)->GetTotCellNumber()
-					- AllHitCounts.at(i)->Get_NumberHitsPerLayer(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j))))
+					- AllHitCounts.at(i)->Get_NumberHitsPerLayer(SubDetectors->at(subdetector_iterator)->GetLayer(AllHitCounts.at(i)->Get_CellID().at(j).to_ullong())))
 					/ float(SubDetectors->at(subdetector_iterator)->GetTotCellNumber());
 			Fraction_CellsNotHit.at(MaxNumberLayers + 1)
 					= float(SubDetectors->at(subdetector_iterator)->GetNumberOfLayers()
@@ -382,7 +382,7 @@ void DrawingHistograms::Setup_for_inputfiles(int file_iterator, int subdetector_
 		SubdetectorTree->GetEntry(i);
 		Filling_Data_of_hits(file_iterator, subdetector_iterator, data, HitCount, PassedTime, HitMapEnergy2D,
 				HitMapEnergy3D);
-		if(i == 1000) break;
+		//if (i == 500) break;
 	}
 	AllHitCounts.push_back(HitCount);
 
@@ -440,10 +440,12 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
 
 	CellID *SubdetectorCells = InitializeCellIDClass(SubDetectors->at(subdetector_iterator)->GetName(), data);
 	SubdetectorCells->CreateCellID();
-	unsigned long long const CellIDkey = SubdetectorCells->CellID_ToLONGconversion(SubdetectorCells->GetCellID());
+	std::bitset<64> const CellIDkey(SubdetectorCells->GetCellID());
+	//unsigned long long const CellIDkey = SubdetectorCells->CellID_ToLONGconversion(SubdetectorCells->GetCellID());
 
 	LayerCodeInCellID LayerInfo;
-    std::cout << __FILE__ << ", " <<__LINE__ << ": CellID = " << SubdetectorCells->GetCellID() << std::endl;
+    std::cout << __FILE__ << ", " <<__LINE__ << ": CellIDkey = " << CellIDkey << std::endl;
+    //std::cout << __FILE__ << ", " <<__LINE__ << ": CellID = " << SubdetectorCells->GetCellID() << std::endl;
 	int const Layer_no = LayerInfo.GetLayer(SubdetectorCells->GetCellID(),
 			SubDetectors->at(subdetector_iterator)->GetStartLayerBin(),
 			SubDetectors->at(subdetector_iterator)->GetLengthLayerBin());
