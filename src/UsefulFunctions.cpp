@@ -1,5 +1,7 @@
 #include "UsefulFunctions.h"
 
+#include <iostream>
+
 float FindMax(float const value, float max){
   if (value > max)  max = value;
   return max;
@@ -33,7 +35,7 @@ std::string Convert_FloatToString (float number){
     return buff.str();
 }
 
-void NormalizeHistogram(TH1* histo, float size = 1.0) {
+void NormalizeHistogram(TH1 * const histo, float const area) {
 	if (histo == NULL) {
 		std::cerr << "Trying to normalize the histogram " << histo->GetName() << ", but the histo doesn't exist!"
 				<< std::endl;
@@ -45,7 +47,7 @@ void NormalizeHistogram(TH1* histo, float size = 1.0) {
 					<< histo->GetBinContent(histo->GetNbinsX() + 1) << std::endl;
 			throw std::exception();
 		} else {
-			histo->Scale(size / histo->Integral());
+			histo->Scale(area / histo->Integral());
 		}
 	}
 }
