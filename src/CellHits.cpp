@@ -63,7 +63,7 @@ void CellHits::Check_CellID(std::bitset<64> const id_bit, float const x, float c
 		CellID.push_back(std::bitset<64>(id));
 		HitCount.push_back(1);
 		CellPosition.push_back(std::pair<float, float>(x, y));
-		Layer.push_back(SubDetector->GetLayer(std::bitset<64>(id).to_ullong()));
+		Layer.push_back(SubDetector->GetLayer(id));
 		Position_Radius.push_back(sqrt(pow(x, 2) + pow(y, 2)));
 		Position_Phi.push_back(atan2(y, x));
 		//Position_Phi.push_back(acos(x / sqrt(pow(x, 2) + pow(y, 2))));

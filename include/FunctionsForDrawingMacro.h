@@ -1,6 +1,7 @@
 #ifndef FUNCTIONSFORDRAWINGMACRO
 #define FUNCTIONSFORDRAWINGMACRO
 
+#include "TError.h"
 #include "TGraph.h"
 #include "TH2.h"
 #include "TH3.h"
@@ -132,9 +133,15 @@ void WritePrintComparedHistogram(TCanvas* Canvas_, std::vector<T> Histos_, std::
 	CanvasName_C << Canvas_->GetName() << "_" << Histos_.at(firstlayer)->GetName() << "_" << firstlayer << "-"
 			<< lastlayer << ".C";
 
+  gErrorIgnoreLevel=kFatal;
 	Canvas_->Print(CanvasName_eps.str().c_str());
+  gErrorIgnoreLevel=kInfo;
+  gErrorIgnoreLevel=kFatal;
 	Canvas_->Print(CanvasName_C.str().c_str());
+  gErrorIgnoreLevel=kInfo;
+  gErrorIgnoreLevel=kFatal;
 	Canvas_->Print(PDFName.c_str());
+  gErrorIgnoreLevel=kInfo;
 }
 
 template<class T>
@@ -147,9 +154,15 @@ void WritePrintComparedHistogram(TCanvas* Canvas_, T Histo, int firstlayer, int 
 	CanvasName_eps << Canvas_->GetName() << "_" << Histo->GetName() << "_" << firstlayer << "-" << lastlayer << ".eps";
 	CanvasName_C << Canvas_->GetName() << "_" << Histo->GetName() << "_" << firstlayer << "-" << lastlayer << ".C";
 
+  gErrorIgnoreLevel=kFatal;
 	Canvas_->Print(CanvasName_eps.str().c_str());
+  gErrorIgnoreLevel=kInfo;
+  gErrorIgnoreLevel=kFatal;
 	Canvas_->Print(CanvasName_C.str().c_str());
+  gErrorIgnoreLevel=kInfo;
+  gErrorIgnoreLevel=kFatal;
 	Canvas_->Print(PDFName.c_str());
+  gErrorIgnoreLevel=kInfo;
 }
 
 template<class T>
@@ -173,9 +186,15 @@ void WritePrintHistogram(TCanvas* Canvas_, T Histos_, std::string drawingoption,
 	CanvasName_eps << Canvas_->GetName() << "_" << Histos_->GetName() << ".eps";
 	CanvasName_C << Canvas_->GetName() << "_" << Histos_->GetName() << ".C";
 
+  gErrorIgnoreLevel=kFatal;
 	Canvas_->Print(CanvasName_eps.str().c_str());
+  gErrorIgnoreLevel=kInfo;
+  gErrorIgnoreLevel=kFatal;
 	Canvas_->Print(CanvasName_C.str().c_str());
+  gErrorIgnoreLevel=kInfo;
+  gErrorIgnoreLevel=kFatal;
 	Canvas_->Print(PDFName.c_str());
+  gErrorIgnoreLevel=kInfo;
 }
 
 template<class T>
@@ -204,9 +223,15 @@ void WritePrintHistogram(TCanvas* Canvas_, T Histos_, bool Normalizing, std::str
 	CanvasName_eps << Canvas_->GetName() << "_" << Histos_->GetName() << ".eps";
 	CanvasName_C << Canvas_->GetName() << "_" << Histos_->GetName() << ".C";
 
+  gErrorIgnoreLevel=kFatal;
 	Canvas_->Print(CanvasName_eps.str().c_str());
+  gErrorIgnoreLevel=kInfo;
+  gErrorIgnoreLevel=kFatal;
 	Canvas_->Print(CanvasName_C.str().c_str());
+  gErrorIgnoreLevel=kInfo;
+  gErrorIgnoreLevel=kFatal;
 	Canvas_->Print(PDFName.c_str());
+  gErrorIgnoreLevel=kInfo;
 }
 
 template<class T>

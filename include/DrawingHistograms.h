@@ -108,7 +108,8 @@ class DrawingHistograms{
 	std::vector<float> Fraction_CellsNotHit;
 
 	std::map< int, std::vector<int> > HitsPerLayerMap;
-  
+   std::map< unsigned long long int, int > HitMap; //cellid, count of all hits per cell
+
     void Initialize();
     void SetupGeneralHistograms();
     void Setup_SubDetector_vector();
