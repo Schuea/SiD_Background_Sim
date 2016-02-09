@@ -24,7 +24,7 @@ void EcalEndcap::Initialize(){
   TotCellNumber_ = 102400;
 
   ROOTEnergyHisto_binning = {40., 0., 0.01};
-  ROOTHisto_binning_occupancy = {12, 0, 12};
+  ROOTHisto_binning_occupancy = {30, 0, 30};
   ROOTHisto_binning_occupancy_r = {10, 0, 2000, 12, 0, 12};
   ROOTHisto_binning_occupancy_phi = {16, -3.2, 3.2, 12, 0, 12};
   ROOTHisto_binning1D = {35, 0, 70};
@@ -214,6 +214,10 @@ void SiTrackerForward::Initialize(){
   ROOTHisto_time = {200, 0, 2000};
 }
 int Subdetector::GetLayer(unsigned long long const cellID){
+  LayerInfo_ = new LayerCodeInCellID();
+  return LayerInfo_->GetLayer(cellID,StartLayerBin_,LengthLayerBin_);
+}
+int Subdetector::GetLayer(std::string const cellID){
   LayerInfo_ = new LayerCodeInCellID();
   return LayerInfo_->GetLayer(cellID,StartLayerBin_,LengthLayerBin_);
 }

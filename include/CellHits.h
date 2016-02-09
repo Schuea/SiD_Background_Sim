@@ -40,8 +40,9 @@ public:
 	int Get_BunchNumber() const;
 
 	int Calculate_NumberHitsPerLayer(int LayerNumber);
+	void Check_CellID(long const id, float const x, float const y);
 	//void Check_CellID(unsigned long long const id, float const x, float const y);
-	void Check_CellID(std::bitset<64> const id, float const x, float const y);
+	//void Check_CellID(std::bitset<64> const id, float const x, float const y);
 	void Check_Rad_Position();
 	void Check_Phi_Position();
 	void Calculate_Average(std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > & AverageMap);

@@ -440,12 +440,12 @@ void DrawingHistograms::Filling_Data_of_hits(int file_iterator, int subdetector_
 
 	CellID *SubdetectorCells = InitializeCellIDClass(SubDetectors->at(subdetector_iterator)->GetName(), data);
 	SubdetectorCells->CreateCellID();
-	std::bitset<64> const CellIDkey(SubdetectorCells->GetCellID());
+	//std::bitset<64> const CellIDkey(SubdetectorCells->GetCellID());
 	//unsigned long long const CellIDkey = SubdetectorCells->CellID_ToLONGconversion(SubdetectorCells->GetCellID());
+	long const CellIDkey = std::bitset<64>(SubdetectorCells->GetCellID()).to_ulong();
 
 	LayerCodeInCellID LayerInfo;
-    std::cout << __FILE__ << ", " <<__LINE__ << ": CellIDkey = " << CellIDkey << std::endl;
-    //std::cout << __FILE__ << ", " <<__LINE__ << ": CellID = " << SubdetectorCells->GetCellID() << std::endl;
+    //std::cout << __FILE__ << ", " <<__LINE__ << ": CellIDkey = " << CellIDkey << std::endl;
 	int const Layer_no = LayerInfo.GetLayer(SubdetectorCells->GetCellID(),
 			SubDetectors->at(subdetector_iterator)->GetStartLayerBin(),
 			SubDetectors->at(subdetector_iterator)->GetLengthLayerBin());
@@ -548,8 +548,8 @@ void DrawingHistograms::DrawingMacro() {
 	TotDeadCells->GetXaxis()->SetTitle("Number of bunch crossings");
 	TotDeadCells->GetXaxis()->CenterTitle();
 
-	gStyle->SetOptStat(1);
-	//gStyle->SetOptStat(111111);
+	//gStyle->SetOptStat(1);
+	gStyle->SetOptStat(111111);
 
 	TCanvas* PDF_Canvas_Hits_Layers = new TCanvas();
 	PDF_Canvas_Hits_Layers->Print("PDFCanvas_Hits_Layers.pdf[");
@@ -809,8 +809,8 @@ void DrawingHistograms::DrawingMacro() {
 	std::stringstream FilesCanvasName_eps, FilesCanvasName_C;
 
 	Files_Canvas_->cd();
-	gStyle->SetOptStat(1);
-	//gStyle->SetOptStat(111111);
+	//gStyle->SetOptStat(1);
+	gStyle->SetOptStat(111111);
 
 	Files_Canvas_->Clear();
 	Files_Canvas_->SetLogy(0);

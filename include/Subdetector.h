@@ -14,7 +14,9 @@ class Subdetector{
     int GetStartLayerBin() const;
     int GetLengthLayerBin() const;				
     int GetNumberOfLayers() const;	
-    int GetLayer(unsigned long long const cellID);
+    int GetLayer(std::string const cellID);
+    int GetLayer(int const cellID);
+    //int GetLayer(unsigned long long const cellID);
     int GetTotCellNumber() const;
 
 	std::vector<float> GetROOTEnergyHisto_binning() const;

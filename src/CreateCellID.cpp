@@ -21,6 +21,7 @@ void CellID64bits::CreateCellID() {
 	std::cout << "ID0 = " << ID0_ << std::endl;
 	std::cout << "ID1 = " << ID1_ << std::endl;
     std::bitset<32> const ID0_bit = std::bitset<32>(ID0_);
+    //std::bitset<32> const ID1_bit = std::bitset<32>();
     std::bitset<32> const ID1_bit = std::bitset<32>(ID1_);
     CellID_bit_ = concatString<64, 32, 32>(ID1_bit, ID0_bit);
 	std::cout << "ID0_bit = " << ID0_bit << std::endl;
