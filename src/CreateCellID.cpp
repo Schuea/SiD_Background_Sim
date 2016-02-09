@@ -18,15 +18,13 @@ void CellID64bits::CreateCellID() {
     throw std::runtime_error("The CellID was not set. Invalid IDs!");
   }				
   else{
-	std::cout << "ID0 = " << ID0_ << std::endl;
-	std::cout << "ID1 = " << ID1_ << std::endl;
     std::bitset<32> const ID0_bit = std::bitset<32>(ID0_);
     //std::bitset<32> const ID1_bit = std::bitset<32>();
     std::bitset<32> const ID1_bit = std::bitset<32>(ID1_);
     CellID_bit_ = concatString<64, 32, 32>(ID1_bit, ID0_bit);
-	std::cout << "ID0_bit = " << ID0_bit << std::endl;
-	std::cout << "ID1_bit = " << ID1_bit << std::endl;
-	std::cout << "concatString = " << CellID_bit_ << std::endl;
+    std::cout << "ID0_bit = " << ID0_bit << std::endl;
+    std::cout << "ID1_bit = " << ID1_bit << std::endl;
+    std::cout << "concatString = " << CellID_bit_ << std::endl;
   }
 }
 
@@ -50,8 +48,10 @@ void CellID54bits::CreateCellID() {
   }
 }
 
-unsigned long long CellID::CellID_ToLONGconversion(std::string const CellIDstring) const{
+//int CellID::CellID_ToLONGconversion(std::string const CellIDstring) const{
+unsigned long long int CellID::CellID_ToLONGconversion(std::string const CellIDstring) const{
   std::bitset<64> temp (CellIDstring);
+ // return int(temp.to_ulong());
   return temp.to_ullong();
 }
 
