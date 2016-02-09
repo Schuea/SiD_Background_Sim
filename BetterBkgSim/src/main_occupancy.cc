@@ -69,12 +69,11 @@ int main(int const argc, char const * const * const argv) {
 		std::cerr
 				<< "You didn't give the name for the subdector, the inputfiles or the amount of files. Please try again!"
 				<< std::endl;
-		return 1;
+		exit(1);
 	}
 
 	string const tree_name = "Tree_" + subdetector;
 	map<string,int> hit_map;
-	//map<unsigned long long int, int> hit_map;
 
 	for (int file_iterator = 0; file_iterator < NUMBER_OF_FILES; ++file_iterator) {
 		TFile *file = TFile::Open(inputfilenames->at(file_iterator).c_str());
@@ -100,7 +99,6 @@ int main(int const argc, char const * const * const argv) {
 		//Combine the two Cell ID's into a single new Cell ID
 		//See how often the new Cell ID occurs in total, this is the occupancy
 
-		//long long int const entries = 500;
 		long long int const entries = tree->GetEntries();
 		for (long long int i = 0; i < entries; ++i) {
 			tree->GetEntry(i);
@@ -109,31 +107,13 @@ int main(int const argc, char const * const * const argv) {
 			string const id0string(id0bit.to_string());
 			bitset<32> const id1bit(HitCellID1);
 			string const id1string(id1bit.to_string());
-			/*if (i % 10000 == 0) {
-				cout << "HitCellID0 = " << HitCellID0 << " = " << id0string << endl;
-			 	cout << "HitCellID1 = " << HitCellID1 << " = " << id1string << endl;
-			 }*/
 
 			//Make a combined cell ID
-			//unsigned long long int const combined_cell_id = (long long) HitCellID1 << 32 | HitCellID0;
-			//bitset<64> const combined_cell_idbit(combined_cell_id);
-			string combined_cell_id = id1string+id0string;
-			//string combined_cell_id = id1string;
-			//int Check_cellid1 = int(combined_cell_id >> 32);
-			/*if (i % 10000 == 0) {
-			 cout << "Combined CellID = " << combined_cell_id << " = " << combined_cell_idbit.to_string() << endl;
-			 cout << "CHECK: HitCellID0 = " << Check_cellid1 << " = " << bitset<32>(Check_cellid1).to_string()
-			 << endl;
-			 }*/
+			string const combined_cell_id = id1string+id0string;
 			//Test if the ID already exists in a map, either way add 1
 			if (hit_map.find(combined_cell_id) == hit_map.end()) {
 				hit_map[combined_cell_id] = 1;
 			} else {
-				cout << "HitCellID0 = " << HitCellID0 << " = " << id0string << endl;
-			 	cout << "HitCellID1 = " << HitCellID1 << " = " << id1string << endl;
-				cout << "Counting up!" << endl;
-				cout << "Combined CellID = " << combined_cell_id << endl;
-				//cout << "Combined CellID = " << combined_cell_id << " = " << combined_cell_idbit.to_string() << endl;
 				hit_map[combined_cell_id] = hit_map[combined_cell_id] + 1;
 			}
 		}
@@ -141,7 +121,7 @@ int main(int const argc, char const * const * const argv) {
 	}
 
 	//Make histogram for storing the information
-	std::string title = "Normalized buffer depth for subdetector " + subdetector;
+	std::string const title = "Normalized buffer depth for subdetector " + subdetector;
 	TH1D *histo = new TH1D("histo", title.c_str(), 20, 0, 20);
 	//Fill histogram with the occupancies from the hit_map
 	for (auto const &it : hit_map) {
@@ -151,13 +131,15 @@ int main(int const argc, char const * const * const argv) {
 		cerr << "Histogram not filled in the x-axis range you specified" << endl;
 		cerr << "Underflow = " << histo->GetBinContent(0) << ", Overflow = "
 				<< histo->GetBinContent(histo->GetNbinsX() + 1) << endl;
-	}
+		exit(1);
+	} else{
 	histo->Scale(1.0 / histo->Integral());
-	histo->SetMinimum(0.000000001);
+	}
 
 	//Plot the histogram and save it
 	TCanvas *canvas = new TCanvas("canvas", "canvas", 800, 600);
 	canvas->SetLogy(1);
+	histo->SetMinimum(0.0000001);
 	histo->Draw();
 	canvas->Print("../output/buffer_depth.pdf");
 
