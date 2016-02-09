@@ -20,7 +20,8 @@ int main(int const argc, char const * const * const argv){
 
   //Open the tree for making the plot
   string const filename("/home/schuea/BkgSim_data/1_simulated_pairs.root");
-  string const tree_name("Tree_EcalEndcap");
+  //string const tree_name("Tree_EcalEndcap");
+  string const tree_name("Tree_BeamCal");
 
   TFile *file = TFile::Open(filename.c_str());
   TTree *tree;
@@ -47,7 +48,8 @@ int main(int const argc, char const * const * const argv){
   
   //long long int const entries = 500;
   long long int const entries = tree->GetEntries();
-  map<string,int> hit_map;
+  //map<string,int> hit_map;
+  map<long long int,int> hit_map;
   for(long long int i = 0; i < entries; ++i){
     tree->GetEntry(i);
     if(i%10000 == 0){
@@ -58,14 +60,27 @@ int main(int const argc, char const * const * const argv){
     string const id0string(id0bit.to_string());
     bitset<32> const id1bit(HitCellID1);
     string const id1string(id1bit.to_string());
+    if(i%10000 == 0){
+      cout << "HitCellID0 = " << HitCellID0 << " = " << id0string << endl;
+      cout << "HitCellID1 = " << HitCellID1 << " = " << id1string << endl;
+    }
 
     //Make a combined cell ID
-    string combined_cell_id = id1string+id0string;
+    long long int const combined_cell_id =  (long long)HitCellID1 << 32 | HitCellID0;
+    bitset<64> const combined_cell_idbit(combined_cell_id);
+    //string combined_cell_id = id1string+id0string;
+    //string combined_cell_id = id1string;
+    int Check_cellid1 = int(combined_cell_id >> 32);
+    if(i%10000 == 0){
+      cout << "Combined CellID = " << combined_cell_id << " = " << combined_cell_idbit.to_string() << endl;
+      cout << "CHECK: HitCellID0 = " << Check_cellid1 << " = " << bitset<32>(Check_cellid1).to_string() << endl;
+    }
     //Test if the ID already exists in a map, either way add 1
     if(hit_map.find(combined_cell_id) == hit_map.end()){
       hit_map[combined_cell_id] = 1;
     }
     else{
+      cout << "Counting up!" << endl;
       hit_map[combined_cell_id] = hit_map[combined_cell_id] + 1;
     }
   }
