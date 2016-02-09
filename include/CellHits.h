@@ -27,38 +27,34 @@ public:
 	~CellHits() {
 	}
 
-	//std::vector<unsigned long long> Get_CellID() const;
-	std::vector< std::bitset<64> > Get_CellID() const;
+	std::vector< std::string > Get_CellID() const;
 	std::vector<int> Get_HitCount() const;
 	std::vector<std::pair<float, float> > Get_CellPosition() const;
 	std::vector<float> Get_Layer() const;
 	int Get_NumberHitsPerLayer(int LayerNumber);
-	std::vector<float> Get_Position_Radius() const;
-	std::vector<float> Get_Position_Phi() const;
-	std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > Get_AverageOccupancy_Rad() const;
-	std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > Get_AverageOccupancy_Phi() const;
+	//std::vector<float> Get_Position_Radius() const;
+	//std::vector<float> Get_Position_Phi() const;
+	//std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > Get_AverageOccupancy_Rad() const;
+	//std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > Get_AverageOccupancy_Phi() const;
 	int Get_BunchNumber() const;
+	void Set_BunchNumber(int const bunchnumber);
 
 	int Calculate_NumberHitsPerLayer(int LayerNumber);
-	void Check_CellID(long const id, float const x, float const y);
-	//void Check_CellID(unsigned long long const id, float const x, float const y);
-	//void Check_CellID(std::bitset<64> const id, float const x, float const y);
-	void Check_Rad_Position();
-	void Check_Phi_Position();
-	void Calculate_Average(std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > & AverageMap);
-	void Set_BunchNumber(int const bunchnumber);
+	void Check_CellID(std::string const id, float const x, float const y);
+	//void Check_Rad_Position();
+	//void Check_Phi_Position();
+	//void Calculate_Average(std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > & AverageMap);
 
 protected:
 	Subdetector* SubDetector;
-	std::vector<std::bitset<64>> CellID;
-	//std::vector<unsigned long long> CellID;
+	std::vector<std::string> CellID;
 	std::vector<int> HitCount;
 	std::vector<std::pair<float, float> > CellPosition;
 	std::vector<float> Layer;
-	std::vector<float> Position_Radius;
-	std::vector<float> Position_Phi;
-	std::map<int, std::pair<std::vector<int>, std::pair< float, float > > > AverageOccupancy_Rad;
-	std::map<int, std::pair<std::vector<int>, std::pair< float, float > > > AverageOccupancy_Phi;
+	//std::vector<float> Position_Radius;
+	//std::vector<float> Position_Phi;
+	//std::map<int, std::pair<std::vector<int>, std::pair< float, float > > > AverageOccupancy_Rad;
+	//std::map<int, std::pair<std::vector<int>, std::pair< float, float > > > AverageOccupancy_Phi;
 	int BunchNumber;
 };
 

@@ -10,6 +10,7 @@
 
 #include "ConfigReaderAnalysis.h"
 #include "UsefulFunctions.h"
+#include "CellHits.h"
 
 using namespace std;
 
@@ -82,7 +83,8 @@ int main(int const argc, char const * const * const argv) {
 	}
 
 	string const tree_name = "Tree_" + subdetector;
-	map<string, int> hit_map;
+	//map<string, int> hit_map;
+  CellHits HitsCount;
 
 	for (int file_iterator = 0; file_iterator < NUMBER_OF_FILES; ++file_iterator) {
 		TFile *file = TFile::Open(inputfilenames->at(file_iterator).c_str());
@@ -119,12 +121,17 @@ int main(int const argc, char const * const * const argv) {
 
 			//Make a combined cell ID
 			string const combined_cell_id = id1string + id0string;
-			//Test if the ID already exists in a map, either way add 1
+
+      HitCount->Check_CellID(combined_cell_id, HitPosition_x, HitPosition_y);
+
+			/*
+      //Test if the ID already exists in a map, either way add 1
 			if (hit_map.find(combined_cell_id) == hit_map.end()) {
 				hit_map[combined_cell_id] = 1;
 			} else {
 				hit_map[combined_cell_id] = hit_map[combined_cell_id] + 1;
 			}
+      */
 		}
 		file->Close();
 	}
@@ -132,10 +139,17 @@ int main(int const argc, char const * const * const argv) {
 	//Make histogram for storing the information
 	std::string const title = "Normalized buffer depth for subdetector " + subdetector;
 	TH1D *histo = new TH1D("histo", title.c_str(), 20, 0, 20);
+
+  for(int hitcounts = 0; hitcounts < HitCount.Get_HitCount().size(); ++hitcounts){
+    histo->Fill(HitCount.Get_HitCount().at(hitcounts);
+  }  
+
+  /*
 	//Fill histogram with the occupancies from the hit_map
 	for (auto const &it : hit_map) {
 		histo->Fill(it.second);
 	}
+  */
 	NormalizeHistogram(histo, 1.0);
 
 	//Plot the histogram and save it

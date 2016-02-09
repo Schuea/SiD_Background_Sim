@@ -20,10 +20,11 @@ TESTS = #Test
 MAIN_OCCUPANCY = objects/main_occupancy.o
 CONFIG = objects/ConfigReader.o objects/ConfigReaderAnalysis.o
 USEFUL = objects/UsefulFunctions.o
+CELLHITS = objects/CellHits.o
 
 INCLUDES = -I ../include/ -I ../test/include/ -I ../../include/
 
-OBJECTS = $(CONFIG) $(USEFUL)
+OBJECTS = $(CONFIG) $(USEFUL) $(CELLHITS)
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -88,4 +89,7 @@ objects/main_occupancy.o : ../src/main_occupancy.cc
 	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
 
 objects/UsefulFunctions.o : ../../src/UsefulFunctions.cpp
+	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
+
+objects/CellHits.o : ../src/CellHits.cpp
 	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@

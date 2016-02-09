@@ -7,8 +7,7 @@
 
 #include "CellHits.h"
 
-std::vector<std::bitset<64>> CellHits::Get_CellID() const {
-//std::vector<unsigned long long> CellHits::Get_CellID() const {
+std::vector<std::string> CellHits::Get_CellID() const {
 	return CellID;
 }
 std::vector<int> CellHits::Get_HitCount() const {
@@ -23,6 +22,7 @@ std::vector< float > CellHits::Get_Layer() const {
 int CellHits::Get_NumberHitsPerLayer(int LayerNumber) {
 	return Calculate_NumberHitsPerLayer(LayerNumber);
 }
+/*
 std::vector<float> CellHits::Get_Position_Radius() const {
 	return Position_Radius;
 }
@@ -35,6 +35,7 @@ std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > CellHits::
 std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > CellHits::Get_AverageOccupancy_Phi() const {
 	return AverageOccupancy_Phi;
 }
+*/
 int CellHits::Get_BunchNumber() const {
 	return BunchNumber;
 }
@@ -42,19 +43,11 @@ void CellHits::Set_BunchNumber(int const bunchnumber) {
 	BunchNumber = bunchnumber;
 }
 
-//void CellHits::Check_CellID(std::bitset<64> const id_bit, float const x, float const y) {
-//void CellHits::Check_CellID(unsigned long long const id, float const x, float const y) {
-void CellHits::Check_CellID(long const id, float const x, float const y) {
+void CellHits::Check_CellID(std::string const id, float const x, float const y) {
 	bool cell_exists(false);
 	int vector_element(-1);
-	//std::string id = id_bit.to_string();
-	std::cout << "id = " << id << std::endl;
 	for (int i = 0; i < CellID.size(); ++i) {
-		//std::cout << "CellID.at(i).to_string() = " << CellID.at(i).to_string() << std::endl;
-		std::cout << "CellID.at(i).to_ulong() = " << CellID.at(i).to_ulong() << std::endl;
-		if (CellID.at(i).to_ulong() == id) {
-		//if (CellID.at(i).to_string() == id) {
-			std::cout << "Counting up the HitCount for cellid " << id << std::endl;
+		if (CellID.at(i) == id) {
 			cell_exists = true;
 			vector_element = i; //Check at which position in vector the ID is stored
 			break;
@@ -68,9 +61,8 @@ void CellHits::Check_CellID(long const id, float const x, float const y) {
 		HitCount.push_back(1);
 		CellPosition.push_back(std::pair<float, float>(x, y));
 		Layer.push_back(SubDetector->GetLayer(id));
-		Position_Radius.push_back(sqrt(pow(x, 2) + pow(y, 2)));
-		Position_Phi.push_back(atan2(y, x));
-		//Position_Phi.push_back(acos(x / sqrt(pow(x, 2) + pow(y, 2))));
+		//Position_Radius.push_back(sqrt(pow(x, 2) + pow(y, 2)));
+		//Position_Phi.push_back(atan2(y, x));
 	}
 }
 
@@ -82,8 +74,8 @@ int CellHits::Calculate_NumberHitsPerLayer(int LayerNumber) {
 	return NumberHitsPerLayer;
 }
 
+/*
 void CellHits::Check_Rad_Position() {
-	//std::size_t found = subdetector_.find_last_of("Endcap");
 
 	for (int j = 0; j < Position_Radius.size(); ++j) {
 
@@ -135,25 +127,6 @@ void CellHits::Check_Rad_Position() {
 void CellHits::Check_Phi_Position() {
 	for (int j = 0; j < Position_Phi.size(); ++j) {
 
-		/*
-		if (Position_Phi.at(j) < 0 && Position_Phi.at(j) > -0.8)
-			AverageOccupancy_Phi[-4].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) <= -0.8 && Position_Phi.at(j) > -1.6)
-			AverageOccupancy_Phi[-12].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) <= -1.6 && Position_Phi.at(j) > -2.4)
-			AverageOccupancy_Phi[-20].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) <= -2.4 && Position_Phi.at(j) > -3.2)
-			AverageOccupancy_Phi[-28].first.push_back(HitCount.at(j));
-
-		if (Position_Phi.at(j) >= 0 && Position_Phi.at(j) < 0.8)
-			AverageOccupancy_Phi[4].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 0.8 && Position_Phi.at(j) < 1.6)
-			AverageOccupancy_Phi[12].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 1.6 && Position_Phi.at(j) < 2.4)
-			AverageOccupancy_Phi[20].first.push_back(HitCount.at(j));
-		if (Position_Phi.at(j) >= 2.4 && Position_Phi.at(j) < 3.2)
-			AverageOccupancy_Phi[28].first.push_back(HitCount.at(j));
-		 */
 		 if (Position_Phi.at(j) < 0 && Position_Phi.at(j) > -0.4)
 		 AverageOccupancy_Phi[-2].first.push_back(HitCount.at(j));
 		 if (Position_Phi.at(j) <= -0.4 && Position_Phi.at(j) > -0.8)
@@ -214,4 +187,4 @@ void CellHits::Calculate_Average(std::map<int, std::pair<std::vector<int>, std::
 		iterator.second.second.second = stddev;
 	}
 }
-
+*/
