@@ -8,11 +8,18 @@
 #include <limits>
 #include <string>
 
+#include "ConfigReaderAnalysis.h"
 #include "UsefulFunctions.h"
 
 using namespace std;
 
 int main(int const argc, char const * const * const argv) {
+	//ConfigReaderAnalysis config(argv[1]);
+	//config.setUp();
+	//cout << config.getConfigName() << endl;
+	//cout << config.getDoEventLooper() << endl;
+	//cout << config.getMaxEvents() << endl;
+	//exit(1);
 	//Three occupancy plots
 	//Two that are 1D histograms, y-axis is average occupancy and x-axis is radius/phi
 	//The difficult plot is buffer depth plot: y-axis is probability of a specific cell occupancy occuring and x-axis is occupancy

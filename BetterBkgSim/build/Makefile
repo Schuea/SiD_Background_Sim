@@ -18,10 +18,12 @@ TESTS = #Test
 
 # Useful variables
 MAIN_OCCUPANCY = objects/main_occupancy.o
+CONFIG = objects/ConfigReader.o objects/ConfigReaderAnalysis.o
+USEFUL = objects/UsefulFunctions.o
 
-INCLUDES = -I ../include/ -I ../test/include/
+INCLUDES = -I ../include/ -I ../test/include/ -I ../../include/
 
-OBJECTS = 
+OBJECTS = $(CONFIG) $(USEFUL)
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -76,5 +78,14 @@ Test : objects/test.o objects/gtest.a $(OBJECTS)
 OccupancyPlotter : $(MAIN_OCCUPANCY) $(OBJECTS)
 	@$(CXX) -lpthread $^ -o $@ $(INCLUDES) $(CXXFLAGS)
 
+objects/ConfigReader.o : ../src/ConfigReader.cc
+	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
+
+objects/ConfigReaderAnalysis.o : ../src/ConfigReaderAnalysis.cc
+	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
+
 objects/main_occupancy.o : ../src/main_occupancy.cc
+	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
+
+objects/UsefulFunctions.o : ../../src/UsefulFunctions.cpp
 	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
