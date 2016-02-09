@@ -36,7 +36,7 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 all : $(RUN) $(TESTS)
 
 clean :
-	@rm -f ./$(RUN) ./$(TESTS) objects/*
+	@rm -f ./$(RUN) objects/*
 
 # Builds gtest.a and gtest_main.a.
 # Usually you shouldn't tweak such internal variables, indicated by a
