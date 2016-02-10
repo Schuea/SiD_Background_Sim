@@ -54,7 +54,6 @@ void CellHits::Check_CellID(std::string const id, float const x, float const y) 
 		}
 	}
 	if (cell_exists) {
-		std::cout << "Counting up HitCount for cellid: " << id << std::endl;
 		HitCount.at(vector_element) += 1;
 	} else {
 		CellID.push_back(id);
