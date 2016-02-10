@@ -1,7 +1,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TCanvas.h"
-#include "TH1D.h"
+#include "TH2D.h"
 
 #include <bitset>
 #include <iostream>
@@ -92,6 +92,7 @@ int main(int const argc, char const * const * const argv) {
 	std::string* subdetector_name = new std::string("");
 	SetupSubDetectorsVector(SubDetectors, subdetector_name, argument_subdetectors);
 	std::string subdetectornames = (*subdetector_name);
+	std::vector<float> range_array;
 
 	std::vector<CellHits*> AllCellHits;
 
@@ -132,15 +133,18 @@ int main(int const argc, char const * const * const argv) {
 			}
 			file->Close();
 		}
+		range_array = SubDetectors->at(subdetector_iterator)->GetROOTHisto_binning2D();
 	}
 
 	//Make histogram for storing the information
-	std::string const title = "Normalized buffer depth for subdetector " + subdetectornames;
-	TH1D *histo = new TH1D("histo", title.c_str(), 20, 0, 20);
+	std::string const title = "Hit maps of cells with full buffer for subdetector " + subdetectornames + ";x [mm]; y [mm]";
+	TH2D *histo = new TH2D("histo", title.c_str(), range_array[0], range_array[1], range_array[2], range_array[3], range_array[4], range_array[5]);
 
 	for (size_t allcellhits = 0; allcellhits < AllCellHits.size(); ++allcellhits) {
-		for (size_t hitcounts = 0; hitcounts < AllCellHits.at(allcellhits)->Get_HitCount().size(); ++hitcounts) {
-			histo->Fill(AllCellHits.at(allcellhits)->Get_HitCount().at(hitcounts));
+		for (size_t positions = 0; positions < AllCellHits.at(allcellhits)->Get_CellPosition().size(); ++positions) {
+			if (AllCellHits.at(allcellhits)->Get_HitCount().at(positions) >= 4){
+				histo->Fill(AllCellHits.at(allcellhits)->Get_CellPosition().at(positions).first,AllCellHits.at(allcellhits)->Get_CellPosition().at(positions).second);
+			}
 		}
 	}
 
@@ -148,11 +152,9 @@ int main(int const argc, char const * const * const argv) {
 
 	//Plot the histogram and save it
 	TCanvas *canvas = new TCanvas("canvas", "canvas", 800, 600);
-	canvas->SetLogy(1);
-	histo->SetMinimum(0.0000001);
-	histo->Draw();
-	canvas->Print("../output/buffer_depth.pdf");
-	canvas->Print("../output/buffer_depth.C");
+	histo->Draw("colz");
+	canvas->Print("../output/hitmaps_fullbuffers.pdf");
+	canvas->Print("../output/hitmaps_fullbuffers.C");
 
 	return 0;
 }

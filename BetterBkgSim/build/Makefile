@@ -10,7 +10,7 @@ CPPFLAGS += -isystem $(GTEST_DIR)/include -g -Wall -Wextra -pthread -O2 -std=c++
 CXXFLAGS +=  $(shell root-config --glibs)
 
 # Executables produced by this Makefile
-RUN = OccupancyPlotter
+RUN = OccupancyPlotter FullBufferMapsPlotter ParticleOriginsTimePlotter
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
@@ -18,14 +18,19 @@ TESTS = #Test
 
 # Useful variables
 MAIN_OCCUPANCY = objects/main_occupancy.o
+MAIN_HITMAPSFULLBUFFER = objects/main_hitmaps_fullbuffers.o
+MAIN_HITMAPSORIGINSTIME = objects/main_hitmaps_particleorigins_time.o
 CONFIG = objects/ConfigReader.o objects/ConfigReaderAnalysis.o
 USEFUL = objects/UsefulFunctions.o
+GENERALFUNCTIONS = objects/GeneralFunctions_SiDBkgSim.o
+SUBDETECTOR = objects/Subdetector_class.o
 CELLHITS = objects/CellHits_class.o
 LAYERCODE = objects/LayerCodeInCellID_class.o
+TIME = objects/time_class.o
 
 INCLUDES = -I ../include/ -I ../test/include/ -I /space/vol1/Useful_Code/include/
 
-OBJECTS = $(CONFIG) $(USEFUL) $(CELLHITS) $(LAYERCODE)
+OBJECTS = $(CONFIG) $(USEFUL) $(GENERALFUNCTIONS) $(SUBDETECTOR) $(CELLHITS) $(LAYERCODE) $(TIME)
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -80,6 +85,12 @@ Test : objects/test.o objects/gtest.a $(OBJECTS)
 OccupancyPlotter : $(MAIN_OCCUPANCY) $(OBJECTS)
 	@$(CXX) -lpthread $^ -o $@ $(INCLUDES) $(CXXFLAGS)
 
+FullBufferMapsPlotter : $(MAIN_HITMAPSFULLBUFFER) $(OBJECTS)
+	@$(CXX) -lpthread $^ -o $@ $(INCLUDES) $(CXXFLAGS)
+
+ParticleOriginsTimePlotter : $(MAIN_HITMAPSORIGINSTIME) $(OBJECTS)
+	@$(CXX) -lpthread $^ -o $@ $(INCLUDES) $(CXXFLAGS)
+
 objects/ConfigReader.o : ../src/ConfigReader.cc
 	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
 
@@ -89,11 +100,26 @@ objects/ConfigReaderAnalysis.o : ../src/ConfigReaderAnalysis.cc
 objects/main_occupancy.o : ../src/main_occupancy.cc
 	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
 
+objects/main_hitmaps_fullbuffers.o : ../src/main_hitmaps_fullbuffers.cc
+	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
+
+objects/main_hitmaps_particleorigins_time.o : ../src/main_hitmaps_particleorigins_time.cc
+	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
+
 objects/UsefulFunctions.o : /space/vol1/Useful_Code/src/UsefulFunctions.cc
+	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
+
+objects/GeneralFunctions_SiDBkgSim.o : ../src/GeneralFunctions_SiDBkgSim.cc
+	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
+
+objects/Subdetector_class.o : ../src/Subdetector_class.cc
 	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
 
 objects/CellHits_class.o : ../src/CellHits_class.cc
 	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
 
 objects/LayerCodeInCellID_class.o : ../src/LayerCodeInCellID_class.cc
+	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
+
+objects/Time_class.o : ../src/Time_class.cc
 	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@

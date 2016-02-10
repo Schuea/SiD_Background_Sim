@@ -1,5 +1,7 @@
 #include "Subdetector_class.h"
 
+#include <iostream>
+
 void EcalBarrel::Initialize(){
   Name_ = "EcalBarrel";
   LengthLayerBin_ = 6;
@@ -213,13 +215,7 @@ void SiTrackerForward::Initialize(){
   ROOTHisto_binning3D = {150, -1900, 1900, 100, -230, 230, 100, -230, 230};
   ROOTHisto_time = {200, 0, 2000};
 }
-int Subdetector::GetLayer(int const cellID){
-//int Subdetector::GetLayer(unsigned long long const cellID){
-  LayerInfo_ = new LayerCodeInCellID();
-  return LayerInfo_->GetLayer(cellID,StartLayerBin_,LengthLayerBin_);
-}
-int Subdetector::GetLayer(std::string const cellID){
-//int Subdetector::GetLayer(unsigned long long const cellID){
+int Subdetector::GetLayer(long long const cellID){
   LayerInfo_ = new LayerCodeInCellID();
   return LayerInfo_->GetLayer(cellID,StartLayerBin_,LengthLayerBin_);
 }

@@ -5,6 +5,14 @@
  *      Author: schuea
  */
 
+#include <iostream>
+
+#include <bitset>
+#include <vector>
+#include <map>
+#include <cmath>
+#include <math.h>       /* atan2 */
+
 #include "CellHits_class.h"
 
 std::vector<long long int> CellHits::Get_CellID() const {
@@ -16,13 +24,12 @@ std::vector<int> CellHits::Get_HitCount() const {
 std::vector<std::pair<float, float> > CellHits::Get_CellPosition() const {
 	return CellPosition;
 }
-std::vector< float > CellHits::Get_Layer() const {
+std::vector< int > CellHits::Get_Layer() const {
 	return Layer;
 }
 int CellHits::Get_NumberHitsPerLayer(int LayerNumber) {
 	return Calculate_NumberHitsPerLayer(LayerNumber);
 }
-/*
 std::vector<float> CellHits::Get_Position_Radius() const {
 	return Position_Radius;
 }
@@ -35,7 +42,6 @@ std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > CellHits::
 std::map<int, std::pair<std::vector<int>, std::pair<float, float> > > CellHits::Get_AverageOccupancy_Phi() const {
 	return AverageOccupancy_Phi;
 }
-*/
 int CellHits::Get_BunchNumber() const {
 	return BunchNumber;
 }
@@ -59,9 +65,9 @@ void CellHits::Check_CellID(long long int const id, float const x, float const y
 		CellID.push_back(id);
 		HitCount.push_back(1);
 		CellPosition.push_back(std::pair<float, float>(x, y));
-		//Layer.push_back(SubDetector->GetLayer(id));
-		//Position_Radius.push_back(sqrt(pow(x, 2) + pow(y, 2)));
-		//Position_Phi.push_back(atan2(y, x));
+		Layer.push_back(SubDetector->GetLayer(id));
+		Position_Radius.push_back(sqrt(pow(x, 2) + pow(y, 2)));
+		Position_Phi.push_back(atan2(y, x));
 	}
 }
 
@@ -73,10 +79,9 @@ int CellHits::Calculate_NumberHitsPerLayer(int LayerNumber) {
 	return NumberHitsPerLayer;
 }
 
-/*
 void CellHits::Check_Rad_Position() {
 
-	for (int j = 0; j < Position_Radius.size(); ++j) {
+	for (size_t j = 0; j < Position_Radius.size(); ++j) {
 
 		if (SubDetector->GetName() == "SiVertexEndcap" || SubDetector->GetName() == "SiVertexBarrel") {
 			if (Position_Radius.at(j) < 10)
@@ -124,7 +129,7 @@ void CellHits::Check_Rad_Position() {
 	Calculate_Average(AverageOccupancy_Rad);
 }
 void CellHits::Check_Phi_Position() {
-	for (int j = 0; j < Position_Phi.size(); ++j) {
+	for (size_t j = 0; j < Position_Phi.size(); ++j) {
 
 		 if (Position_Phi.at(j) < 0 && Position_Phi.at(j) > -0.4)
 		 AverageOccupancy_Phi[-2].first.push_back(HitCount.at(j));
@@ -167,7 +172,7 @@ void CellHits::Calculate_Average(std::map<int, std::pair<std::vector<int>, std::
 		float average = 0;
 		float stddev = 0;
 
-		for (int i = 0; i < iterator.second.first.size(); ++i) {
+		for (size_t i = 0; i < iterator.second.first.size(); ++i) {
 			average += iterator.second.first.at(i);
 		}
 		if (iterator.second.first.size() != 0) average /= float(iterator.second.first.size());
@@ -186,4 +191,3 @@ void CellHits::Calculate_Average(std::map<int, std::pair<std::vector<int>, std::
 		iterator.second.second.second = stddev;
 	}
 }
-*/
