@@ -20,11 +20,12 @@ TESTS = #Test
 MAIN_OCCUPANCY = objects/main_occupancy.o
 CONFIG = objects/ConfigReader.o objects/ConfigReaderAnalysis.o
 USEFUL = objects/UsefulFunctions.o
-CELLHITS = objects/CellHits.o
+CELLHITS = objects/CellHits_class.o
+LAYERCODE = objects/LayerCodeInCellID_class.o
 
-INCLUDES = -I ../include/ -I ../test/include/ -I ../../include/
+INCLUDES = -I ../include/ -I ../test/include/ -I /space/vol1/Useful_Code/include/
 
-OBJECTS = $(CONFIG) $(USEFUL) $(CELLHITS)
+OBJECTS = $(CONFIG) $(USEFUL) $(CELLHITS) $(LAYERCODE)
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -88,8 +89,11 @@ objects/ConfigReaderAnalysis.o : ../src/ConfigReaderAnalysis.cc
 objects/main_occupancy.o : ../src/main_occupancy.cc
 	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
 
-objects/UsefulFunctions.o : ../../src/UsefulFunctions.cpp
+objects/UsefulFunctions.o : /space/vol1/Useful_Code/src/UsefulFunctions.cc
 	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
 
-objects/CellHits.o : ../src/CellHits.cpp
+objects/CellHits_class.o : ../src/CellHits_class.cc
+	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
+
+objects/LayerCodeInCellID_class.o : ../src/LayerCodeInCellID_class.cc
 	@$(CXX) $(CPPFLAGS)  $(INCLUDES) -c $< -o $@
