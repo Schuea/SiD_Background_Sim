@@ -26,7 +26,7 @@ GENERALFUNCTIONS = objects/GeneralFunctions_SiDBkgSim.o
 SUBDETECTOR = objects/Subdetector_class.o
 CELLHITS = objects/CellHits_class.o
 LAYERCODE = objects/LayerCodeInCellID_class.o
-TIME = objects/time_class.o
+TIME = objects/Time_class.o
 
 INCLUDES = -I ../include/ -I ../test/include/ -I /space/vol1/Useful_Code/include/
 
