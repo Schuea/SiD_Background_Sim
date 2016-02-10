@@ -10,7 +10,7 @@
 
 #include "ConfigReaderAnalysis.h"
 #include "UsefulFunctions.h"
-#include "CellHits.h"
+#include "CellHits_class.h"
 
 using namespace std;
 
@@ -84,7 +84,7 @@ int main(int const argc, char const * const * const argv) {
 
 	string const tree_name = "Tree_" + subdetector;
 	//map<string, int> hit_map;
-  CellHits HitCount;
+	CellHits HitCount;
 
 	for (int file_iterator = 0; file_iterator < NUMBER_OF_FILES; ++file_iterator) {
 		TFile *file = TFile::Open(inputfilenames->at(file_iterator).c_str());
@@ -113,25 +113,10 @@ int main(int const argc, char const * const * const argv) {
 		long long int const entries = tree->GetEntries();
 		for (long long int i = 0; i < entries; ++i) {
 			tree->GetEntry(i);
-			//First, we combine the two cell IDs into one cell ID
-			bitset<32> const id0bit(HitCellID0);
-			string const id0string(id0bit.to_string());
-			bitset<32> const id1bit(HitCellID1);
-			string const id1string(id1bit.to_string());
-
 			//Make a combined cell ID
-			string const combined_cell_id = id1string + id0string;
-
-      HitCount.Check_CellID(combined_cell_id, HitPosition_x, HitPosition_y);
-
-			/*
-      //Test if the ID already exists in a map, either way add 1
-			if (hit_map.find(combined_cell_id) == hit_map.end()) {
-				hit_map[combined_cell_id] = 1;
-			} else {
-				hit_map[combined_cell_id] = hit_map[combined_cell_id] + 1;
-			}
-      */
+			long long int const combined_cell_id = (long long) HitCellID1 << 32 | HitCellID0;
+			//Use the CellHits class for storing the hit cells and their hitcounts
+			HitCount.Check_CellID(combined_cell_id, HitPosition_x, HitPosition_y);
 		}
 		file->Close();
 	}
@@ -140,16 +125,10 @@ int main(int const argc, char const * const * const argv) {
 	std::string const title = "Normalized buffer depth for subdetector " + subdetector;
 	TH1D *histo = new TH1D("histo", title.c_str(), 20, 0, 20);
 
-  for(size_t hitcounts = 0; hitcounts < HitCount.Get_HitCount().size(); ++hitcounts){
-    histo->Fill(HitCount.Get_HitCount().at(hitcounts));
-  }  
-
-  /*
-	//Fill histogram with the occupancies from the hit_map
-	for (auto const &it : hit_map) {
-		histo->Fill(it.second);
+	for (size_t hitcounts = 0; hitcounts < HitCount.Get_HitCount().size(); ++hitcounts) {
+		histo->Fill(HitCount.Get_HitCount().at(hitcounts));
 	}
-  */
+
 	NormalizeHistogram(histo, 1.0);
 
 	//Plot the histogram and save it
@@ -158,6 +137,7 @@ int main(int const argc, char const * const * const argv) {
 	histo->SetMinimum(0.0000001);
 	histo->Draw();
 	canvas->Print("../output/buffer_depth.pdf");
+	canvas->Print("../output/buffer_depth.C");
 
 	return 0;
 }
